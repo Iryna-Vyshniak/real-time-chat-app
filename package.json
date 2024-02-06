@@ -6,11 +6,11 @@
   "scripts": {
     "server": "nodemon backend/server.js",
     "start": "node backend/server.js",
-    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
+  "type": "module",
   "repository": {
-    "type": "module",
+    "type": "git",
     "url": "git+https://github.com/Iryna-Vyshniak/real-time-chat-app.git"
   },
   "keywords": [],
@@ -22,9 +22,12 @@
   "homepage": "https://github.com/Iryna-Vyshniak/real-time-chat-app#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
-    "mongoose": "^8.1.1"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.1",
+    "socket.io": "^4.7.4"
   },
   "devDependencies": {
     "nodemon": "^3.0.3"
