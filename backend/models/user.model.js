@@ -1,5 +1,7 @@
 import { Schema, model } from 'mongoose';
 
+import { handleMongooseError, addUpdateSettings } from '../helpers/index.js';
+
 const userSchema = new Schema(
   {
     fullName: {
@@ -8,13 +10,13 @@ const userSchema = new Schema(
     },
     username: {
       type: String,
-      required: true,
       unique: true,
+      required: true,
     },
     password: {
       type: String,
-      required: true,
       minlength: 7,
+      required: true,
     },
     gender: {
       type: String,
@@ -26,8 +28,12 @@ const userSchema = new Schema(
       default: '',
     },
   },
-  { timestamps: true }
+  { versionKey: false, timestamps: true }
 );
+
+userSchema.post('save', handleMongooseError);
+userSchema.pre('findOneAndUpdate', addUpdateSettings);
+userSchema.post('findOneAndUpdate', handleMongooseError);
 
 const User = model('User', userSchema);
 
