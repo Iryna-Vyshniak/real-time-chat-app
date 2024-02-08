@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
 import authRouter from './routes/api/auth.routes.js';
+import messageRouter from './routes/api/message.routes.js';
 
 import connectToMongoDB from './db/connectToMongoDB.js';
 
@@ -15,6 +16,7 @@ app.use(express.json()); // to parse the incoming requests with JSON payloads (f
 app.use(cookieParser());
 
 app.use('/api/auth', authRouter);
+app.use('/api/messages', messageRouter);
 
 app.use((req, res) => {
   res.statusCode(404).json({ message: 'Not found' });
