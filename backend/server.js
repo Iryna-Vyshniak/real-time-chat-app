@@ -23,8 +23,10 @@ app.use('/api/auth', authRouter);
 app.use('/api/messages', messageRouter);
 app.use('/api/users', usersRouter);
 
-app.use(express.static(path.join(__dirname, '/frontend/dist')));
+// Serve static files from the frontend/dist directory
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
+// Route fallback to index.html for client-side routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
 });
