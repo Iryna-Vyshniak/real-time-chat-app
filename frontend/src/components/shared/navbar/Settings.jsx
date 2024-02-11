@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { bgImages } from '../../../data';
 
-const Dialog = () => {
+const Settings = () => {
   const [bgImage, setBgImages] = useState(localStorage.getItem('bg') || bgImages[0].img);
 
   const handleClick = (img) => {
@@ -16,14 +16,18 @@ const Dialog = () => {
 
   return (
     <dialog id='settings' className='modal'>
-      <div className='modal-box p-6 w-96 max-w-full min-h-[26rem] rounded-lg shadow-lg bg-slate-400 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-0'>
+      <div className='modal-box p-6 w-[18rem] max-w-full min-h-[26rem] rounded-lg shadow-lg bg-slate-400 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-0'>
         <form method='dialog'>
-          <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white/50'>
+          <button className='btn btn-sm btn-circle btn-ghost absolute z-[1000] right-2 top-2 text-white/50'>
             ✕
           </button>
         </form>
-        <h3 className='font-bold text-lg text-white/50'>Hello!</h3>
-        <p className='py-4 text-white/50'>Setup background</p>
+        <h3 className='font-semibold text-lg text-slate-300 drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)] tracking-wider'>
+          Hello!
+        </h3>
+        <p className='py-4 text-slate-300 drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)] tracking-wider'>
+          Setup background
+        </p>
         <ul className='flex items-center justify-center flex-wrap gap-2 w-full'>
           {bgImages.map(({ img, id }) => {
             return (
@@ -44,4 +48,4 @@ const Dialog = () => {
   );
 };
 
-export default Dialog;
+export default Settings;
