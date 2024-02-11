@@ -27,6 +27,10 @@ export const bgImages = [
     id: 'hjwe3rfeftertdve4',
     img: 'https://res.cloudinary.com/dkqxaid79/image/upload/v1707588572/chat/abstract.jpg',
   },
+  {
+    id: 'hj4353e3rtyhf',
+    img: 'https://res.cloudinary.com/dkqxaid79/image/upload/v1707596119/chat/ben.jpg',
+  },
 ];
 
 // for login form
@@ -34,15 +38,44 @@ export const loginFields = {
   username: {
     label: 'Username',
     name: 'username',
-    type: 'text',
     required: true,
     placeholder: 'Enter username',
   },
   password: {
     label: 'Password',
     name: 'password',
-    type: 'text',
     required: true,
     placeholder: 'Enter Password',
+  },
+};
+export const signupFields = {
+  fullName: {
+    label: 'Full Name',
+    name: 'fullName',
+    required: true,
+    placeholder: 'Will Smith',
+  },
+  username: {
+    label: 'Username',
+    name: 'username',
+    required: true,
+    placeholder: 'wills',
+  },
+  password: {
+    label: 'Password',
+    name: 'password',
+    required: true,
+    placeholder: 'Enter Password',
+  },
+  confirmPassword: {
+    label: 'Confirm Password',
+    name: 'confirmPassword',
+    required: true,
+    placeholder: 'Confirm Password',
+  },
+  gender: {
+    label: 'Male' || 'Female',
+    name: 'gender',
+    required: true,
   },
 };
