@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
-export const useForm = (initialState) => {
+export const useForm = (initialState, onSubmit) => {
   const [state, setState] = useState(initialState);
 
   const handleChange = ({ target }) => {
@@ -13,12 +13,26 @@ export const useForm = (initialState) => {
   };
 
   useEffect(() => {
-    const savedData = JSON.parse(localStorage.getItem('formdata'));
+    let savedData = localStorage.getItem('formdata');
+    savedData = savedData ? JSON.parse(savedData) : {};
 
     if (savedData) {
       setState(savedData);
     }
   }, []);
 
-  return { state, handleChange };
+  const reset = useCallback(() => setState({ ...initialState }), [initialState]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    onSubmit({ ...state });
+
+    if (localStorage.getItem('formdata')) {
+      localStorage.removeItem('formdata');
+    }
+
+    reset();
+  };
+
+  return { state, handleChange, reset, handleSubmit };
 };
