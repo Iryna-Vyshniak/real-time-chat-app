@@ -21,8 +21,8 @@ export const useSignup = () => {
         body: JSON.stringify({ fullName, username, password, confirmPassword, gender }),
       });
       const data = await res.json();
-      if (data.error) {
-        throw new Error(data.error);
+      if (data.error || data.message) {
+        throw new Error(data.error || data.message);
       }
 
       // localStorage
