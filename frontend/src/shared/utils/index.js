@@ -1,4 +1,4 @@
-import { emojiBook } from '../../data';
+import { emojiBook } from '../data/index';
 
 export const genEmoji = () => {
   const emodjiList = emojiBook.length;

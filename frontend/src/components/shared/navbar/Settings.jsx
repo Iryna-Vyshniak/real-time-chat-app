@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { bgImages } from '../../../data';
+
+import { bgImages } from '../../../shared/data/index.js';
 
 const Settings = () => {
   const [bgImage, setBgImages] = useState(localStorage.getItem('bg') || bgImages[0].img);

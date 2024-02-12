@@ -1,4 +1,4 @@
-import { genEmoji } from '../../../shared/utils';
+import { genEmoji } from '../../../shared/utils/index.js';
 import Icon from '../../ui/Icon';
 
 const NoChatSelected = () => {
