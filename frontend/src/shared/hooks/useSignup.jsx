@@ -8,7 +8,7 @@ export const useSignup = () => {
   const { setAuthUser } = useAuthContext();
 
   const signup = async ({ fullName, username, password, confirmPassword, gender }) => {
-    //   check success or not
+    //   check validation
     const success = handleInputErrors({ fullName, username, password, confirmPassword, gender });
     if (!success) return;
 
