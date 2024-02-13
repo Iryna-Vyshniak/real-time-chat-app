@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { signupFields } from '../../shared/data/index.js';
 import { useForm } from '../../shared/hooks/useForm';
+import { useSignup } from '../../shared/hooks/useSignup.jsx';
 
 import TextField from './TextField';
 import GenderCheckbox from './GenderCheckbox';
@@ -13,6 +14,7 @@ const SignupForm = ({ onSubmit }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const { isLoading } = useSignup();
   const { state, handleChange, handleSubmit } = useForm(
     {
       fullName: '',
@@ -91,7 +93,9 @@ const SignupForm = ({ onSubmit }) => {
           </span>
         </Link>
       </div>
-      <Button type='submit'>SIGNUP</Button>
+      <Button type='submit' disabled={isLoading}>
+        {isLoading ? <span className='loading loading-spinner'></span> : 'SIGNUP'}
+      </Button>
     </form>
   );
 };
