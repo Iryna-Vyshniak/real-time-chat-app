@@ -12,9 +12,7 @@ export const useGetConversations = () => {
         const res = await fetch(`/api/users`);
         const data = await res.json();
 
-        if (data.error || data.message) {
-          throw new Error(data.error || data.message);
-        }
+        if (data.error) throw new Error(data.error);
 
         setConversations(data);
       } catch (error) {
