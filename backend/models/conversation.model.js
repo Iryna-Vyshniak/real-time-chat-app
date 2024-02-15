@@ -8,6 +8,10 @@ const conversationSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: 'User',
+        unreadMessages: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
     messages: [
