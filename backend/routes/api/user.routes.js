@@ -6,5 +6,6 @@ import protectRoute from '../../middlewares/protectRoute.js';
 const router = Router();
 
 router.get('/', protectRoute, userCtrl.getUsersForSidebar);
+router.patch('/messages', protectRoute, userCtrl.updateMessageStatus);
 
 export default router;
