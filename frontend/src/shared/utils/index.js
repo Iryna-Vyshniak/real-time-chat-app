@@ -21,3 +21,20 @@ export const extractTime = (dateStr) => {
 function padZero(num) {
   return num.toString().padStart(2, '0');
 }
+
+// for last messages
+export const unreadMessagesCount = (msges, id) => {
+  let unreadCount = 0;
+
+  if (id) {
+    unreadCount = Array.isArray(msges)
+      ? msges.filter(({ lastMessage }) => lastMessage.senderId === id && !lastMessage.read).length
+      : 0;
+  } else {
+    unreadCount = Array.isArray(msges)
+      ? msges.filter(({ lastMessage }) => !lastMessage.read).length
+      : 0;
+  }
+
+  return unreadCount > 0 ? (unreadCount > 9 ? '9+' : unreadCount.toString()) : null;
+};

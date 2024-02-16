@@ -22,7 +22,7 @@ export const bgImages = [
   },
   {
     id: 'hjwe31tertdve4',
-    img: 'https://res.cloudinary.com/dkqxaid79/image/upload/v1707588419/chat/augustine.jpg',
+    img: 'https://res.cloudinary.com/dkqxaid79/image/upload/v1708097895/chat/colin-lloyd-RTJ36Km7CI4-unsplash_oyh6mu.jpg',
   },
   {
     id: 'hjwe3rfeftertdve4',
@@ -30,7 +30,11 @@ export const bgImages = [
   },
   {
     id: 'hj4353e3rtyhf',
-    img: 'https://res.cloudinary.com/dkqxaid79/image/upload/v1707596119/chat/ben.jpg',
+    img: 'https://res.cloudinary.com/dkqxaid79/image/upload/v1708097895/chat/micah-hallahan-Kb-Cpr5dZXo-unsplash_taawbw.jpg',
+  },
+  {
+    id: 'hj43435g3rtyhf',
+    img: 'https://res.cloudinary.com/dkqxaid79/image/upload/v1708097895/chat/denys-nevozhai-duo-xV0TU7s-unsplash_y1vuta.jpg',
   },
 ];
 
