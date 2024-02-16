@@ -8,18 +8,30 @@ body {
 }
 
 /* chrome */
-html::-webkit-scrollbar {
+::-webkit-scrollbar {
   display: none;
 }
 
 /* firefox */
-html {
+html,
+div {
   scrollbar-width: none;
 }
 
 @layer utilities {
   .container {
     @apply max-w-7xl lg:mx-auto p-5 md:px-10  w-full;
+  }
+
+  .modal {
+    @apply bg-clip-padding backdrop-filter backdrop-blur-md bg-green/10;
+  }
+  .modal-box {
+    @apply bg-clip-padding backdrop-filter backdrop-blur-xl bg-green/10 bg-opacity-0;
+  }
+
+  .dropdown-content {
+    @apply absolute z-50;
   }
 }
 
@@ -30,7 +42,7 @@ html {
   display: block;
   border-radius: 9999px;
   --tw-bg-opacity: 1;
-  background-color: #0084fe;
+  background-color: #ff8400;
   outline-style: solid;
   outline-width: 2px;
   outline-color: var(--fallback-b1, oklch(var(--b1) / 1));
