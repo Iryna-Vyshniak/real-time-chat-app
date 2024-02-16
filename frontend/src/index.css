@@ -29,10 +29,6 @@ div {
   .modal-box {
     @apply bg-clip-padding backdrop-filter backdrop-blur-xl bg-green/10 bg-opacity-0;
   }
-
-  .dropdown-content {
-    @apply absolute z-50;
-  }
 }
 
 .avatar.online:before {
