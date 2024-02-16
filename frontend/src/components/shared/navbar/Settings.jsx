@@ -17,7 +17,7 @@ const Settings = () => {
 
   return (
     <dialog id='settings' className='modal'>
-      <div className='modal-box p-6 w-[18rem] max-w-full min-h-[26rem] rounded-lg shadow-lg bg-slate-400 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-0'>
+      <div className='modal-box p-6 w-[18rem] max-w-full min-h-[26rem] rounded-lg shadow-lg'>
         <form method='dialog'>
           <button className='btn btn-sm btn-circle btn-ghost absolute z-[1000] right-2 top-2 text-white/50'>
             ✕
