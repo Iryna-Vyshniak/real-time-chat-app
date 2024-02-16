@@ -5,7 +5,7 @@ import useConversation from '../../store/useConversation';
 
 export const useGetMessages = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { messages, setMessages, selectedConversation } = useConversation();
+  const { messages, setMessages, selectedConversation, lastMessages } = useConversation();
 
   useEffect(() => {
     const getMessages = async () => {
@@ -24,7 +24,7 @@ export const useGetMessages = () => {
       }
     };
     if (selectedConversation?._id) getMessages();
-  }, [selectedConversation?._id, setMessages]);
+  }, [selectedConversation._id, setMessages, lastMessages]);
 
   return { messages, isLoading };
 };
