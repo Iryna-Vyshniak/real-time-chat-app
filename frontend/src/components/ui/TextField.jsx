@@ -8,7 +8,7 @@ const TextField = ({ label, id, variant, ...props }) => {
           {label}
         </span>
       </label>
-      <input id={id} className='w-full input input-bordered h-10' {...props} />
+      <input id={id} className='w-full input input-bordered h-10 bg-secondary/30' {...props} />
     </>
   );
 };

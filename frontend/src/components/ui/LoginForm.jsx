@@ -44,13 +44,13 @@ const LoginForm = ({ onSubmit }) => {
           <Icon logic={showPassword ? '#icon-eye' : '#icon-eye-hidden'} />
         </div>
       </div>
-      <div className='flex justify-between mt-6 whitespace-nowrap text-sm font-semibold tracking-wider sm:text-lg text-blue-500 drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)]'>
+      <div className='flex justify-between mt-6 whitespace-nowrap text-sm font-semibold tracking-wider sm:text-lg text-primary drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)]'>
         <p className='mb-6'>Don`t have an account?</p>
         <Link
           to='/signup'
           className='group ml-1 text-white transition-all duration-200 ease-in-out'
         >
-          <span className='bg-left-bottom bg-gradient-to-r from-white to-blue-500 bg-[length:0%_1px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-200 ease-out'>
+          <span className='bg-left-bottom bg-gradient-to-r from-white to-primary bg-[length:0%_1px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-200 ease-out'>
             {' '}
             Register
           </span>

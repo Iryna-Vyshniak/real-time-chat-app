@@ -84,10 +84,10 @@ const SignupForm = ({ onSubmit }) => {
         </div>
       </div>
       <GenderCheckbox selectedGender={gender} handleChange={handleChange} />
-      <div className='flex justify-between mt-2 whitespace-nowrap text-sm sm:text-lg font-semibold tracking-wider text-blue-500 drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)]'>
+      <div className='flex justify-between mt-2 whitespace-nowrap text-sm sm:text-lg font-semibold tracking-wider text-primary drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)]'>
         <p className='mb-6'>Already have an account?</p>
         <Link to='/login' className='group ml-1 text-white transition-all duration-200 ease-in-out'>
-          <span className='bg-left-bottom bg-gradient-to-r from-white to-blue-500 bg-[length:0%_1px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-200 ease-out'>
+          <span className='bg-left-bottom bg-gradient-to-r from-white to-primary bg-[length:0%_1px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-200 ease-out'>
             {' '}
             Sign in
           </span>

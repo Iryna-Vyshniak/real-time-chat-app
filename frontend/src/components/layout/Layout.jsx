@@ -8,7 +8,7 @@ const Layout = () => {
   return (
     <div className='p-4 h-screen flex flex-col items-center justify-center overflow-hidden'>
       <Navbar />
-      <main className='flex flex-col items-center justify-center'>
+      <main className='relative flex flex-col items-center justify-center max-w-full'>
         <Suspense fallback={<p>...Loading</p>}>
           <Outlet />
         </Suspense>
