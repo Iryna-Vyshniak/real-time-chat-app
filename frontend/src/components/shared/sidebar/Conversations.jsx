@@ -10,7 +10,7 @@ import Conversation from './Conversation';
 
 const Conversations = () => {
   const { isLoading, conversations } = useGetConversations();
-  const { selectedConversation } = useConversation();
+  const { selectedConversation, lastMessages } = useConversation();
   const filteredConversation = useFilterConversations(conversations, selectedConversation);
 
   const conversationRef = useRef();
@@ -29,12 +29,16 @@ const Conversations = () => {
   }, [filteredConversation]);
 
   return (
-    <ul className='flex flex-col overflow-auto p-2'>
+    <ul className='flex md:flex-col p-2 gap-2 overflow-auto touch-auto will-change-scroll'>
       {isLoading ? <span className='loading loading-spinner'></span> : null}
       {filteredConversation.length > 0 &&
         filteredConversation.map((conversation) => (
-          <li key={conversation._id} ref={conversationRef}>
-            <Conversation conversation={conversation} emoji={generateEmoji()} />
+          <li key={conversation._id} ref={conversationRef} className='w-full'>
+            <Conversation
+              conversation={conversation}
+              emoji={generateEmoji()}
+              lastMessages={lastMessages}
+            />
           </li>
         ))}
       {nonFilteredConversations.map((conversation, idx) => (
@@ -43,6 +47,7 @@ const Conversations = () => {
             lastIdx={idx === conversations.length - 1} // if last conversation - don`t show divider
             conversation={conversation}
             emoji={generateEmoji()}
+            lastMessages={lastMessages}
           />
         </li>
       ))}
