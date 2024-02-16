@@ -8,7 +8,10 @@ const NotFoundPage = () => {
         <p className='text-xl font-medium m-6'>
           Sorry, the page {"you're"} looking for {"can't"} be found
         </p>
-        <NavLink to='/' className='bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded'>
+        <NavLink
+          to='/'
+          className='bg-primary hover:bg-green text-white py-2 px-4 rounded drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)]'
+        >
           Go Home
         </NavLink>
       </div>
