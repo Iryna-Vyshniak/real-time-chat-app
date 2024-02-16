@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
+import { useSendMessage } from '../../../shared/hooks/useSendMessage';
+
 import TextField from '../../ui/TextField';
 import Icon from '../../ui/Icon';
-import { useSendMessage } from '../../../shared/hooks/useSendMessage';
 
 const MessageInput = () => {
   const [message, setMessage] = useState('');
@@ -16,7 +17,7 @@ const MessageInput = () => {
   };
 
   return (
-    <form className='px-4 mt-auto' onSubmit={handleSubmit}>
+    <form className='px-4 mt-auto w-full' onSubmit={handleSubmit} autoComplete='off'>
       <div className='relative w-full'>
         <TextField
           type='text'
@@ -24,13 +25,13 @@ const MessageInput = () => {
           name='message'
           value={message}
           onChange={({ target }) => setMessage(target.value)}
-          className='p-2.5 w-full bg-beige border border-slate-800 text-sm tracking-wider rounded-lg  text-slate-900'
+          className='p-2.5 pr-10 w-full bg-beige border border-slate-800 text-sm tracking-wider rounded-lg  text-slate-900 placeholder:text-slate-600 placeholder:line-clamp-1'
         />
         <button type='submit' className='absolute top-[45%] right-0 flex items-center pe-3'>
           {isLoading ? (
             <span className='loading loading-spinner'></span>
           ) : (
-            <Icon src='#icon-paper-plane' />
+            <Icon src='#icon-paper-plane' style='drop-shadow-[0px_1px_0.5px_rgba(0,0,0,1)]' />
           )}
         </button>
       </div>

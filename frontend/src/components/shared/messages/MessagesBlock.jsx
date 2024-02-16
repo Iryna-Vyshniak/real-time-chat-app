@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
+
 import useConversation from '../../../store/useConversation';
+
 import Header from './Header';
 import MessageInput from './MessageInput';
 import Messages from './Messages';
@@ -14,7 +16,7 @@ const MessagesBlock = () => {
   }, [setSelectedConversation]);
 
   return (
-    <div className='md:min-w-[450px] w-[50vw] flex flex-col p-4'>
+    <div className='max-w-full md:w-[50vw] h-[50vh] md:h-[70vh] flex flex-col p-4'>
       {!selectedConversation ? (
         <NoChatSelected />
       ) : (
