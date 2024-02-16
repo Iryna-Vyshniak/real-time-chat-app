@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, Suspense, lazy } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+
+import Layout from './components/layout/Layout';
+
+import { bgImages } from './shared/data/index.js';
+import { useAuthContext } from './shared/context/AuthContext.jsx';
+
+const HomePage = lazy(() => import('./pages/home/HomePage'));
+const LoginPage = lazy(() => import('./pages/login/LoginPage'));
+const SignupPage = lazy(() => import('./pages/signup/SignupPage'));
+const NotFoundPage = lazy(() => import('./pages/notfound/NotFoundPage'));
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { authUser } = useAuthContext();
+
+  useEffect(() => {
+    const savedBg = localStorage.getItem('bg');
+    const defaultBg = bgImages[0].img;
+    const bgToSet = savedBg || defaultBg;
+
+    document.body.style = `background: linear-gradient(to top, rgba(0, 0, 0, 0.384) 50%, transparent),
+    url(${bgToSet}) center center / cover fixed no-repeat`;
+  }, []);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Suspense
+        fallback={
+          <div className='flex items-center justify-center'>
+            <span className='loading loading-ring loading-lg'></span>
+          </div>
+        }
+      >
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={authUser ? <HomePage /> : <Navigate to='/login' />} />
+            <Route path='/login' element={authUser ? <Navigate to='/' /> : <LoginPage />} />
+            <Route path='/signup' element={authUser ? <Navigate to='/' /> : <SignupPage />} />
+            <Route path='*' element={<NotFoundPage />} />
+          </Route>
+        </Routes>
+      </Suspense>
+      <Toaster />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
