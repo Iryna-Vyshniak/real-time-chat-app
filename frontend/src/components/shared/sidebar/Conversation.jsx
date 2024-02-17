@@ -1,3 +1,4 @@
+import { useSocketContext } from '../../../shared/context/SocketContext.jsx';
 import useUpdateStatusMsg from '../../../shared/hooks/useUpdateStatusMsg.jsx';
 import { unreadMessagesCount } from '../../../shared/utils/index.js';
 import useConversation from '../../../store/useConversation.jsx';
@@ -12,6 +13,9 @@ const Conversation = ({
   lastMessages,
 }) => {
   const { selectedConversation, setSelectedConversation, setLastMessages } = useConversation();
+  const { onlineUsers } = useSocketContext();
+  const isOnline = onlineUsers.includes(_id);
+  console.log('isOnline: ', isOnline);
 
   const { updateStatusMessage } = useUpdateStatusMsg();
 
@@ -54,7 +58,7 @@ const Conversation = ({
         onClick={handleClick}
       >
         <div className='relative'>
-          <Avatar src={avatar} selected={isSelected} />
+          <Avatar src={avatar} selected={isSelected} isOnline={isOnline} />
 
           {unreadMessagesCounts && (
             <div className='absolute bottom-0 right-0 z-10 flex items-end justify-end md:hidden'>
