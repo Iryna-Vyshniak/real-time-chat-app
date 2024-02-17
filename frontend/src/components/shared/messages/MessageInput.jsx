@@ -31,7 +31,7 @@ const MessageInput = () => {
           {isLoading ? (
             <span className='loading loading-spinner'></span>
           ) : (
-            <Icon src='#icon-paper-plane' style='drop-shadow-[0px_1px_0.5px_rgba(0,0,0,1)]' />
+            <Icon src='#icon-paper-plane' style='drop-shadow-1xl-black' />
           )}
         </button>
       </div>

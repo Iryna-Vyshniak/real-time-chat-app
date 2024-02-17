@@ -6,10 +6,16 @@ import Settings from '../shared/navbar/Settings';
 
 const Layout = () => {
   return (
-    <div className='p-4 h-screen flex flex-col items-center justify-center overflow-hidden'>
+    <div className='flex flex-col justify-center h-screen overflow-hidden'>
       <Navbar />
-      <main className='relative flex flex-col items-center justify-center max-w-full'>
-        <Suspense fallback={<p>...Loading</p>}>
+      <main className='relative mt-[5rem] flex-1 flex items-center justify-center max-w-full'>
+        <Suspense
+          fallback={
+            <div className='flex items-center justify-center'>
+              <span className='loading loading-ring loading-lg'></span>
+            </div>
+          }
+        >
           <Outlet />
         </Suspense>
         <Settings />

@@ -66,7 +66,7 @@ const Conversation = ({
         </div>
 
         <div className='hidden md:flex items-center justify-between gap-4 flex-grow'>
-          <p className='font-semibold text-slate-300 tracking-wider drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)]'>
+          <p className='font-semibold text-slate-300 tracking-wider drop-shadow-5xl-black'>
             {fullName}
           </p>
           <div className='flex items-center justify-center w-8 h-8 rounded-full bg-slate-500/20 shadow-md'>

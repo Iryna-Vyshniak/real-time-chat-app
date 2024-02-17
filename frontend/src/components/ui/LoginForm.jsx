@@ -44,7 +44,7 @@ const LoginForm = ({ onSubmit }) => {
           <Icon logic={showPassword ? '#icon-eye' : '#icon-eye-hidden'} />
         </div>
       </div>
-      <div className='flex justify-between mt-6 whitespace-nowrap text-sm font-semibold tracking-wider sm:text-lg text-primary drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)]'>
+      <div className='flex justify-between mt-6 whitespace-nowrap text-sm font-semibold tracking-wider sm:text-lg text-primary drop-shadow-5xl-black'>
         <p className='mb-6'>Don`t have an account?</p>
         <Link
           to='/signup'

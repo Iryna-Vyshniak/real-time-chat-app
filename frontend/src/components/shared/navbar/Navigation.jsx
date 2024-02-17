@@ -18,7 +18,7 @@ const Navigation = () => {
         <>
           <div className='navbar-end'>
             <button className='btn btn-ghost btn-circle'>
-              <div className='indicator drop-shadow-[0px_1px_1px_rgba(250,250,250,1)]'>
+              <div className='indicator drop-shadow-1xl-white'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   className='h-6 w-6'
@@ -34,7 +34,7 @@ const Navigation = () => {
                   />
                 </svg>
                 {unreadMessagesCounts && (
-                  <span className='absolute top-0 right-0 flex items-center justify-center w-[16px] h-[16px] rounded-full bg-primary indicator-item text-slate-800 text-[7px] drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)]'>
+                  <span className='absolute top-0 right-0 flex items-center justify-center w-[16px] h-[16px] rounded-full bg-primary indicator-item text-slate-800 text-[7px] drop-shadow-5xl-black'>
                     {unreadMessagesCounts}
                   </span>
                 )}

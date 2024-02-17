@@ -23,12 +23,10 @@ const Settings = () => {
             ✕
           </button>
         </form>
-        <h3 className='font-semibold text-lg text-slate-300 drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)] tracking-wider'>
+        <h3 className='font-semibold text-lg text-slate-300 drop-shadow-5xl-black tracking-wider'>
           Hello!
         </h3>
-        <p className='py-4 text-slate-300 drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)] tracking-wider'>
-          Setup background
-        </p>
+        <p className='py-4 text-slate-300 drop-shadow-5xl-black tracking-wider'>Setup background</p>
         <ul className='flex items-center justify-center flex-wrap gap-2 w-full'>
           {bgImages.map(({ img, id }) => {
             return (

@@ -3,7 +3,7 @@ const TextField = ({ label, id, variant, ...props }) => {
     <>
       <label htmlFor={id} className='label p-2 mt-2'>
         <span
-          className={`text-base label-text text-slate-300 drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)] ${variant}`}
+          className={`text-base label-text text-slate-300 drop-shadow-5xl-black ${variant}`}
         >
           {label}
         </span>

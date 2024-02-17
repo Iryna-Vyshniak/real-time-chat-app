@@ -10,7 +10,7 @@ const NotFoundPage = () => {
         </p>
         <NavLink
           to='/'
-          className='bg-primary hover:bg-green text-white py-2 px-4 rounded drop-shadow-[0px_0.5px_0.5px_rgba(0,0,0,1)]'
+          className='bg-primary hover:bg-green text-white py-2 px-4 rounded drop-shadow-5xl-black'
         >
           Go Home
         </NavLink>
