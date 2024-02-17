@@ -8,12 +8,12 @@ import messageRouter from './routes/api/message.routes.js';
 import usersRouter from './routes/api/user.routes.js';
 
 import connectToMongoDB from './db/connectToMongoDB.js';
+import { app, server } from './socket/socket.js';
 
 dotenv.config();
 
 const __dirname = path.resolve();
 
-const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json()); // to parse the incoming requests with JSON payloads (from req.body)
@@ -40,7 +40,7 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   connectToMongoDB();
   console.log(`Server running on port ${PORT}`);
 });
