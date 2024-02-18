@@ -5,10 +5,12 @@ import { useListenMessages } from '../../../shared/hooks/useListenMessages';
 
 import MessageSkeleton from '../skeletons/MessageSkeleton';
 import Message from './Message';
+import useConversation from '../../../store/useConversation';
 
 const Messages = () => {
   const [messageStatus, setMessageStatus] = useState({});
 
+  const { selectedConversation } = useConversation();
   const { isLoading, messages } = useGetMessages();
   useListenMessages();
   const lastMessageRef = useRef(null);
@@ -37,11 +39,18 @@ const Messages = () => {
     <div className='flex-auto px-4 overflow-auto touch-auto will-change-scroll'>
       {!isLoading && messages.length > 0 && (
         <ul className='flex-1 px-4 overflow-auto'>
-          {messages.map((message) => (
-            <li key={message._id} ref={lastMessageRef}>
-              <Message message={message} read={messageStatus[message._id]} />
-            </li>
-          ))}
+          {messages.map((message) => {
+            if (
+              message.receiverId === selectedConversation._id ||
+              message.senderId === selectedConversation._id
+            ) {
+              return (
+                <li key={message._id} ref={lastMessageRef}>
+                  <Message message={message} read={messageStatus[message._id]} />
+                </li>
+              );
+            }
+          })}
         </ul>
       )}
       {/* if loading - 4 cycles display skeleton */}

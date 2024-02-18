@@ -15,14 +15,8 @@ const Conversation = ({
   const { selectedConversation, setSelectedConversation, setLastMessages } = useConversation();
   const { onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(_id);
-  console.log('isOnline: ', isOnline);
 
   const { updateStatusMessage } = useUpdateStatusMsg();
-
-  // const unreadMessagesCount = Array.isArray(lastMessages)
-  //   ? lastMessages.filter(({ lastMessage }) => lastMessage.senderId === _id && !lastMessage.read)
-  //       .length
-  //   : 0;
 
   const unreadMessagesCounts = unreadMessagesCount(lastMessages, _id);
 
