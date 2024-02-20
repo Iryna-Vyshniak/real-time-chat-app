@@ -1,29 +1,33 @@
 import { ctrlWrapper } from '../decorators/index.js';
 import Conversation from '../models/conversation.model.js';
 import Message from '../models/message.model.js';
+import User from '../models/user.model.js';
 import { getReceiverSocketId, io } from '../socket/socket.js';
 
 export const sendMessage = async (req, res) => {
-  const { id: receiverId } = req.params;
+  const { id: receiver } = req.params; // receiver
   const { message } = req.body;
-  const senderId = req.user._id;
+  const sender = req.user._id; // its me
 
   let conversation = await Conversation.findOne({
-    participants: { $all: [senderId, receiverId] },
+    participants: { $all: [sender, receiver] },
   });
 
   if (!conversation) {
-    conversation = await Conversation.create({ participants: [senderId, receiverId] });
+    conversation = await Conversation.create({ participants: [sender, receiver] });
   }
 
+  const senderInfo = await User.findById({ _id: sender });
+  const receiverInfo = await User.findById({ _id: receiver });
+
   const newMessage = await Message.create({
-    senderId,
-    receiverId,
+    sender: senderInfo,
+    receiver: receiverInfo,
     message,
   });
 
   if (newMessage) {
-    conversation.messages.push(newMessage._id);
+    conversation.messages.push(newMessage);
   }
 
   //   await conversation.save();
@@ -33,7 +37,7 @@ export const sendMessage = async (req, res) => {
   await Promise.all([conversation.save(), newMessage.save()]);
 
   // socket io functionality
-  const receiverSocketId = getReceiverSocketId(receiverId);
+  const receiverSocketId = getReceiverSocketId(receiver);
   if (receiverSocketId) {
     // io.to(socket_id).emit() used to send events to one specific clients
     io.to(receiverSocketId).emit('newMessage', newMessage);
@@ -45,13 +49,16 @@ export const sendMessage = async (req, res) => {
 // GET MESSAGES
 
 export const getMessages = async (req, res) => {
-  const { id: receiverId } = req.params; // my receiver
-  const senderId = req.user._id; // it`s me
+  const { id: receiver } = req.params; // my receiver
+  const sender = req.user._id; // it`s me
 
   // get actual messages
   const conversation = await Conversation.findOne({
-    participants: { $all: [senderId, receiverId] },
-  }).populate('messages');
+    participants: { $all: [sender, receiver] },
+  }).populate({
+    path: 'messages',
+    populate: [{ path: 'sender' }, { path: 'receiver' }],
+  });
 
   if (!conversation) return res.status(200).json([]);
 
