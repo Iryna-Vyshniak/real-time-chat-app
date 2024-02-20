@@ -22,19 +22,27 @@ function padZero(num) {
   return num.toString().padStart(2, '0');
 }
 
-// for last messages
-export const unreadMessagesCount = (msges, id) => {
-  let unreadCount = 0;
+//  for notification
+export const uniqueSender = (notification) => {
+  if (notification) {
+    return Object.values(
+      notification.reduce((acc, curr) => {
+        const {
+          sender: { _id, fullName, username, avatar },
+        } = curr;
 
-  if (id) {
-    unreadCount = Array.isArray(msges)
-      ? msges.filter(({ lastMessage }) => lastMessage.senderId === id && !lastMessage.read).length
-      : 0;
+        if (!acc[_id]) {
+          acc[_id] = {
+            sender: { _id, fullName, username, avatar },
+            count: 1,
+          };
+        } else {
+          acc[_id].count += 1;
+        }
+        return acc;
+      }, {})
+    );
   } else {
-    unreadCount = Array.isArray(msges)
-      ? msges.filter(({ lastMessage }) => !lastMessage.read).length
-      : 0;
+    return null;
   }
-
-  return unreadCount > 0 ? (unreadCount > 9 ? '9+' : unreadCount.toString()) : null;
 };
