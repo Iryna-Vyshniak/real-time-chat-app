@@ -7,6 +7,8 @@ const useConversation = create((set) => ({
   setMessages: (messages) => set(() => ({ messages })),
   lastMessages: [],
   setLastMessages: (lastMessages) => set(() => ({ lastMessages })),
+  notification: [],
+  setNotification: (notification) => set(() => ({ notification })),
 }));
 
 export default useConversation;
