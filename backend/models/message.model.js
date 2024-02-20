@@ -4,18 +4,19 @@ import { addUpdateSettings, handleMongooseError } from '../helpers/index.js';
 
 const messageSchema = new Schema(
   {
-    senderId: {
+    sender: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    receiverId: {
+    receiver: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
     message: {
       type: String,
+      trim: true,
       required: true,
     },
     read: {
