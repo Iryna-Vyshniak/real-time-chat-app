@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import useConversation from '../../../store/useConversation';
+import { useListenMessages } from '../../../shared/hooks/useListenMessages';
 
 import Header from './Header';
 import MessageInput from './MessageInput';
@@ -9,6 +10,8 @@ import NoChatSelected from './NoChatSelected';
 
 const MessagesBlock = () => {
   const { selectedConversation, setSelectedConversation } = useConversation();
+
+  useListenMessages();
 
   useEffect(() => {
     // cleanup function when unmounted component

@@ -1,6 +1,5 @@
 import { useSocketContext } from '../../../shared/context/SocketContext.jsx';
-import useUpdateStatusMsg from '../../../shared/hooks/useUpdateStatusMsg.jsx';
-import { unreadMessagesCount } from '../../../shared/utils/index.js';
+// import useUpdateStatusMsg from '../../../shared/hooks/useUpdateStatusMsg.jsx';
 import useConversation from '../../../store/useConversation.jsx';
 
 import Avatar from '../../ui/Avatar';
@@ -10,37 +9,18 @@ const Conversation = ({
   conversation: { _id, fullName, username, avatar },
   emoji,
   lastIdx,
-  lastMessages,
+  filteredNotification,
 }) => {
-  const { selectedConversation, setSelectedConversation, setLastMessages } = useConversation();
+  const { selectedConversation, setSelectedConversation, setNotification, notification } =
+    useConversation();
   const { onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(_id);
 
-  const { updateStatusMessage } = useUpdateStatusMsg();
-
-  const unreadMessagesCounts = unreadMessagesCount(lastMessages, _id);
-
-  const isSelected = selectedConversation?._id == _id;
+  const isSelected = selectedConversation?._id === _id;
 
   const handleClick = async () => {
     setSelectedConversation({ _id, fullName, username, avatar });
-    if (unreadMessagesCounts) {
-      await updateStatusMessage(_id);
-
-      const updatedLastMessages = lastMessages.map((item) => {
-        if (item._id === _id) {
-          return {
-            ...item,
-            lastMessage: {
-              ...item.lastMessage,
-              read: true,
-            },
-          };
-        }
-        return item;
-      });
-      setLastMessages(updatedLastMessages);
-    }
+    setNotification(notification.filter(({ sender: { _id: idSender } }) => idSender !== _id));
   };
 
   return (
@@ -54,10 +34,10 @@ const Conversation = ({
         <div className='relative'>
           <Avatar src={avatar} selected={isSelected} isOnline={isOnline} />
 
-          {unreadMessagesCounts && (
+          {filteredNotification.length > 0 && (
             <div className='absolute bottom-0 right-0 z-10 flex items-end justify-end md:hidden'>
               <span className='flex items-center justify-center shadow bg-primary h-4 w-4 text-[10px] rounded-full text-slate-800'>
-                {unreadMessagesCounts}
+                {filteredNotification[0].count}
               </span>
             </div>
           )}
@@ -68,10 +48,10 @@ const Conversation = ({
             {fullName}
           </p>
           <div className='flex items-center justify-center w-8 h-8 rounded-full bg-slate-500/20 shadow-md'>
-            {unreadMessagesCounts ? (
+            {filteredNotification.length > 0 ? (
               <div className='absolute z-[10] flex items-center justify-center h-full right-0 top-0 mr-3'>
                 <span className='flex items-center justify-center shadow bg-primary h-6 w-6 text-xs rounded-full text-slate-800'>
-                  {unreadMessagesCounts}
+                  {filteredNotification[0].count}
                 </span>
               </div>
             ) : (

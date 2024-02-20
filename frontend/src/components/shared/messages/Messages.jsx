@@ -1,30 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useGetMessages } from '../../../shared/hooks/useGetMessages';
 import { useListenMessages } from '../../../shared/hooks/useListenMessages';
+import useConversation from '../../../store/useConversation';
 
 import MessageSkeleton from '../skeletons/MessageSkeleton';
 import Message from './Message';
-import useConversation from '../../../store/useConversation';
 
 const Messages = () => {
-  const [messageStatus, setMessageStatus] = useState({});
-
   const { selectedConversation } = useConversation();
   const { isLoading, messages } = useGetMessages();
-  useListenMessages();
-  const lastMessageRef = useRef(null);
 
-  useEffect(() => {
-    if (messages.length > 0) {
-      // Оновлюємо статус для кожного повідомлення відповідно до його прочитаності
-      const updatedStatus = {};
-      messages.forEach((message) => {
-        updatedStatus[message._id] = message.read;
-      });
-      setMessageStatus(updatedStatus);
-    }
-  }, [messages]);
+  useListenMessages();
+
+  const lastMessageRef = useRef(null);
 
   // scroll to the last messsages
   useEffect(() => {
@@ -41,12 +30,12 @@ const Messages = () => {
         <ul className='flex-1 px-4 overflow-auto'>
           {messages.map((message) => {
             if (
-              message.receiverId === selectedConversation._id ||
-              message.senderId === selectedConversation._id
+              message.receiver._id === selectedConversation._id ||
+              message.sender._id === selectedConversation._id
             ) {
               return (
                 <li key={message._id} ref={lastMessageRef}>
-                  <Message message={message} read={messageStatus[message._id]} />
+                  <Message message={message} />
                 </li>
               );
             }
