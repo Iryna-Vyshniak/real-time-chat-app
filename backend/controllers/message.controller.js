@@ -57,7 +57,10 @@ export const getMessages = async (req, res) => {
     participants: { $all: [sender, receiver] },
   }).populate({
     path: 'messages',
-    populate: [{ path: 'sender' }, { path: 'receiver' }],
+    populate: [
+      { path: 'sender', select: ' _id fullName username avatar' },
+      { path: 'receiver', select: ' _id fullName username avatar' },
+    ],
   });
 
   if (!conversation) return res.status(200).json([]);
