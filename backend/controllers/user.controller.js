@@ -23,7 +23,7 @@ const getUsersForSidebar = async (req, res) => {
   const lastMessages = await Message.aggregate([
     {
       $match: {
-        receiverId: loggedInUserId,
+        receiver: loggedInUserId,
         read: false,
       },
     },

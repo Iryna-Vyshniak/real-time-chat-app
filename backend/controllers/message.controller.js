@@ -1,13 +1,20 @@
 import { ctrlWrapper } from '../decorators/index.js';
+import { HttpError } from '../helpers/index.js';
+
 import Conversation from '../models/conversation.model.js';
 import Message from '../models/message.model.js';
 import User from '../models/user.model.js';
+
 import { getReceiverSocketId, io } from '../socket/socket.js';
 
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
   const { message } = req.body;
   const sender = req.user._id; // its me
+
+  if (!message) {
+    throw HttpError(400, 'Invalid data passed into request');
+  }
 
   let conversation = await Conversation.findOne({
     participants: { $all: [sender, receiver] },
@@ -21,13 +28,14 @@ export const sendMessage = async (req, res) => {
   const receiverInfo = await User.findById({ _id: receiver });
 
   const newMessage = await Message.create({
+    conversationId: conversation._id,
     sender: senderInfo,
     receiver: receiverInfo,
     message,
   });
 
   if (newMessage) {
-    conversation.messages.push(newMessage);
+    conversation.messages.push(newMessage._id);
   }
 
   //   await conversation.save();
@@ -58,8 +66,8 @@ export const getMessages = async (req, res) => {
   }).populate({
     path: 'messages',
     populate: [
-      { path: 'sender', select: ' _id fullName username avatar' },
-      { path: 'receiver', select: ' _id fullName username avatar' },
+      { path: 'sender', model: 'User', select: ' _id fullName username avatar' },
+      { path: 'receiver', model: 'User', select: ' _id fullName username avatar' },
     ],
   });
 
