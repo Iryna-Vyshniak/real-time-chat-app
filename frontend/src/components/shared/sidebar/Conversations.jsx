@@ -10,7 +10,9 @@ import Conversation from './Conversation';
 
 const Conversations = () => {
   const { isLoading, conversations } = useGetConversations();
+
   const { selectedConversation, notification } = useConversation();
+
   const filteredConversation = useFilterConversations(conversations, selectedConversation);
 
   const conversationRef = useRef();

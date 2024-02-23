@@ -14,7 +14,7 @@ const Message = ({ message }) => {
   const chatClassName = fromMe ? 'chat-end' : 'chat-start';
   const chatColor = fromMe ? 'bg-beige/80' : 'bg-green/80';
   const avatar = fromMe ? authUser.avatar : selectedConversation?.avatar;
-  const isMsgRead = true;
+  const isMsgRead = message.read;
 
   const messageStatus =
     isMsgRead && fromMe ? (

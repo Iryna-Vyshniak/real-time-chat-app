@@ -1,5 +1,4 @@
 import { useSocketContext } from '../../../shared/context/SocketContext.jsx';
-// import useUpdateStatusMsg from '../../../shared/hooks/useUpdateStatusMsg.jsx';
 import useConversation from '../../../store/useConversation.jsx';
 
 import Avatar from '../../ui/Avatar';
@@ -13,12 +12,13 @@ const Conversation = ({
 }) => {
   const { selectedConversation, setSelectedConversation, setNotification, notification } =
     useConversation();
+
   const { onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(_id);
 
   const isSelected = selectedConversation?._id === _id;
 
-  const handleClick = async () => {
+  const handleClick = () => {
     setSelectedConversation({ _id, fullName, username, avatar });
     setNotification(notification.filter(({ sender: { _id: idSender } }) => idSender !== _id));
   };
