@@ -1,16 +1,25 @@
+import { Link } from 'react-router-dom';
+
+import { useAuthContext } from '../../../shared/context/AuthContext';
+
 import Logout from './Logout';
 
 const DropdownContent = () => {
+  const { authUser } = useAuthContext();
+
   return (
     <ul
       tabIndex={0}
       className='menu menu-sm dropdown-content mt-2 p-2 rounded-box w-52 shadow-md bg-primary'
     >
       <li>
-        <a className='justify-between text-slate-800 font-semibold tracking-widest'>
+        <Link
+          to={`/update/${authUser._id}`}
+          className='justify-between text-slate-800 font-semibold tracking-widest'
+        >
           Profile
           <span className='badge'>New</span>
-        </a>
+        </Link>
       </li>
       <li>
         <button onClick={() => document.getElementById('settings').showModal()}>
