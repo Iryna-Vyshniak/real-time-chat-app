@@ -10,6 +10,7 @@ import { useAuthContext } from './shared/context/AuthContext.jsx';
 const HomePage = lazy(() => import('./pages/home/HomePage'));
 const LoginPage = lazy(() => import('./pages/login/LoginPage'));
 const SignupPage = lazy(() => import('./pages/signup/SignupPage'));
+const UpdateProfilePage = lazy(() => import('./pages/update/UpdateProfilePage'));
 const NotFoundPage = lazy(() => import('./pages/notfound/NotFoundPage'));
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
             <Route index element={authUser ? <HomePage /> : <Navigate to='/login' />} />
             <Route path='/login' element={authUser ? <Navigate to='/' /> : <LoginPage />} />
             <Route path='/signup' element={authUser ? <Navigate to='/' /> : <SignupPage />} />
+            <Route path='/update/:id' element={authUser ? <UpdateProfilePage /> : <SignupPage />} />
             <Route path='*' element={<NotFoundPage />} />
           </Route>
         </Routes>
