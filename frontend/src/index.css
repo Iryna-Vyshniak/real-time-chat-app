@@ -53,6 +53,11 @@ div {
   width: 1.2rem;
 }
 
+.update-avatar.btn-circle {
+  height: 6rem;
+  width: 6rem;
+}
+
 /* style for send or received messages */
 
 .shake-msg {
