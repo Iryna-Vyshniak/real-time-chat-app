@@ -24,7 +24,7 @@ cloudinary.config({
 });
 
 app.use(express.json()); // to parse the incoming requests with JSON payloads (from req.body)
-app.use(express.urlencoded({ extended: true })); // to parse form data (from req.body)
+app.use(express.urlencoded({ limit: '3mb', extended: true })); // to parse form data (from req.body)
 app.use(cookieParser());
 
 app.use('/api/auth', authRouter);
