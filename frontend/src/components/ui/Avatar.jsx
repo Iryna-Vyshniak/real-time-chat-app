@@ -15,9 +15,9 @@ const Avatar = ({ src, selected, isOnline, style }) => {
         <img
           alt='user avatar'
           src={src}
-          width='2.8rem'
-          height='2.8rem'
-          className={'w-[2.8rem] h-[2.8rem] shadow-lg'}
+          width='2rem'
+          height='2rem'
+          className={style ? 'w-10 h-10 shadow-lg rounded-full' : 'w-10 h-10 shadow-lg'}
         />
       </div>
     </div>
