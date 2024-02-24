@@ -7,5 +7,6 @@ const router = Router();
 
 router.get('/', protectRoute, userCtrl.getUsersForSidebar);
 router.patch('/messages', protectRoute, userCtrl.updateMessageStatus);
+router.put('/update/:id', protectRoute, userCtrl.updateUser);
 
 export default router;
