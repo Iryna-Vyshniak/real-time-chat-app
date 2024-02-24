@@ -34,5 +34,5 @@ export const useForm = (initialState, onSubmit) => {
     reset();
   };
 
-  return { state, handleChange, reset, handleSubmit };
+  return { state, setState, handleChange, reset, handleSubmit };
 };

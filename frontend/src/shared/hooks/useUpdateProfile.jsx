@@ -32,8 +32,8 @@ const useUpdateProfile = () => {
 
       const data = await res.json();
 
-      if (data.error) {
-        throw new Error(data.error);
+      if (data.error || data.message) {
+        throw new Error(data.error || data.message);
       }
 
       // localStorage
