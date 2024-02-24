@@ -1,3 +1,6 @@
+import bcrypt from 'bcryptjs';
+import { v2 as cloudinary } from 'cloudinary';
+
 import { ctrlWrapper } from '../decorators/index.js';
 import { HttpError } from '../helpers/index.js';
 
@@ -66,7 +69,68 @@ const updateMessageStatus = async (req, res) => {
   }
 };
 
+// update user profile
+const updateUser = async (req, res) => {
+  const { fullName, username, password, gender, avatar } = req.body;
+
+  const userId = req.user.id;
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw HttpError(400, 'User not found');
+  }
+
+  if (req.params.id !== userId.toString()) {
+    throw HttpError(400, 'You can`t change other user`s profile');
+  }
+
+  if (password) {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    user.password = hashedPassword;
+  }
+
+  if (avatar) {
+    let avatarUrl = avatar;
+
+    if (user.avatar && user._id) {
+      await cloudinary.uploader.destroy(`avatar_${user._id}`);
+    }
+
+    if (avatar.startsWith('data:image')) {
+      const uploadedResponse = await cloudinary.uploader.upload(avatar, {
+        folder: 'chat',
+        public_id: `avatar_${user._id}`,
+        use_filename: true,
+        transformation: [
+          { gravity: 'face', height: 200, width: 200, crop: 'fill' },
+          { radius: 'max' },
+          { fetch_format: 'auto' },
+        ],
+      });
+      avatarUrl = uploadedResponse.secure_url;
+    }
+
+    user.avatar = avatarUrl;
+  }
+
+  // Only update fields if they are provided
+  user.fullName = fullName || user.fullName;
+  user.username = username || user.username;
+  user.gender = gender || user.gender;
+
+  // Save user with updated data
+  const updatedUser = await user.save();
+
+  // Avoid sending password in response
+  updatedUser.password = null;
+
+  res.status(200).json(updatedUser);
+};
+
 export default {
   getUsersForSidebar: ctrlWrapper(getUsersForSidebar),
   updateMessageStatus: ctrlWrapper(updateMessageStatus),
+  updateUser: ctrlWrapper(updateUser),
 };
