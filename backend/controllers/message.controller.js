@@ -34,14 +34,15 @@ export const sendMessage = async (req, res) => {
   if (img) {
     imgUrl = img;
 
-    if (img.startsWith('data:image')) {
-      const uploadResponse = await cloudinary.uploader.upload(img, {
-        folder: `chat`,
-        public_id: `chat-${sender}`,
-        use_filename: true,
-      });
-      imgUrl = uploadResponse.secure_url;
-    }
+    const uploadResponse = await cloudinary.uploader.upload(img, {
+      folder: `chat`,
+      public_id: `chat-${sender}-${Date.now()}`,
+      use_filename: true,
+      fetch_format: 'auto',
+      quality: 'auto',
+      flags: 'lossy',
+    });
+    imgUrl = uploadResponse.secure_url;
   }
 
   const newMessage = await Message.create({
