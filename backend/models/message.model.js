@@ -18,11 +18,15 @@ const messageSchema = new Schema(
     message: {
       type: String,
       trim: true,
-      required: true,
+      default: '',
     },
     read: {
       type: Boolean,
       default: false,
+    },
+    img: {
+      type: String,
+      default: '',
     },
   },
   { versionKey: false, timestamps: true }
