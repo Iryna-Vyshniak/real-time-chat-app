@@ -7,7 +7,9 @@ export const useSendMessage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { messages, setMessages, selectedConversation } = useConversation();
 
-  const sendMessages = async (message) => {
+  if (!selectedConversation?._id) return;
+
+  const sendMessages = async ({ message, img }) => {
     setIsLoading(true);
     try {
       const res = await fetch(`/api/messages/send/${selectedConversation._id}`, {
@@ -15,7 +17,7 @@ export const useSendMessage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, img }),
       });
 
       const data = await res.json();
