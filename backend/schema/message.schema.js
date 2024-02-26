@@ -1,11 +1,8 @@
 import Joi from 'joi';
 
 const messageValidation = Joi.object({
-  message: Joi.string()
-    .min(1)
-    .max(500)
-    .required()
-    .messages({ 'any.required': 'message must be exists' }),
+  message: Joi.string().max(500).allow('').optional(),
+  img: Joi.string().uri().allow(null).optional(),
 });
 
 export default messageValidation;
