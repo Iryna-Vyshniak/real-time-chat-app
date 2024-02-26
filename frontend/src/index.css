@@ -58,6 +58,10 @@ div {
   width: 6rem;
 }
 
+.modal-img.modal-box {
+    padding: .1rem;
+  }
+
 /* style for send or received messages */
 
 .shake-msg {
