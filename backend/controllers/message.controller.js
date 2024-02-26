@@ -1,3 +1,5 @@
+import { v2 as cloudinary } from 'cloudinary';
+
 import { ctrlWrapper } from '../decorators/index.js';
 import { HttpError } from '../helpers/index.js';
 
@@ -9,10 +11,10 @@ import { getReceiverSocketId, io } from '../socket/socket.js';
 
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
-  const { message } = req.body;
+  const { message, img } = req.body;
   const sender = req.user._id; // its me
 
-  if (!message) {
+  if (!message && !img) {
     throw HttpError(400, 'Invalid data passed into request');
   }
 
@@ -27,11 +29,27 @@ export const sendMessage = async (req, res) => {
   const senderInfo = await User.findById({ _id: sender });
   const receiverInfo = await User.findById({ _id: receiver });
 
+  let imgUrl = '';
+
+  if (img) {
+    imgUrl = img;
+
+    if (img.startsWith('data:image')) {
+      const uploadResponse = await cloudinary.uploader.upload(img, {
+        folder: `chat`,
+        public_id: `chat-${sender}`,
+        use_filename: true,
+      });
+      imgUrl = uploadResponse.secure_url;
+    }
+  }
+
   const newMessage = await Message.create({
     conversationId: conversation._id,
     sender: senderInfo,
     receiver: receiverInfo,
     message,
+    img: imgUrl,
   });
 
   if (newMessage) {
