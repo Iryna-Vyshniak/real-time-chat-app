@@ -11,10 +11,11 @@ import { getReceiverSocketId, io } from '../socket/socket.js';
 
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
-  const { message, img } = req.body;
+  const { message, img, audio } = req.body;
+
   const sender = req.user._id; // its me
 
-  if (!message && !img) {
+  if (!message && !img && !audio) {
     throw HttpError(400, 'Invalid data passed into request');
   }
 
@@ -30,6 +31,7 @@ export const sendMessage = async (req, res) => {
   const receiverInfo = await User.findById({ _id: receiver });
 
   let imgUrl = '';
+  let audioUrl = '';
 
   if (img) {
     imgUrl = img;
@@ -45,12 +47,26 @@ export const sendMessage = async (req, res) => {
     imgUrl = uploadResponse.secure_url;
   }
 
+  if (audio) {
+    audioUrl = audio;
+
+    const uploadResponse = await cloudinary.uploader.upload(audio, {
+      folder: 'chat/audio',
+      public_id: `chat-${sender}-${Date.now()}`,
+      use_filename: true,
+      resource_type: 'video',
+    });
+
+    audioUrl = uploadResponse.secure_url;
+  }
+
   const newMessage = await Message.create({
     conversationId: conversation._id,
     sender: senderInfo,
     receiver: receiverInfo,
     message,
     img: imgUrl,
+    audio: audioUrl,
   });
 
   if (newMessage) {
