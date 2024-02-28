@@ -7,6 +7,10 @@ body {
   overflow: hidden;
 }
 
+#root {
+  height: 100%;
+}
+
 /* chrome */
 ::-webkit-scrollbar {
   display: none;
@@ -20,6 +24,7 @@ div {
 
 @layer utilities {
   .container {
+    max-height: calc(100vh - 4.5rem);
     @apply max-w-7xl lg:mx-auto p-5 md:px-10  w-full;
   }
 
@@ -59,8 +64,26 @@ div {
 }
 
 .modal-img.modal-box {
-    padding: .1rem;
+  padding: 0.1rem;
+}
+
+/*  style for audio recorder */
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
   }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(0.8);
+  }
+}
+
+.pulse {
+  animation: pulse 1000ms infinite;
+}
 
 /* style for send or received messages */
 

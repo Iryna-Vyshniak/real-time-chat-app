@@ -25,7 +25,7 @@ const Messages = () => {
   }, [messages]);
 
   return (
-    <div className='flex-auto px-4 overflow-auto touch-auto will-change-scroll'>
+    <div className='flex-auto mb-4 px-4 overflow-auto touch-auto will-change-scroll'>
       {!isLoading && messages.length > 0 && (
         <ul className='flex-1 px-4 overflow-auto'>
           {messages.map((message) => {

@@ -19,7 +19,7 @@ const MessagesBlock = () => {
   }, [setSelectedConversation]);
 
   return (
-    <div className='grid grid-rows-[auto,1fr,auto] p-4 max-w-full w-full min-h-full h-[360px] sm:h-[50vh] md:h-[70vh]'>
+    <div className='grid grid-rows-[auto,1fr,auto] flex-grow p-4 max-w-full w-full'>
       {!selectedConversation ? (
         <NoChatSelected />
       ) : (
