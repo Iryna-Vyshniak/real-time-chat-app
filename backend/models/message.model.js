@@ -28,6 +28,7 @@ const messageSchema = new Schema(
       type: String,
       default: '',
     },
+    audio: String,
   },
   { versionKey: false, timestamps: true }
 );
