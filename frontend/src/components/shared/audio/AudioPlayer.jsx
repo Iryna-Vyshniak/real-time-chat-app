@@ -50,7 +50,7 @@ const AudioPlayer = ({ src }) => {
           <Icon src='#icon-play' style='w-3 h-3 drop-shadow-[0px_1px_0.5px_rgba(0,0,0,1)]' />
         )}
       </button>
-      <div className='mx-4 flex items-center justify-start gap-2'>
+      <div className='ml-1 flex items-center justify-start gap-1'>
         <p className='text-xs'>{calculateTime(currentTime)}</p>
         <input
           type='range'

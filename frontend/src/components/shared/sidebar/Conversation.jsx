@@ -26,7 +26,7 @@ const Conversation = ({
   return (
     <>
       <div
-        className={`relative flex items-center justify-between gap-2 px-2 py-1 rounded-lg cursor-pointer transition duration-200 ease-in-out ${
+        className={`relative flex items-center justify-center md:justify-between gap-2 p-3 rounded-lg cursor-pointer transition duration-200 ease-in-out ${
           isSelected ? 'md:bg-secondary/30' : ''
         }`}
         onClick={handleClick}

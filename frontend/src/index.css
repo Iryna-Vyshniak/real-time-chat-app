@@ -24,7 +24,6 @@ div {
 
 @layer utilities {
   .container {
-    max-height: calc(100vh - 4.5rem);
     @apply max-w-7xl lg:mx-auto p-5 md:px-10  w-full;
   }
 
@@ -49,6 +48,14 @@ div {
   .range::-moz-range-thumb {
     background-color: #ea580c;
     color: #ea580c;
+  }
+
+  .home {
+    height: calc(100vh - 4.5rem);
+  }
+
+  .area {
+    resize: none;
   }
 }
 

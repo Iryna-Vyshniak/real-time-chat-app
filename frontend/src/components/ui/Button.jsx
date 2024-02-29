@@ -1,6 +1,7 @@
-const Button = ({ children, style }, props) => {
+const Button = ({ children, style, onClick }, props) => {
   return (
     <button
+      onClick={onClick}
       className={`${
         style
           ? 'btn-sm btn-circle rounded-full h-9 min-h-9 w-9'

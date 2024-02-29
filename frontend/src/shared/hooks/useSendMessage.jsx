@@ -9,7 +9,7 @@ export const useSendMessage = () => {
 
   if (!selectedConversation?._id) return;
 
-  const sendMessages = async ({ message, img, audio }) => {
+  const sendMessages = async ({ message: text, img, audio }) => {
     setIsLoading(true);
     try {
       const res = await fetch(`/api/messages/send/${selectedConversation._id}`, {
@@ -17,12 +17,14 @@ export const useSendMessage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message, img, audio }),
+        body: JSON.stringify({ text, img, audio }),
       });
 
       const data = await res.json();
 
-      if (data.error) throw new Error(data.error);
+      if (data.error || data.message) {
+        throw new Error(data.error || data.message);
+      }
 
       setMessages([...messages, data]);
     } catch (error) {

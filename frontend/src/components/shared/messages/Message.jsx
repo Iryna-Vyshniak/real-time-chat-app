@@ -35,7 +35,7 @@ const Message = ({ message }) => {
           </div>
         </div>
         <div
-          className={`chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} overflow-hidden`}
+          className={`chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} flex flex-col items-center justify-center gap-1 overflow-hidden selection:bg-accent/50`}
         >
           {message.img && (
             <div className='w-32 h-20'>
@@ -50,7 +50,7 @@ const Message = ({ message }) => {
             </div>
           )}
           {message.audio && <AudioPlayer src={message.audio} />}
-          {message.message}
+          {message.text}
         </div>
         <div className='chat-footer flex items-center gap-2 text-xs text-slate-400'>
           {messageStatus} {extractTime(message.createdAt)}

@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 
 import { useSendMessage } from '../../../shared/hooks/useSendMessage';
 
-import TextField from '../../ui/TextField';
 import Icon from '../../ui/Icon';
 import { usePreviewImage } from '../../../shared/hooks/usePreviewImage';
 import RecordView from './MediaRecorder';
@@ -32,22 +31,22 @@ const MessageInput = () => {
   };
 
   return (
-    <form className='pl-2 pr-4 mt-auto w-full' onSubmit={handleSubmit} autoComplete='off'>
+    <form className='pl-2 pr-4 mt-auto w-full items-end' onSubmit={handleSubmit} autoComplete='off'>
       <div className='relative flex items-center justify-between gap-2 w-full'>
         <RecordView audio={true} />
-        <TextField
+        <textarea
           type='text'
           placeholder='Send a message'
           name='message'
           value={message}
           onChange={({ target }) => setMessage(target.value)}
-          className='relative p-2.5 pr-20 w-full bg-beige border border-slate-800 text-sm tracking-wider rounded-lg  text-slate-900 placeholder:text-slate-600 placeholder:line-clamp-1'
+          className='area relative p-2.5 py-2 pr-20 w-full bg-beige border border-slate-800 text-sm tracking-wider rounded-lg  text-slate-900 placeholder:text-slate-600 placeholder:line-clamp-1 input input-bordered h-10 selection:bg-accent/50'
         />
         <button
           type='button'
           disabled={isLoading}
           onClick={() => fileRef.current.click()}
-          className='absolute top-[25%] right-8 flex items-center pe-2 bg-transparent cursor-pointer'
+          className='absolute top-[20%] right-8 flex items-center pe-2 bg-transparent cursor-pointer'
         >
           <Icon src='#icon-paperclip' style='drop-shadow-1xl-black' />
 
@@ -60,7 +59,7 @@ const MessageInput = () => {
         <input type='file' ref={fileRef} hidden onChange={handleImageChange} />
         <button
           type='submit'
-          className='absolute top-[25%] right-0 flex items-center pe-3 cursor-pointer'
+          className='absolute top-[20%] right-0 flex items-center pe-3 cursor-pointer'
         >
           {isLoading ? (
             <span className='loading loading-spinner'></span>

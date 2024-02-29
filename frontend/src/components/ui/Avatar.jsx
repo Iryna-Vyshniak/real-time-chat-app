@@ -5,10 +5,10 @@ const Avatar = ({ src, selected, isOnline, style }) => {
       role='button'
       className={
         !style
-          ? `btn btn-ghost btn-circle avatar shadow-xl shadow-primary/30 
+          ? `btn btn-ghost btn-circle avatar shadow-lg shadow-primary/30
       ${isOnline ? 'online' : ''} 
       ${selected ? 'ring ring-accent ring-offset-base-100 ring-offset-2' : ''}`
-          : 'update-avatar btn btn-ghost btn-circle avatar shadow-xl shadow-primary/30'
+          : 'update-avatar btn btn-ghost btn-circle avatar shadow-lg shadow-primary/30'
       }
     >
       <div className={style ? style : 'w-10 rounded-full'}>
@@ -17,7 +17,7 @@ const Avatar = ({ src, selected, isOnline, style }) => {
           src={src}
           width='2rem'
           height='2rem'
-          className={style ? 'w-10 h-10 shadow-lg rounded-full' : 'w-10 h-10 shadow-lg'}
+          className={style ? 'w-10 h-10 rounded-full' : 'w-10 h-10'}
         />
       </div>
     </div>

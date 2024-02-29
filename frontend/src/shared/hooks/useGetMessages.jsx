@@ -24,7 +24,9 @@ export const useGetMessages = () => {
         const res = await fetch(`/api/messages/${selectedConversation._id}`);
         const data = await res.json();
 
-        if (data.error) throw new Error(data.error);
+        if (data.error || data.message) {
+          throw new Error(data.error || data.message);
+        }
 
         // getting the conversation ID for a particular user and setting that ID as the active conversation
         const conversationsId = getUserConversationId(data, selectedConversation._id);
