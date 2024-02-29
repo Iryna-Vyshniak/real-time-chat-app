@@ -5,10 +5,13 @@ import { useSendMessage } from '../../../shared/hooks/useSendMessage';
 import TextField from '../../ui/TextField';
 import Icon from '../../ui/Icon';
 import { usePreviewImage } from '../../../shared/hooks/usePreviewImage';
+import RecordView from './MediaRecorder';
+import useConversation from '../../../store/useConversation';
 
 const MessageInput = () => {
   const [message, setMessage] = useState('');
   const { handleImageChange, imgUrl, setImgUrl } = usePreviewImage();
+  const { mediaUrl, setMediaUrl } = useConversation();
 
   const { isLoading, sendMessages } = useSendMessage();
 
@@ -16,19 +19,22 @@ const MessageInput = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (message || imgUrl) {
+    if (message || imgUrl || mediaUrl) {
       await sendMessages({
         message,
         img: imgUrl,
+        audio: mediaUrl,
       });
       setMessage('');
       setImgUrl(null);
+      setMediaUrl(null);
     }
   };
 
   return (
-    <form className='px-4 mt-auto w-full' onSubmit={handleSubmit} autoComplete='off'>
-      <div className='relative w-full'>
+    <form className='pl-2 pr-4 mt-auto w-full' onSubmit={handleSubmit} autoComplete='off'>
+      <div className='relative flex items-center justify-between gap-2 w-full'>
+        <RecordView audio={true} />
         <TextField
           type='text'
           placeholder='Send a message'

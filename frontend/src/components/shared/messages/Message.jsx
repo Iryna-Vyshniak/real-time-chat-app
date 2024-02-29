@@ -4,6 +4,7 @@ import useConversation from '../../../store/useConversation';
 import { extractTime } from '../../../shared/utils';
 
 import Icon from '../../ui/Icon';
+import AudioPlayer from '../audio/AudioPlayer';
 
 const Message = ({ message }) => {
   const { authUser } = useAuthContext();
@@ -48,6 +49,7 @@ const Message = ({ message }) => {
               />
             </div>
           )}
+          {message.audio && <AudioPlayer src={message.audio} />}
           {message.message}
         </div>
         <div className='chat-footer flex items-center gap-2 text-xs text-slate-400'>
