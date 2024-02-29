@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 const messageValidation = Joi.object({
-  message: Joi.string().max(500).allow('').optional(),
+  text: Joi.string().max(500).allow('').optional(),
   img: Joi.string().uri().allow(null).optional(),
   audio: Joi.string().allow(null).optional(),
 });

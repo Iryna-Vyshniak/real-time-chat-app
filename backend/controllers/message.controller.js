@@ -11,11 +11,11 @@ import { getReceiverSocketId, io } from '../socket/socket.js';
 
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
-  const { message, img, audio } = req.body;
+  const { text, img, audio } = req.body;
 
   const sender = req.user._id; // its me
 
-  if (!message && !img && !audio) {
+  if (!text && !img && !audio) {
     throw HttpError(400, 'Invalid data passed into request');
   }
 
@@ -64,7 +64,7 @@ export const sendMessage = async (req, res) => {
     conversationId: conversation._id,
     sender: senderInfo,
     receiver: receiverInfo,
-    message,
+    text,
     img: imgUrl,
     audio: audioUrl,
   });

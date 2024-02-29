@@ -15,21 +15,22 @@ const messageSchema = new Schema(
       ref: 'User',
       required: true,
     },
-    message: {
+    text: {
       type: String,
       trim: true,
       default: '',
-    },
-    read: {
-      type: Boolean,
-      default: false,
     },
     img: {
       type: String,
       default: '',
     },
     audio: String,
+    read: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   { versionKey: false, timestamps: true }
 );
 
