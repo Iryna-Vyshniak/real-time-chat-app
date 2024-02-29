@@ -34,6 +34,22 @@ div {
   .modal-box {
     @apply bg-clip-padding backdrop-filter backdrop-blur-xl bg-green/10 bg-opacity-0;
   }
+
+  .range {
+    padding: 0;
+    height: 0.2rem;
+    width: 100%;
+    --range-shdw: #ea580c;
+  }
+
+  .range::-webkit-slider-thumb {
+    background-color: #ea580c;
+    color: #ea580c;
+  }
+  .range::-moz-range-thumb {
+    background-color: #ea580c;
+    color: #ea580c;
+  }
 }
 
 .avatar.online:before {
