@@ -11,6 +11,10 @@ const useConversation = create((set) => ({
   setNotification: (notification) => set({ notification }),
   conversationId: null,
   setConversationId: (conversationId) => set({ conversationId }),
+  mediaFile: null,
+  setMediaFile: (mediaFile) => set({ mediaFile }),
+  mediaUrl: null,
+  setMediaUrl: (mediaUrl) => set({ mediaUrl }),
 }));
 
 export default useConversation;
