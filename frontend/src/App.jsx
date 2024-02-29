@@ -5,7 +5,9 @@ import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
 
 import { bgImages } from './shared/data/index.js';
+
 import { useAuthContext } from './shared/context/AuthContext.jsx';
+import { useAppHeight } from './shared/hooks/useAppHeight.jsx';
 
 const HomePage = lazy(() => import('./pages/home/HomePage'));
 const LoginPage = lazy(() => import('./pages/login/LoginPage'));
@@ -15,6 +17,7 @@ const NotFoundPage = lazy(() => import('./pages/notfound/NotFoundPage'));
 
 function App() {
   const { authUser } = useAuthContext();
+  useAppHeight();
 
   useEffect(() => {
     const savedBg = localStorage.getItem('bg');
@@ -30,7 +33,7 @@ function App() {
       <Suspense
         fallback={
           <div className='flex items-center justify-center'>
-            <span className='loading loading-ring loading-lg'></span>
+            <p className='loading loading-ring loading-lg'></p>
           </div>
         }
       >
