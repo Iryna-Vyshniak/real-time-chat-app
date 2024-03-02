@@ -7,7 +7,7 @@ import Layout from './components/layout/Layout';
 import { bgImages } from './shared/data/index.js';
 
 import { useAuthContext } from './shared/context/AuthContext.jsx';
-// import { useAppHeight } from './shared/hooks/useAppHeight.jsx';
+import { useAppHeight } from './shared/hooks/useAppHeight.jsx';
 
 const HomePage = lazy(() => import('./pages/home/HomePage'));
 const LoginPage = lazy(() => import('./pages/login/LoginPage'));
@@ -17,7 +17,7 @@ const NotFoundPage = lazy(() => import('./pages/notfound/NotFoundPage'));
 
 function App() {
   const { authUser } = useAuthContext();
-  // useAppHeight();
+  useAppHeight();
 
   useEffect(() => {
     const savedBg = localStorage.getItem('bg');
