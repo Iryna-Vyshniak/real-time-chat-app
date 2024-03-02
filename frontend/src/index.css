@@ -4,7 +4,7 @@
 
 body {
   min-height: 100vh;
-  min-height: 100svh;
+  min-height: 100dvh;
   overflow: hidden;
 }
 
@@ -53,7 +53,6 @@ div {
 
   .home {
     height: calc(100vh - 5rem);
-    height: calc(100svh - 5rem);
   }
 
   .area {
