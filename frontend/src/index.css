@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
 #root {
   height: 100%;
 }
@@ -46,7 +52,7 @@ div {
   }
 
   .home {
-    height: calc(100vh - 5rem);
+    height: calc(100vh - 4.5rem);
     height: calc(100dvh - 5rem);
   }
 
