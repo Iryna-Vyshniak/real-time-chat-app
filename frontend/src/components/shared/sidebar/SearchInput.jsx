@@ -51,7 +51,7 @@ const SearchInput = () => {
 
   return (
     <form
-      className='flex items-center justify-center gap-2'
+      className='hidden md:flex items-center justify-center gap-2'
       onSubmit={handleSubmit}
       autoComplete='off'
     >
