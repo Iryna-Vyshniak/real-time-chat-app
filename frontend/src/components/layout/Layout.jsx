@@ -8,7 +8,7 @@ const Layout = () => {
   return (
     <div className='flex flex-col justify-center h-screen overflow-hidden'>
       <Navbar />
-      <main className='relative flex-1 flex items-center justify-center mt-[5.5rem]'>
+      <main className='home relative flex-1 flex items-center justify-center mt-[4.8rem]'>
         {' '}
         <Suspense
           fallback={
