@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { useGetConversations } from '../../../shared/hooks/useGetConversations';
 import { useFilterConversations } from '../../../shared/hooks/useFilterConversations';
@@ -25,6 +25,14 @@ const Conversations = () => {
 
   const filterNotification = (id) => unreadMessagesCounts.filter(({ sender }) => sender._id === id);
 
+  // generate static emodji
+  const generateConversationsWithEmoji = useMemo(() => {
+    return conversations.map((conversation) => ({
+      ...conversation,
+      emoji: generateEmoji(),
+    }));
+  }, [conversations]);
+
   // scroll to the selected talking
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -42,7 +50,10 @@ const Conversations = () => {
           <li key={conversation._id} ref={conversationRef} className='w-full'>
             <Conversation
               conversation={conversation}
-              emoji={generateEmoji()}
+              emoji={
+                generateConversationsWithEmoji.find((c) => c._id === conversation._id)?.emoji ||
+                generateEmoji()
+              }
               filteredNotification={filterNotification(conversation._id)}
             />
           </li>
@@ -52,7 +63,10 @@ const Conversations = () => {
           <Conversation
             lastIdx={idx === conversations.length - 1} // if last conversation - don`t show divider
             conversation={conversation}
-            emoji={generateEmoji()}
+            emoji={
+              generateConversationsWithEmoji.find((c) => c._id === conversation._id)?.emoji ||
+              generateEmoji()
+            }
             filteredNotification={filterNotification(conversation._id)}
           />
         </li>
