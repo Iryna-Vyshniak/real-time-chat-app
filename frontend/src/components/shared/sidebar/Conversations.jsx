@@ -25,7 +25,7 @@ const Conversations = () => {
 
   const filterNotification = (id) => unreadMessagesCounts.filter(({ sender }) => sender._id === id);
 
-  // generate static emodji
+  // keep emoji values stable when rerendering, using useMemo for performance optimization
   const generateConversationsWithEmoji = useMemo(() => {
     return conversations.map((conversation) => ({
       ...conversation,
@@ -50,6 +50,7 @@ const Conversations = () => {
           <li key={conversation._id} ref={conversationRef} className='w-full'>
             <Conversation
               conversation={conversation}
+              // If the emoji is not found (i.e., if it's undefined), the generateEmoji() function is called to generate a new emoji. This ensures that each conversation has a stable emoji associated with it, even if the conversation data changes.
               emoji={
                 generateConversationsWithEmoji.find((c) => c._id === conversation._id)?.emoji ||
                 generateEmoji()
