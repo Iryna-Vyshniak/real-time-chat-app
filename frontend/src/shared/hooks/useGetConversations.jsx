@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import useConversation from '../../store/useConversation';
 
@@ -7,26 +7,26 @@ export const useGetConversations = () => {
   const [conversations, setConversations] = useState([]);
   const { lastMessages, setLastMessages } = useConversation();
 
-  useEffect(() => {
-    const getConversations = async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/users`);
-        const data = await res.json();
+  const getConversations = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/users`);
+      const data = await res.json();
 
-        if (data.error) throw new Error(data.error);
+      if (data.error) throw new Error(data.error);
 
-        setConversations(data.allFilteredUsers);
-        setLastMessages(data.lastMessages);
-      } catch (error) {
-        toast.error(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getConversations();
+      setConversations(data.allFilteredUsers);
+      setLastMessages(data.lastMessages);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   }, [setLastMessages]);
+
+  useEffect(() => {
+    getConversations();
+  }, [getConversations]);
 
   return { isLoading, conversations, lastMessages };
 };
