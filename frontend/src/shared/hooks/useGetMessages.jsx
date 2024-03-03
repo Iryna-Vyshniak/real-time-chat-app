@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import useConversation from '../../store/useConversation';
@@ -6,22 +6,21 @@ import { getUserConversationId } from '../utils';
 
 export const useGetMessages = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const {
-    messages,
-    setMessages,
-    selectedConversation,
-    lastMessages,
-    setConversationId,
-    conversationId,
-  } = useConversation();
+  const { messages, setMessages, selectedConversation, conversationId, setConversationId } =
+    useConversation();
+
+  const getLastConversationId = useCallback(() => {
+    return selectedConversation?._id;
+  }, [selectedConversation]);
 
   useEffect(() => {
     const getMessages = async () => {
       setIsLoading(true);
       try {
-        if (!selectedConversation?._id) return;
+        const lastConversationId = getLastConversationId();
+        if (!lastConversationId) return;
 
-        const res = await fetch(`/api/messages/${selectedConversation._id}`);
+        const res = await fetch(`/api/messages/${lastConversationId}`);
         const data = await res.json();
 
         if (data.error || data.message) {
@@ -29,7 +28,7 @@ export const useGetMessages = () => {
         }
 
         // getting the conversation ID for a particular user and setting that ID as the active conversation
-        const conversationsId = getUserConversationId(data, selectedConversation._id);
+        const conversationsId = getUserConversationId(data, lastConversationId);
         setConversationId(conversationsId);
 
         setMessages(data);
@@ -39,8 +38,9 @@ export const useGetMessages = () => {
         setIsLoading(false);
       }
     };
+
     getMessages();
-  }, [selectedConversation?._id, setMessages, lastMessages, setConversationId]);
+  }, [getLastConversationId, setMessages, setConversationId]);
 
   return { messages, isLoading, conversationId };
 };
