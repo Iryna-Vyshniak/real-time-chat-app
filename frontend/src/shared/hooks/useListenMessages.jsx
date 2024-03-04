@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 
 import useConversation from '../../store/useConversation';
@@ -13,8 +14,14 @@ export const useListenMessages = () => {
   const { authUser } = useAuthContext();
   const { conversationId } = useGetMessages();
 
-  const { messages, setMessages, selectedConversation, notification, setNotification } =
-    useConversation();
+  const {
+    messages,
+    setMessages,
+    addMessages,
+    selectedConversation,
+    notification,
+    setNotification,
+  } = useConversation();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const sound = new Audio(messageSound);
@@ -36,21 +43,12 @@ export const useListenMessages = () => {
       } else {
         newMessage.shouldShake = true;
         sound.play();
-        setMessages([...messages, newMessage]);
+        addMessages(newMessage);
       }
     });
 
     return () => socket?.off('newMessage');
-  }, [
-    messages,
-    notification,
-    onlineUsers,
-    selectedConversation,
-    setMessages,
-    setNotification,
-    socket,
-    sound,
-  ]);
+  }, [selectedConversation, setNotification]);
 
   useEffect(() => {
     // condition checks if the last message received was from a user other than the current user
@@ -102,13 +100,5 @@ export const useListenMessages = () => {
     socket?.on('messagesRead', handleMessagesRead);
 
     return () => socket?.off('messagesRead');
-  }, [
-    authUser._id,
-    conversationId,
-    messages,
-    selectedConversation,
-    selectedConversation?._id,
-    setMessages,
-    socket,
-  ]);
+  }, [authUser._id, conversationId, messages, selectedConversation]);
 };
