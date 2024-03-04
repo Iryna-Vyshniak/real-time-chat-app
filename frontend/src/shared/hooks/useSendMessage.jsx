@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -5,7 +6,7 @@ import useConversation from '../../store/useConversation';
 
 export const useSendMessage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { messages, setMessages, selectedConversation } = useConversation();
+  const { messages, addMessages, selectedConversation } = useConversation();
 
   const sendMessages = useCallback(
     async ({ message: text, img, audio }) => {
@@ -27,14 +28,14 @@ export const useSendMessage = () => {
           throw new Error(data.error || data.message);
         }
 
-        setMessages([...messages, data]);
+        addMessages(data);
       } catch (error) {
         toast.error(error.message);
       } finally {
         setIsLoading(false);
       }
     },
-    [messages, selectedConversation._id, setMessages]
+    [messages, selectedConversation._id, addMessages]
   );
 
   return { isLoading, sendMessages };
