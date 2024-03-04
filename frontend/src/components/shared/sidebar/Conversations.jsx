@@ -43,7 +43,7 @@ const Conversations = ({ toggleSidebar }) => {
   }, [filteredConversation]);
 
   return (
-    <ul className='flex flex-col p-2 gap-2 overflow-auto touch-auto will-change-scroll'>
+    <ul className='flex flex-col mt-4 p-2 gap-2 overflow-auto touch-auto will-change-scroll'>
       {isLoading ? <span className='loading loading-spinner'></span> : null}
       {filteredConversation.length > 0 &&
         filteredConversation.map((conversation) => (

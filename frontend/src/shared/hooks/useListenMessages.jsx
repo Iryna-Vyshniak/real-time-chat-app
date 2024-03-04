@@ -29,13 +29,13 @@ export const useListenMessages = () => {
   useEffect(() => {
     socket?.on('newMessage', (newMessage) => {
       // Check if the user is online
-      const senderIsOnline = onlineUsers.some((user) => user._id === newMessage.receiver._id);
+      const receiverIsOnline = onlineUsers.some((user) => user._id === newMessage.receiver._id);
 
       // Check if conversation is selected
       const conversationNotSelected =
         !selectedConversation || selectedConversation._id !== newMessage.sender._id;
 
-      if (!senderIsOnline && conversationNotSelected) {
+      if (!receiverIsOnline && conversationNotSelected) {
         if (!notification.includes(newMessage._id)) {
           setNotification([...notification, newMessage]);
           sound.play();
@@ -48,7 +48,7 @@ export const useListenMessages = () => {
     });
 
     return () => socket?.off('newMessage');
-  }, [selectedConversation, setNotification]);
+  }, [selectedConversation]);
 
   useEffect(() => {
     // condition checks if the last message received was from a user other than the current user
