@@ -1,10 +1,14 @@
 import { create } from 'zustand';
 
-const useConversation = create((set) => ({
+const useConversation = create((set, get) => ({
   selectedConversation: null,
   setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
   messages: [],
   setMessages: (messages) => set({ messages }),
+  addMessages(newMessage) {
+    const messages = [...get().messages, newMessage];
+    set({ messages });
+  },
   lastMessages: [],
   setLastMessages: (lastMessages) => set({ lastMessages }),
   notification: [],
