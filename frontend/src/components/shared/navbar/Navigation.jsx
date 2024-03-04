@@ -8,10 +8,11 @@ const Navigation = () => {
   const { authUser } = useAuthContext();
 
   return (
-    <nav className='flex-none flex items-center justify-between gap-2'>
+    <nav className='flex md:flex-col-reverse items-center justify-between md:justify-center gap-2'>
       {authUser && (
         <>
-          <div className='navbar-end'>
+          {' '}
+          <div className='navbar-end md:navbar'>
             <Notification />
           </div>
           <Dropdown avatar={<Avatar src={authUser.avatar} />} />

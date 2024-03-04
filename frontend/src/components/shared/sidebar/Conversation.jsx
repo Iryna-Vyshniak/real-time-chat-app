@@ -9,6 +9,7 @@ const Conversation = ({
   emoji,
   lastIdx,
   filteredNotification,
+  toggleSidebar,
 }) => {
   const { selectedConversation, setSelectedConversation, setNotification, notification } =
     useConversation();
@@ -21,12 +22,13 @@ const Conversation = ({
   const handleClick = () => {
     setSelectedConversation({ _id, fullName, username, avatar });
     setNotification(notification.filter(({ sender: { _id: idSender } }) => idSender !== _id));
+    toggleSidebar();
   };
 
   return (
     <>
       <div
-        className={`relative flex items-center justify-center md:justify-between gap-2 p-3 rounded-lg cursor-pointer transition duration-200 ease-in-out ${
+        className={`relative flex items-center justify-between gap-2 p-3 rounded-lg cursor-pointer transition duration-200 ease-in-out ${
           isSelected ? 'md:bg-secondary/30' : ''
         }`}
         onClick={handleClick}
@@ -43,7 +45,7 @@ const Conversation = ({
           )}
         </div>
 
-        <div className='hidden md:flex items-center justify-between gap-4 flex-grow'>
+        <div className='flex items-center justify-between gap-4 flex-grow'>
           <p className='font-semibold text-slate-300 tracking-wider drop-shadow-5xl-black'>
             {fullName}
           </p>

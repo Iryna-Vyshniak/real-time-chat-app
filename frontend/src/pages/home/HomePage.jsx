@@ -1,12 +1,34 @@
 import MessagesBlock from '../../components/shared/messages/MessagesBlock';
 import Sidebar from '../../components/shared/sidebar/Sidebar';
+import Navbar from '../../components/shared/navbar/Navbar';
+
+import { useEffect, useState } from 'react';
 
 const HomePage = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className='relative grid grid-rows-[10rem,1fr] md:flex gap-2 max-w-full md:w-4/5 xl:w-3/5 h-full sm:h-[70vh] md:h-[80vh] overflow-auto rounded-lg bg-slate-300/10 brightness-105 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-1 text-slate-300'>
-      {/* <div className='home relative flex flex-col md:flex-row gap-2 max-w-full md:w-4/5 xl:w-3/5 rounded-lg bg-slate-300/10 brightness-105 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-1 text-slate-300'> */}
-      <Sidebar />
-      <MessagesBlock />
+    <div className='absolute inset-0 flex flex-col-reverse md:flex-row w-screen overflow-auto text-slate-300'>
+      <Navbar toggleSidebar={toggleSidebar} />
+      <Sidebar isMobile={isMobile} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <MessagesBlock isOpen={!isMobile || (isMobile && !isSidebarOpen)} />
     </div>
   );
 };

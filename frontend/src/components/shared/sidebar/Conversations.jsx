@@ -8,7 +8,7 @@ import { generateEmoji, uniqueSender } from '../../../shared/utils/index';
 
 import Conversation from './Conversation';
 
-const Conversations = () => {
+const Conversations = ({ toggleSidebar }) => {
   const { isLoading, conversations } = useGetConversations();
 
   const { selectedConversation, notification } = useConversation();
@@ -43,7 +43,7 @@ const Conversations = () => {
   }, [filteredConversation]);
 
   return (
-    <ul className='flex md:flex-col p-2 gap-2 overflow-auto touch-auto will-change-scroll'>
+    <ul className='flex flex-col p-2 gap-2 overflow-auto touch-auto will-change-scroll'>
       {isLoading ? <span className='loading loading-spinner'></span> : null}
       {filteredConversation.length > 0 &&
         filteredConversation.map((conversation) => (
@@ -56,6 +56,7 @@ const Conversations = () => {
                 generateEmoji()
               }
               filteredNotification={filterNotification(conversation._id)}
+              toggleSidebar={toggleSidebar}
             />
           </li>
         ))}
@@ -69,6 +70,7 @@ const Conversations = () => {
               generateEmoji()
             }
             filteredNotification={filterNotification(conversation._id)}
+            toggleSidebar={toggleSidebar}
           />
         </li>
       ))}
