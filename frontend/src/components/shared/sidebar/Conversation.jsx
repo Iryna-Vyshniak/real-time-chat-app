@@ -51,7 +51,7 @@ const Conversation = ({
           </p>
           <div className='flex items-center justify-center w-8 h-8 rounded-full bg-slate-500/20 shadow-md'>
             {filteredNotification.length > 0 ? (
-              <div className='absolute z-[10] flex items-center justify-center h-full right-0 top-0 mr-3'>
+              <div className='absolute z-[10] flex items-center justify-center h-full right-0 top-0 mr-4'>
                 <span className='flex items-center justify-center shadow bg-primary h-6 w-6 text-xs rounded-full text-slate-800'>
                   {filteredNotification[0].count}
                 </span>

@@ -31,7 +31,7 @@ const Notification = () => {
                       notification.filter(({ sender: { _id: idSender } }) => idSender !== _id)
                     );
                   }}
-                  className='grid grid-cols-[1fr,40px] gap-2 items-center justify-between'
+                  className='grid grid-cols-[1fr,40px] gap-2 items-center justify-between text-slate-800'
                 >
                   <p className='text-[10px]'>{`New message from ${username}`} </p>
                   <span className='flex items-center justify-center shadow bg-secondary h-4 w-4 text-[10px] rounded-full text-slate-800'>
