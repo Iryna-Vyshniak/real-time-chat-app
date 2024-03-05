@@ -2,6 +2,7 @@ import { v2 as cloudinary } from 'cloudinary';
 
 import { ctrlWrapper } from '../decorators/index.js';
 import { HttpError } from '../helpers/index.js';
+import { pagination } from '../utils/pagination.js';
 
 import Conversation from '../models/conversation.model.js';
 import Message from '../models/message.model.js';
@@ -94,6 +95,9 @@ export const sendMessage = async (req, res) => {
 export const getMessages = async (req, res) => {
   const { id: receiver } = req.params; // my receiver
   const sender = req.user._id; // it`s me
+  const { page: currentPage, limit: currentLimit } = req.query;
+
+  const { page, limit, skip } = pagination(currentPage, currentLimit);
 
   // get actual messages
   const conversation = await Conversation.findOne({
@@ -106,11 +110,29 @@ export const getMessages = async (req, res) => {
     ],
   });
 
-  if (!conversation) return res.status(200).json([]);
+  if (!conversation)
+    return res
+      .status(200)
+      .json({ messages: [], totalMessages: 0, totalPages: 0, currentPage: page, limit });
 
-  const messages = conversation.messages;
+  const messages = await Message.find({ _id: { $in: conversation.messages } })
+    .sort({ createdAt: 1 })
+    .skip(skip) // Skip previous messages
+    .limit(limit) // Limit the number of messages per page
+    .populate([
+      { path: 'sender', model: 'User', select: '_id fullName username avatar' },
+      { path: 'receiver', model: 'User', select: '_id fullName username avatar' },
+    ]);
+  const totalMessages = conversation.messages.length;
+  console.log('totalMessages: ', totalMessages);
 
-  res.status(200).json(messages);
+  res.status(200).json({
+    messages,
+    totalMessages,
+    totalPages: Math.ceil(totalMessages / limit),
+    currentPage: page,
+    limit,
+  });
 };
 
 export default {
