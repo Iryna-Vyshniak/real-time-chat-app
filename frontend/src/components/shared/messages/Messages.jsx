@@ -8,8 +8,9 @@ import MessageSkeleton from '../skeletons/MessageSkeleton';
 import Message from './Message';
 
 const Messages = () => {
-  const { selectedConversation } = useConversation();
-  const { isLoading, messages } = useGetMessages();
+  const { selectedConversation, currentPage } = useConversation();
+
+  const { isLoading, messages, loadMoreMessages } = useGetMessages();
 
   useListenMessages();
 
@@ -17,12 +18,35 @@ const Messages = () => {
 
   // scroll to the last messsages
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 1000);
+    const element = lastMessageRef.current;
 
-    return () => clearTimeout(timerId);
-  }, [messages]);
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = lastMessageRef.current;
+      if (scrollTop + clientHeight >= scrollHeight) {
+        loadMoreMessages(currentPage + 1);
+      }
+    };
+
+    if (element) {
+      element.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (element) {
+        element.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [loadMoreMessages, currentPage, isLoading]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const timerId = setTimeout(() => {
+        lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+        loadMoreMessages(currentPage + 1);
+      }, 1000);
+      return () => clearTimeout(timerId);
+    }
+  }, [currentPage, isLoading, loadMoreMessages]);
 
   return (
     <div className='mb-4 px-4 flex-auto w-full overflow-auto touch-auto will-change-scroll'>

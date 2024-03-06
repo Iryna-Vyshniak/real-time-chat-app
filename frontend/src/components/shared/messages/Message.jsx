@@ -35,7 +35,7 @@ const Message = ({ message }) => {
           </div>
         </div>
         <div
-          className={`chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} flex flex-col items-center justify-center gap-1 overflow-hidden selection:bg-accent/50`}
+          className={`chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50`}
         >
           {message.img && (
             <div className='w-32 h-20'>

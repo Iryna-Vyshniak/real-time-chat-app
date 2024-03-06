@@ -6,7 +6,7 @@ import useConversation from '../../store/useConversation';
 
 export const useSendMessage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { messages, addMessages, selectedConversation } = useConversation();
+  const { messages, addMessage, selectedConversation } = useConversation();
 
   const sendMessages = useCallback(
     async ({ message: text, img, audio }) => {
@@ -28,14 +28,14 @@ export const useSendMessage = () => {
           throw new Error(data.error || data.message);
         }
 
-        addMessages(data);
+        addMessage(data);
       } catch (error) {
         toast.error(error.message);
       } finally {
         setIsLoading(false);
       }
     },
-    [messages, selectedConversation._id, addMessages]
+    [messages, selectedConversation._id, addMessage]
   );
 
   return { isLoading, sendMessages };
