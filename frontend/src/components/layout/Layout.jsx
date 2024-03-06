@@ -5,7 +5,7 @@ import Settings from '../shared/navbar/Settings';
 
 const Layout = () => {
   return (
-    <main className='h-screen overflow-hidden'>
+    <main className='flex flex-col items-center justify-center h-screen max-w-full overflow-hidden text-slate-800'>
       {' '}
       <Suspense
         fallback={
