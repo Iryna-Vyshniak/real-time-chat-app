@@ -50,9 +50,11 @@ export const uniqueSender = (notification) => {
 // get conversationId
 
 export const getUserConversationId = (messagesArr, _id) => {
-  for (const message of messagesArr) {
-    if (message.sender._id === _id || message.receiver._id === _id) {
-      return message.conversationId;
+  if (messagesArr.length > 0) {
+    for (const message of messagesArr) {
+      if (message.sender._id === _id || message.receiver._id === _id) {
+        return message.conversationId;
+      }
     }
   }
   return null;
