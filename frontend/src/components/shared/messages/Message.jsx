@@ -1,3 +1,7 @@
+import { lazy } from 'react';
+
+const ImageDialog = lazy(() => import('../../shared/messages/ImageDialog'));
+
 import { useAuthContext } from '../../../shared/context/AuthContext';
 import useConversation from '../../../store/useConversation';
 
@@ -56,20 +60,7 @@ const Message = ({ message }) => {
           {messageStatus} {extractTime(message.createdAt)}
         </div>
       </div>
-      <dialog id={`${message._id}`} className='modal'>
-        <div className='modal-img modal-box'>
-          <form method='dialog'>
-            <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2'>✕</button>
-          </form>
-          <img
-            src={message.img}
-            alt='message'
-            width={128}
-            height={80}
-            className='w-full h-full rounded-2xl object-cover'
-          />
-        </div>
-      </dialog>
+      <ImageDialog message={message} />
     </>
   );
 };
