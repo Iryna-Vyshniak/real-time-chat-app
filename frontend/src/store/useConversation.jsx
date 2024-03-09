@@ -1,43 +1,68 @@
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
+import { shallow } from 'zustand/shallow';
 
-const useConversation = create((set, get) => ({
-  selectedConversation: null,
-  setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
-  messages: [],
-  setMessages: (messages) => set({ messages }),
-  addMessages(newMessages) {
-    set((prev) => {
-      // filter new messages to exclude those that are already in the list
-      const uniqueNewMessages = newMessages.filter((newMessage) => {
-        return !prev.messages.some((prevMessage) => prevMessage._id === newMessage._id);
+const useConversation = createWithEqualityFn(
+  (set, get) => ({
+    // MESSAGES
+    // loading
+    isLoading: false,
+    setIsLoading: (value) => set({ isLoading: value }),
+    // messages
+    messages: [],
+    setMessages: (messages) => set({ messages }),
+    addMessages: (newMessages) => {
+      set((state) => ({ messages: [...state.messages, ...newMessages] }));
+    },
+    addMessage: (newMessage) => {
+      set((state) => ({ messages: [...state.messages, newMessage] }));
+    },
+    updateMessagesStatus: (conversationId) => {
+      const messages = get().messages;
+      const selectedConversation = get().selectedConversation;
+      if (!Array.isArray(messages)) {
+        console.error('Error: messages is not an array');
+        return;
+      }
+
+      const updatedMessages = messages.map((message) => {
+        const isCurrentConversation = message.conversationId === conversationId;
+        // Check if the current user is not the sender of the message
+        const isInCommonChat =
+          selectedConversation && selectedConversation._id !== message.sender._id;
+        if (isInCommonChat && isCurrentConversation && !message.read) {
+          return { ...message, read: true };
+        }
+        return message;
       });
 
-      // return a new state by adding unique new messages to the list
-      return {
-        messages: [...prev.messages, ...uniqueNewMessages],
-      };
-    });
-  },
-  addMessage(newMessage) {
-    const messages = [...get().messages, newMessage];
-    set({ messages });
-  },
-  totalPages: 0,
-  setTotalPages: (totalPages) => set({ totalPages }),
-  currentPage: 1,
-  setCurrentPage: (currentPage) => set({ currentPage }),
-  limit: 6,
-  setLimit: (limit) => set({ limit }),
-  lastMessages: [],
-  setLastMessages: (lastMessages) => set({ lastMessages }),
-  notification: [],
-  setNotification: (notification) => set({ notification }),
-  conversationId: null,
-  setConversationId: (conversationId) => set({ conversationId }),
-  mediaFile: null,
-  setMediaFile: (mediaFile) => set({ mediaFile }),
-  mediaUrl: null,
-  setMediaUrl: (mediaUrl) => set({ mediaUrl }),
-}));
+      set({ messages: updatedMessages });
+    },
+    totalPages: 0,
+    setTotalPages: (totalPages) => set({ totalPages }),
+    currentPage: 1,
+    setCurrentPage: (page) => set({ currentPage: page }),
+    resetCurrentPage: () => set({ currentPage: 1 }),
+    limit: 6,
+    setLimit: (limit) => set({ limit }),
+    // media
+    mediaFile: null,
+    setMediaFile: (mediaFile) => set({ mediaFile }),
+    mediaUrl: null,
+    setMediaUrl: (mediaUrl) => set({ mediaUrl }),
+    // notifications
+    lastMessages: [],
+    setLastMessages: (lastMessages) => set({ lastMessages }),
+    notification: [],
+    setNotification: (notification) => set({ notification }),
+    // CONVERSATION
+    conversations: [],
+    setConversations: (conversations) => set({ conversations }),
+    selectedConversation: null,
+    setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
+    conversationId: null,
+    setConversationId: (conversationId) => set({ conversationId }),
+  }),
+  shallow
+);
 
 export default useConversation;
