@@ -1,12 +1,18 @@
-import MessagesBlock from '../../components/shared/messages/MessagesBlock';
-import Sidebar from '../../components/shared/sidebar/Sidebar';
-import Navbar from '../../components/shared/navbar/Navbar';
+import { lazy, useEffect, useState } from 'react';
 
-import { useEffect, useState } from 'react';
+import { useListenMessages } from '../../shared/hooks/useListenMessages';
+import { useGetMessages } from '../../shared/hooks/useGetMessages';
+
+const MessagesBlock = lazy(() => import('../../components/shared/messages/MessagesBlock'));
+const Sidebar = lazy(() => import('../../components/shared/sidebar/Sidebar'));
+const Navbar = lazy(() => import('../../components/shared/navbar/Navbar'));
 
 const HomePage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useListenMessages();
+  useGetMessages();
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,7 +33,9 @@ const HomePage = () => {
   return (
     <div className='absolute inset-0 flex flex-col-reverse md:flex-row w-screen overflow-auto text-slate-300'>
       <Navbar toggleSidebar={toggleSidebar} />
-      <Sidebar isMobile={isMobile} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      {(isSidebarOpen || !isMobile) && (
+        <Sidebar isMobile={isMobile} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      )}
       <MessagesBlock isOpen={!isMobile || (isMobile && !isSidebarOpen)} />
     </div>
   );
