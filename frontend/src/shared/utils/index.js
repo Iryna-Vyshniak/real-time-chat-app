@@ -50,12 +50,22 @@ export const uniqueSender = (notification) => {
 // get conversationId
 
 export const getUserConversationId = (messagesArr, _id) => {
-  if (messagesArr.length > 0) {
-    for (const message of messagesArr) {
-      if (message.sender._id === _id || message.receiver._id === _id) {
-        return message.conversationId;
-      }
+  for (const message of messagesArr) {
+    if (message.sender._id === _id || message.receiver._id === _id) {
+      return message.conversationId;
     }
   }
   return null;
+};
+
+//  A function that returns a date in the format "Sun, 10 Mar 2024"
+
+export const getFormattedDate = (date) => {
+  const options = { weekday: 'long', date: '2-digit', month: 'long', year: 'numeric' };
+  return new Date(date).toLocaleDateString('en-US', options);
+};
+
+// Check if the date has changed
+export const hasDateChanged = (previousDate, currentDate) => {
+  return previousDate !== currentDate;
 };
