@@ -1,13 +1,11 @@
 import { useCallback, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import { useGetMessages } from '../../../shared/hooks/useGetMessages';
 import useConversation from '../../../store/useConversation';
-import MessageSkeleton from '../skeletons/MessageSkeleton';
+import toast from 'react-hot-toast';
 
 const LoadMoreMessages = () => {
-  const { setCurrentPage, currentPage, totalPages, messages } = useConversation();
-  const { isLoading } = useGetMessages();
+  const { setCurrentPage, currentPage, totalPages, isLoading } = useConversation();
   const { ref, inView: lastMessageInView } = useInView();
 
   // Use `useCallback` so we don't recreate the function on each render
@@ -15,16 +13,24 @@ const LoadMoreMessages = () => {
     (node) => {
       // Ref's from useRef needs to have the node assigned to `current`
       ref.current = node;
-      // Callback refs, like the one from `useInView`, is a function that takes the node as an argument
       ref(node);
     },
     [ref]
   );
 
   useEffect(() => {
-    if (!isLoading && messages.length > 0 && lastMessageInView && currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    const loadMoreMessages = async () => {
+      try {
+        if (lastMessageInView && currentPage < totalPages) {
+          setCurrentPage(currentPage + 1);
+        }
+      } catch (error) {
+        toast.error('Error loading more messages:', error);
+      }
+    };
+
+    loadMoreMessages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastMessageInView]);
 
   return (
@@ -33,10 +39,16 @@ const LoadMoreMessages = () => {
         <div
           ref={setRefs}
           className='text-sm text-center p-2 pt-4 text-slate-200 drop-shadow-1xl-black'
-        >{`${new Date().toUTCString().split('GMT').toString().replace(/,\s*$/, '').trim()}`}</div>
-      ) : (
-        [...Array(4)].map((_, idx) => <MessageSkeleton key={idx} />)
-      )}
+        >{`${new Date(Date.now()).toLocaleDateString('en-US', {
+          weekday: 'short',
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+          hour: '2-digit',
+          hourCycle: 'h24',
+          minute: '2-digit',
+        })}`}</div>
+      ) : null}
     </>
   );
 };
