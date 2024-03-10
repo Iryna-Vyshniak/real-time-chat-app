@@ -1,4 +1,6 @@
 import { lazy } from 'react';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
 const ImageDialog = lazy(() => import('../../shared/messages/ImageDialog'));
 
@@ -13,6 +15,7 @@ import AudioPlayer from '../audio/AudioPlayer';
 const Message = ({ message }) => {
   const { authUser } = useAuthContext();
   const { selectedConversation } = useConversation();
+  const { ref, inView } = useInView();
 
   const fromMe = message.sender._id === authUser._id;
 
@@ -30,7 +33,15 @@ const Message = ({ message }) => {
   const shakeClass = message.shouldShake ? 'shake-msg' : '';
 
   return (
-    <>
+    <motion.div
+      key={message._id}
+      ref={ref}
+      style={{
+        transform: inView ? 'none' : 'translateY(-50px)',
+        opacity: inView ? 1 : 0,
+        transition: 'all 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) 0.5s',
+      }}
+    >
       <div className={`chat ${chatClassName}`}>
         {' '}
         <div className='chat-image avatar'>
@@ -61,7 +72,7 @@ const Message = ({ message }) => {
         </div>
       </div>
       <ImageDialog message={message} />
-    </>
+    </motion.div>
   );
 };
 
