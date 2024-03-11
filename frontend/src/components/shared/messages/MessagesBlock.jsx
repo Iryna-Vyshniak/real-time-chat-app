@@ -7,9 +7,11 @@ import MessageInput from './MessageInput';
 import Messages from './Messages';
 import NoChatSelected from './NoChatSelected';
 import LoadMoreMessages from './LoadMoreMessages';
+import { useListenReadMessages } from '../../../shared/hooks/useListenReadMessages';
 
 const MessagesBlock = ({ isOpen }) => {
   const { selectedConversation, setSelectedConversation, isLoading } = useConversation();
+  useListenReadMessages();
 
   useEffect(() => {
     // cleanup function when unmounted component
