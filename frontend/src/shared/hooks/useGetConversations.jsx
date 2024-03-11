@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+
 import useConversation from '../../store/useConversation';
 
 export const useGetConversations = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [conversations, setConversations] = useState([]);
-  const { lastMessages, setLastMessages } = useConversation();
+
+  const { lastMessages, setLastMessages, conversations, setConversations } = useConversation();
 
   const getConversations = useCallback(async () => {
     setIsLoading(true);
+
     try {
       const res = await fetch(`/api/users`);
       const data = await res.json();
@@ -22,11 +24,11 @@ export const useGetConversations = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [setLastMessages]);
+  }, [setConversations, setLastMessages]);
 
   useEffect(() => {
     getConversations();
   }, [getConversations]);
 
-  return { isLoading, conversations, lastMessages };
+  return { isLoading, conversations, lastMessages, getConversations };
 };
