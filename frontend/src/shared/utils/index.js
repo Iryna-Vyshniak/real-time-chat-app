@@ -61,7 +61,11 @@ export const getUserConversationId = (messagesArr, _id) => {
 //  A function that returns a date in the format "Sun, 10 Mar 2024"
 
 export const getFormattedDate = (date) => {
-  const options = { weekday: 'long', date: '2-digit', month: 'long', year: 'numeric' };
+  const options = {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  };
   return new Date(date).toLocaleDateString('en-US', options);
 };
 
