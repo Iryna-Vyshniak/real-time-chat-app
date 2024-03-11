@@ -6,6 +6,7 @@ import useConversation from '../../../store/useConversation.jsx';
 
 import Avatar from '../../ui/Avatar';
 import Divider from '../../ui/Divider.jsx';
+import { useState } from 'react';
 
 const Conversation = ({
   conversation: { _id, fullName, username, avatar },
@@ -15,10 +16,16 @@ const Conversation = ({
   toggleSidebar,
   filtered,
 }) => {
+  const [clicked, setClicked] = useState(false);
   const { ref, inView } = useInView();
 
-  const { selectedConversation, setSelectedConversation, setNotification, notification } =
-    useConversation();
+  const {
+    selectedConversation,
+    setSelectedConversation,
+    setNotification,
+    notification,
+    resetCurrentPage,
+  } = useConversation();
 
   const { onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(_id);
@@ -26,9 +33,14 @@ const Conversation = ({
   const isSelected = selectedConversation?._id === _id;
 
   const handleClick = () => {
+    // implementing click disabling for previously clicked items
+    if (clicked) return;
+    // resetting the current page
+    resetCurrentPage();
     setSelectedConversation({ _id, fullName, username, avatar });
     setNotification(notification.filter(({ sender: { _id: idSender } }) => idSender !== _id));
     toggleSidebar();
+    setClicked(true);
   };
 
   return (
@@ -78,8 +90,7 @@ const Conversation = ({
           viewport={{ amount: 0 }}
           style={{
             transform: inView ? 'scale(1)' : 'scale(0.5)',
-            opacity: inView ? 1 : 0,
-            transitionProperty: 'transform, opacity',
+            transitionProperty: 'transform',
             transitionDuration: '0.9s',
             transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
             transitionDelay: inView ? '0.9' : '0s',

@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useRef } from 'react';
-import { AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 import { useGetConversations } from '../../../shared/hooks/useGetConversations';
@@ -22,8 +21,10 @@ const Conversations = ({ toggleSidebar }) => {
 
   const filteredConversation = useFilterConversations(conversations, selectedConversation);
 
-  const nonFilteredConversations = conversations.filter(
-    (conversation) => !filteredConversation.includes(conversation)
+  const nonFilteredConversations = useConversation((state) =>
+    state.conversations.filter((conversation) =>
+      state.selectedConversation ? conversation._id !== state.selectedConversation._id : true
+    )
   );
 
   const unreadMessagesCounts = uniqueSender(notification);
@@ -42,7 +43,7 @@ const Conversations = ({ toggleSidebar }) => {
   useEffect(() => {
     const timerId = setTimeout(() => {
       conversationRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 1000);
+    }, 500);
     return () => clearTimeout(timerId);
   }, []);
 
@@ -69,19 +70,17 @@ const Conversations = ({ toggleSidebar }) => {
           ))}
 
         {nonFilteredConversations.map((conversation, idx) => (
-          <AnimatePresence key={conversation._id}>
-            {' '}
-            <Conversation
-              lastIdx={idx === conversations.length - 1} // if last conversation - don`t show divider
-              conversation={conversation}
-              emoji={
-                generateConversationsWithEmoji.find((c) => c._id === conversation._id)?.emoji ||
-                generateEmoji()
-              }
-              filteredNotification={filterNotification(conversation._id)}
-              toggleSidebar={toggleSidebar}
-            />
-          </AnimatePresence>
+          <Conversation
+            key={conversation._id}
+            lastIdx={idx === conversations.length - 1} // if last conversation - don`t show divider
+            conversation={conversation}
+            emoji={
+              generateConversationsWithEmoji.find((c) => c._id === conversation._id)?.emoji ||
+              generateEmoji()
+            }
+            filteredNotification={filterNotification(conversation._id)}
+            toggleSidebar={toggleSidebar}
+          />
         ))}
 
         <div ref={lastConversationRef}></div>

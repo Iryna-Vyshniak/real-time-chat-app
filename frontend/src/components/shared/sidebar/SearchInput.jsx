@@ -5,14 +5,10 @@ import Button from '../../ui/Button';
 import Icon from '../../ui/Icon';
 
 import useConversation from '../../../store/useConversation';
-import { useGetConversations } from '../../../shared/hooks/useGetConversations';
-import useUpdateStatusMsg from '../../../shared/hooks/useUpdateStatusMsg';
 
 const SearchInput = () => {
   const [search, setSearch] = useState('');
-  const { setSelectedConversation, setLastMessages } = useConversation();
-  const { conversations, lastMessages } = useGetConversations();
-  const { updateStatusMessage } = useUpdateStatusMsg();
+  const { setSelectedConversation, conversations } = useConversation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,20 +27,6 @@ const SearchInput = () => {
 
     if (searchConversation) {
       setSelectedConversation(searchConversation);
-      await updateStatusMessage(searchConversation._id);
-      const updatedLastMessages = lastMessages.map((item) => {
-        if (item._id === searchConversation._id) {
-          return {
-            ...item,
-            lastMessage: {
-              ...item.lastMessage,
-              read: true,
-            },
-          };
-        }
-        return item;
-      });
-      setLastMessages(updatedLastMessages);
       setSearch('');
     }
   };
