@@ -37,18 +37,16 @@ export const useGetMessages = () => {
         throw new Error(data.error || data.message);
       }
 
+      // get converastionId and add to store for listen read message or not
       const conversationsId = getUserConversationId(data.messages, lastConversationId);
       setConversationId(conversationsId);
 
+      // Update total pages, current page, and limit
       setTotalPages(data.totalPages);
-      setCurrentPage(data.currentPage);
+      setCurrentPage(currentPage);
       setLimit(data.limit);
 
-      if (data.messages.length > 0 && currentPage > 1) {
-        addMessages(data.messages);
-      } else {
-        setMessages(data.messages);
-      }
+      currentPage === 1 ? setMessages(data.messages) : addMessages(data.messages);
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -63,8 +61,8 @@ export const useGetMessages = () => {
     setTotalPages,
     setCurrentPage,
     setLimit,
-    addMessages,
     setMessages,
+    addMessages,
   ]);
 
   useEffect(() => {
