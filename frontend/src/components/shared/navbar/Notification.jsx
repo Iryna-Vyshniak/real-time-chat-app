@@ -10,7 +10,9 @@ const Notification = () => {
 
   return (
     <button
-      className={`btn btn-ghost btn-circle ${notification.length > 0 && 'dropdown dropdown-end'}`}
+      className={`btn btn-ghost btn-circle ${
+        notification.length > 0 && 'dropdown dropdown-right md:dropdown-end'
+      }`}
     >
       <div className='indicator drop-shadow-1xl-white'>
         <Icon src='#icon-bell' style='drop-shadow-1xl-black' />
