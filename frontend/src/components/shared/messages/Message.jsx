@@ -39,7 +39,7 @@ const Message = ({ message }) => {
       style={{
         transform: inView ? 'none' : 'translateY(-50px)',
         opacity: inView ? 1 : 0,
-        transition: 'all 0.5s cubic-bezier(0.17, 0.55, 0.55, 1) 0.5s',
+        transition: 'all 250ms linear 250ms',
       }}
     >
       <div className={`chat ${chatClassName}`}>
