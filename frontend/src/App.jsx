@@ -6,13 +6,13 @@ import Layout from './components/layout/Layout';
 
 import { bgImages } from './shared/data/index.js';
 
-import { useAuthContext } from './shared/context/AuthContext.jsx';
+import { useAuthContext } from './shared/context/AuthContext';
 
-const HomePage = lazy(() => import('./pages/home/HomePage.jsx'));
-const LoginPage = lazy(() => import('./pages/login/LoginPage.jsx'));
-const SignupPage = lazy(() => import('./pages/signup/SignupPage.jsx'));
-const UpdateProfilePage = lazy(() => import('./pages/update/UpdateProfilePage.jsx'));
-const NotFoundPage = lazy(() => import('./pages/notfound/NotFoundPage.jsx'));
+const HomePage = lazy(() => import('./pages/home/HomePage'));
+const LoginPage = lazy(() => import('./pages/login/LoginPage'));
+const SignupPage = lazy(() => import('./pages/signup/SignupPage'));
+const UpdateProfilePage = lazy(() => import('./pages/update/UpdateProfilePage'));
+const NotFoundPage = lazy(() => import('./pages/notfound/NotFoundPage'));
 
 function App() {
   const { authUser } = useAuthContext();
