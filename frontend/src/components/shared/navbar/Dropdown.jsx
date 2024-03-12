@@ -2,7 +2,7 @@ import DropdownContent from './DropdownContent';
 
 const Dropdown = ({ avatar }) => {
   return (
-    <div className='dropdown dropdown-end md:dropdown-right'>
+    <div className='dropdown dropdown-bottom dropdown-left md:dropdown-right'>
       {avatar}
 
       <DropdownContent />

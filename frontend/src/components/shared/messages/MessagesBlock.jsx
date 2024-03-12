@@ -12,6 +12,7 @@ import { useListenReadMessages } from '../../../shared/hooks/useListenReadMessag
 const MessagesBlock = ({ isOpen }) => {
   const { selectedConversation, setSelectedConversation, isLoading } = useConversation();
   useListenReadMessages();
+  useListenReadMessages();
 
   useEffect(() => {
     // cleanup function when unmounted component
@@ -30,11 +31,6 @@ const MessagesBlock = ({ isOpen }) => {
             <>
               <Header name={selectedConversation.fullName} />
               <Messages />
-              {isLoading && (
-                <div className='flex items-center justify-center'>
-                  <p className='loading loading-ring loading-lg'></p>
-                </div>
-              )}
               {!isLoading && <LoadMoreMessages />}
               <MessageInput />
             </>

@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import toast from 'react-hot-toast';
 
 import useConversation from '../../../store/useConversation';
-import toast from 'react-hot-toast';
 
 const LoadMoreMessages = () => {
   const { setCurrentPage, currentPage, totalPages, isLoading } = useConversation();
@@ -39,15 +39,7 @@ const LoadMoreMessages = () => {
         <div
           ref={setRefs}
           className='text-sm text-center p-2 pt-4 text-slate-200 drop-shadow-1xl-black'
-        >{`${new Date(Date.now()).toLocaleDateString('en-US', {
-          weekday: 'short',
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-          hour: '2-digit',
-          hourCycle: 'h24',
-          minute: '2-digit',
-        })}`}</div>
+        ></div>
       ) : null}
     </>
   );

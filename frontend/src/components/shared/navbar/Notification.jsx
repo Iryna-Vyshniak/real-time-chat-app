@@ -11,7 +11,7 @@ const Notification = () => {
   return (
     <button
       className={`btn btn-ghost btn-circle ${
-        notification.length > 0 && 'dropdown dropdown-right md:dropdown-end'
+        notification.length > 0 && 'dropdown dropdown-bottom dropdown-left  md:dropdown-right'
       }`}
     >
       <div className='indicator drop-shadow-1xl-white'>

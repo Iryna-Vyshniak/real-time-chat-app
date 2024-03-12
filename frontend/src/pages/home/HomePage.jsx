@@ -1,6 +1,5 @@
 import { lazy, useEffect, useState } from 'react';
 
-import { useListenMessages } from '../../shared/hooks/useListenMessages';
 import { useGetMessages } from '../../shared/hooks/useGetMessages';
 
 const MessagesBlock = lazy(() => import('../../components/shared/messages/MessagesBlock'));
@@ -11,7 +10,6 @@ const HomePage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  useListenMessages();
   useGetMessages();
 
   useEffect(() => {

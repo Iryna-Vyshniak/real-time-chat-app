@@ -3,7 +3,7 @@ import { Fragment, useEffect, useRef } from 'react';
 import useConversation from '../../../store/useConversation';
 
 import Message from './Message';
-import MessageSkeleton from '../skeletons/MessageSkeleton';
+
 import { getFormattedDate, hasDateChanged } from '../../../shared/utils';
 
 const Messages = () => {
@@ -33,7 +33,11 @@ const Messages = () => {
   return (
     <div className='relative mb-4 px-4 flex-auto w-full overflow-auto touch-auto will-change-scroll'>
       <>
-        {isLoading && [...Array(4)].map((_, idx) => <MessageSkeleton key={idx} />)}
+        {isLoading && (
+          <div className='flex items-center justify-center'>
+            <p className='loading loading-ring loading-lg'></p>
+          </div>
+        )}
         {!isLoading && messageRef.current.length > 0 && currentPage === totalPages && (
           <ul className='flex-1 px-4 overflow-auto touch-auto will-change-scroll'>
             {messageRef.current?.map((message, index) => {

@@ -37,7 +37,6 @@ const Message = ({ message }) => {
       key={message._id}
       ref={ref}
       style={{
-        transform: inView ? 'none' : 'translateY(-50px)',
         opacity: inView ? 1 : 0,
         transition: 'all 250ms linear 250ms',
       }}

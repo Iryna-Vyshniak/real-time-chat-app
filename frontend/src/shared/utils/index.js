@@ -58,7 +58,7 @@ export const getUserConversationId = (messagesArr, _id) => {
   return null;
 };
 
-//  A function that returns a date in the format "Sun, 10 Mar 2024"
+//  A function that returns a date in the format "10 Mar 2024"
 
 export const getFormattedDate = (date) => {
   const options = {
