@@ -11,6 +11,7 @@ import { extractTime } from '../../../shared/utils';
 
 import Icon from '../../ui/Icon';
 import AudioPlayer from '../audio/AudioPlayer';
+import ImageMessage from './ImageMessage';
 
 const Message = ({ message }) => {
   const { authUser } = useAuthContext();
@@ -21,6 +22,7 @@ const Message = ({ message }) => {
 
   const chatClassName = fromMe ? 'chat-end' : 'chat-start';
   const chatColor = fromMe ? 'bg-beige/80' : 'bg-green/80';
+  const dropdownColor = fromMe ? 'bg-green' : 'bg-beige';
   const avatar = fromMe ? authUser.avatar : selectedConversation?.avatar;
   const isMsgRead = message.read;
 
@@ -49,20 +51,9 @@ const Message = ({ message }) => {
           </div>
         </div>
         <div
-          className={`chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50`}
+          className={`relative chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50`}
         >
-          {message.img && (
-            <div className='w-32 h-20'>
-              <img
-                src={message.img}
-                alt='message'
-                width={128}
-                height={80}
-                onClick={() => document.getElementById(`${message._id}`).showModal()}
-                className='w-full h-full object-contain'
-              />
-            </div>
-          )}
+          {message.img && <ImageMessage message={message} dropdownColor={dropdownColor} />}
           {message.audio && <AudioPlayer src={message.audio} />}
           {message.text}
         </div>
