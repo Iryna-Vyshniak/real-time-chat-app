@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import useConversation from '../../../store/useConversation';
 
@@ -7,11 +7,27 @@ import MessageInput from './MessageInput';
 import Messages from './Messages';
 import NoChatSelected from './NoChatSelected';
 import LoadMoreMessages from './LoadMoreMessages';
+import QuotedMessage from './QuotedMessage';
+
 import { useListenReadMessages } from '../../../shared/hooks/useListenReadMessages';
+import { useListenMessages } from '../../../shared/hooks/useListenMessages';
 
 const MessagesBlock = ({ isOpen }) => {
+  const [quotedMessage, setQuotedMessage] = useState(null);
+  const [isShowQuotedMessage, setIsShowQuotedMessage] = useState(true);
+
+  const handleClose = () => {
+    setIsShowQuotedMessage(false);
+    setQuotedMessage(null);
+  };
+
+  const handleReply = (message) => {
+    setQuotedMessage(message);
+    setIsShowQuotedMessage(true);
+  };
+
   const { selectedConversation, setSelectedConversation, isLoading } = useConversation();
-  useListenReadMessages();
+  useListenMessages();
   useListenReadMessages();
 
   useEffect(() => {
@@ -30,9 +46,23 @@ const MessagesBlock = ({ isOpen }) => {
           ) : (
             <>
               <Header name={selectedConversation.fullName} />
-              <Messages />
+              <Messages onReply={handleReply} />
               {!isLoading && <LoadMoreMessages />}
-              <MessageInput />
+              <div className='flex flex-col items-center justify-center w-full'>
+                {' '}
+                {isShowQuotedMessage && (
+                  <QuotedMessage
+                    message={quotedMessage}
+                    showButton='true'
+                    onCloseQuote={handleClose}
+                  />
+                )}
+                <MessageInput
+                  onCloseQuote={handleClose}
+                  isShowQuotedMessage={isShowQuotedMessage}
+                  quotedMessage={quotedMessage}
+                />
+              </div>
             </>
           )}
         </div>

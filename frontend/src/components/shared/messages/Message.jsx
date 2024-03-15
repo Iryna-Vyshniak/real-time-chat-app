@@ -12,11 +12,18 @@ import { extractTime } from '../../../shared/utils';
 import Icon from '../../ui/Icon';
 import AudioPlayer from '../audio/AudioPlayer';
 import ImageMessage from './ImageMessage';
+import QuotedMessage from './QuotedMessage';
+import DropdownButton from '../../ui/DropdownButton';
+import DropdownMessage from './DropdownMessage';
+import DownloadImage from './DownloadImage';
 
-const Message = ({ message }) => {
+const Message = ({ message, onReply, quotedMessage }) => {
+
   const { authUser } = useAuthContext();
-  const { selectedConversation } = useConversation();
+  const { selectedConversation, messages } = useConversation();
   const { ref, inView } = useInView();
+
+  const quotedInfo = messages.find((message) => message._id === quotedMessage);
 
   const fromMe = message.sender._id === authUser._id;
 
@@ -53,9 +60,22 @@ const Message = ({ message }) => {
         <div
           className={`relative chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50`}
         >
-          {message.img && <ImageMessage message={message} dropdownColor={dropdownColor} />}
-          {message.audio && <AudioPlayer src={message.audio} />}
-          {message.text}
+          {quotedMessage && (
+            <QuotedMessage
+              message={quotedInfo || quotedMessage}
+              dropdownColor={dropdownColor}
+              fromMe={fromMe}
+            />
+          )}
+          <DropdownButton>
+            <DropdownMessage dropdownColor={dropdownColor} message={message} onReply={onReply} />
+          </DropdownButton>
+          {message.img && <DownloadImage message={message} />}
+          <div className='relative flex items-center justify-between gap-2'>
+            {message.img && <ImageMessage message={message} />}
+            {message.audio && <AudioPlayer src={message.audio} />}
+            {message.text}
+          </div>
         </div>
         <div className='chat-footer flex items-center gap-2 text-xs text-slate-400'>
           {messageStatus} {extractTime(message.createdAt)}

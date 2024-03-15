@@ -7,7 +7,7 @@ import { usePreviewImage } from '../../../shared/hooks/usePreviewImage';
 import RecordView from './MediaRecorder';
 import useConversation from '../../../store/useConversation';
 
-const MessageInput = () => {
+const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
   const [message, setMessage] = useState('');
   const { handleImageChange, imgUrl, setImgUrl } = usePreviewImage();
   const { mediaUrl, setMediaUrl } = useConversation();
@@ -23,10 +23,13 @@ const MessageInput = () => {
         message,
         img: imgUrl,
         audio: mediaUrl,
+        quote: isShowQuotedMessage,
+        quotedId: quotedMessage?._id || '',
       });
       setMessage('');
       setImgUrl(null);
       setMediaUrl(null);
+      onCloseQuote();
     }
   };
 
@@ -36,7 +39,7 @@ const MessageInput = () => {
         <RecordView audio={true} />
         <textarea
           type='text'
-          placeholder='Send a message'
+          placeholder={!isShowQuotedMessage ? 'Send a message' : 'Reply to message'}
           name='message'
           value={message}
           onChange={({ target }) => setMessage(target.value)}
