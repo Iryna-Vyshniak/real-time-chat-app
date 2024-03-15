@@ -73,3 +73,8 @@ export const getFormattedDate = (date) => {
 export const hasDateChanged = (previousDate, currentDate) => {
   return previousDate !== currentDate;
 };
+
+// create link to download image from cloudinary
+export const downloadImage = (url) => {
+  return `${url.split('/upload/')[0]}/upload/fl_attachment/${url.split('/upload/')[1]}`;
+};
