@@ -30,7 +30,7 @@ export const useListenMessages = () => {
         addMessage(newMessage);
       }
     },
-    [onlineUsers, selectedConversation, notification, setNotification, addMessage]
+    [addMessage, notification, onlineUsers, selectedConversation, setNotification]
   );
 
   useEffect(() => {
@@ -38,10 +38,16 @@ export const useListenMessages = () => {
       handleNewMessage(newMessage);
     };
 
-    socket?.on('newMessage', socketListener);
+    socket?.on('newMessage', (newMessage) => socketListener(newMessage));
 
-    return () => {
-      socket?.off('newMessage', socketListener);
-    };
-  }, [handleNewMessage, socket]);
+    return () => socket?.off('newMessage');
+  }, [
+    addMessage,
+    handleNewMessage,
+    notification,
+    onlineUsers,
+    selectedConversation,
+    setNotification,
+    socket,
+  ]);
 };

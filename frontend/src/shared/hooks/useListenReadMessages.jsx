@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from 'react';
+
 import useConversation from '../../store/useConversation';
 import { useAuthContext } from '../context/AuthContext';
 import { useSocketContext } from '../context/SocketContext';
@@ -36,7 +37,7 @@ export const useListenReadMessages = () => {
       handleMessagesRead({ conversationId });
     };
 
-    socket?.on('messagesRead', messagesReadListener);
+    socket?.on('messagesRead', (conversationId) => messagesReadListener(conversationId));
 
     return () => {
       socket?.off('messagesRead', messagesReadListener);
