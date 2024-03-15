@@ -29,6 +29,8 @@ const messageSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    quote: { type: Boolean, default: false },
+    repliedTo: { type: Schema.Types.ObjectId, ref: 'Message', default: null },
   },
 
   { versionKey: false, timestamps: true }
