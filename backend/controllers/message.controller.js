@@ -12,7 +12,7 @@ import { getReceiverSocketId, io } from '../socket/socket.js';
 
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
-  const { text, img, audio } = req.body;
+  const { text, img, audio, quote, quotedId } = req.body;
 
   const sender = req.user._id; // its me
 
@@ -30,6 +30,24 @@ export const sendMessage = async (req, res) => {
 
   const senderInfo = await User.findById({ _id: sender });
   const receiverInfo = await User.findById({ _id: receiver });
+
+  // retrieve information about the quoted message if a quoted message ID is provided
+  let repliedInfo = null;
+
+  if (quotedId) {
+    repliedInfo = await Message.findById(quotedId)
+      .populate({
+        path: 'sender',
+        model: 'User',
+        select: 'fullName',
+      })
+      .populate({
+        path: 'receiver',
+        model: 'User',
+        select: 'fullName',
+      })
+      .select('_id text audio img');
+  }
 
   let imgUrl = '';
   let audioUrl = '';
@@ -68,6 +86,8 @@ export const sendMessage = async (req, res) => {
     text,
     img: imgUrl,
     audio: audioUrl,
+    quote,
+    repliedTo: repliedInfo,
   });
 
   if (newMessage) {
@@ -124,7 +144,6 @@ export const getMessages = async (req, res) => {
       { path: 'receiver', model: 'User', select: '_id fullName username avatar' },
     ]);
   const totalMessages = conversation.messages.length;
-  console.log('totalMessages: ', totalMessages);
 
   res.status(200).json({
     messages,
