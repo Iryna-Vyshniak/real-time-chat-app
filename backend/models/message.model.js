@@ -25,6 +25,10 @@ const messageSchema = new Schema(
       default: '',
     },
     audio: String,
+    emoji: {
+      type: String,
+      default: '',
+    },
     read: {
       type: Boolean,
       default: false,
