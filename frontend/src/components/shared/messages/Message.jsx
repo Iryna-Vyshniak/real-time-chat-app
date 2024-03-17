@@ -16,11 +16,25 @@ import QuotedMessage from './QuotedMessage';
 import DropdownButton from '../../ui/DropdownButton';
 import DropdownMessage from './DropdownMessage';
 import DownloadImage from './DownloadImage';
+import EmojiPopup from '../emojii/EmojiPopup';
+import useEmojiPicker from '../../../shared/hooks/useEmojiPicker';
+import useListenEmoji from '../../../shared/hooks/useListenEmoji';
 
 const Message = ({ message, onReply, quotedMessage }) => {
-
   const { authUser } = useAuthContext();
   const { selectedConversation, messages } = useConversation();
+
+  const {
+    currentPopupId,
+    showEmojiPicker,
+    emojiPickerRef,
+    onEmojiClick,
+    addEmojis,
+    openEmojiPicker,
+  } = useEmojiPicker();
+
+  useListenEmoji(message._id);
+
   const { ref, inView } = useInView();
 
   const quotedInfo = messages.find((message) => message._id === quotedMessage);
@@ -50,7 +64,7 @@ const Message = ({ message, onReply, quotedMessage }) => {
         transition: 'all 250ms linear 250ms',
       }}
     >
-      <div className={`chat ${chatClassName}`}>
+      <div className={`chat ${chatClassName} relative`}>
         {' '}
         <div className='chat-image avatar'>
           <div className='w-10 rounded-full shadow-lg shadow-primary/40 border-[1px] border-green'>
@@ -58,7 +72,8 @@ const Message = ({ message, onReply, quotedMessage }) => {
           </div>
         </div>
         <div
-          className={`relative chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50`}
+          onClick={() => openEmojiPicker(message._id)}
+          className={`relative chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50 cursor-pointer`}
         >
           {quotedMessage && (
             <QuotedMessage
@@ -76,9 +91,27 @@ const Message = ({ message, onReply, quotedMessage }) => {
             {message.audio && <AudioPlayer src={message.audio} />}
             {message.text}
           </div>
+          {message.emoji && (
+            <button
+              onClick={onEmojiClick}
+              className={`absolute -bottom-2 ${fromMe ? 'left-1' : 'right-1'} z-20 bg-transparent`}
+            >
+              {message.emoji}
+            </button>
+          )}
         </div>
-        <div className='chat-footer flex items-center gap-2 text-xs text-slate-400'>
-          {messageStatus} {extractTime(message.createdAt)}
+        <div className='relative chat-footer'>
+          <div className='flex items-center justify-center gap-2 text-xs text-slate-600'>
+            {messageStatus} {extractTime(message.createdAt)}
+          </div>
+          {showEmojiPicker && currentPopupId === message._id && (
+            <div
+              ref={emojiPickerRef}
+              className={`absolute z-20 ${fromMe ? 'right-10' : 'left-10'} -bottom-10`}
+            >
+              <EmojiPopup onSelect={addEmojis} id={message._id} />
+            </div>
+          )}
         </div>
       </div>
       <ImageDialog message={message} />
