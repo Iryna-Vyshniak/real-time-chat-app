@@ -12,7 +12,7 @@ import { getReceiverSocketId, io } from '../socket/socket.js';
 
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
-  const { text, img, audio, quote, quotedId } = req.body;
+  const { text, img, audio, quote, quotedId, emoji } = req.body;
 
   const sender = req.user._id; // its me
 
@@ -86,6 +86,7 @@ export const sendMessage = async (req, res) => {
     text,
     img: imgUrl,
     audio: audioUrl,
+    emoji,
     quote,
     repliedTo: repliedInfo,
   });
@@ -107,7 +108,36 @@ export const sendMessage = async (req, res) => {
     io.to(receiverSocketId).emit('newMessage', newMessage);
   }
 
+  console.log('newMessage: ', newMessage);
   res.status(201).json(newMessage);
+};
+
+// SEND EMOJI
+export const sendEmoji = async (req, res) => {
+  const { id: receiver, messageId } = req.params;
+  console.log('receiver, messageId: ', receiver, messageId);
+  const { emoji } = req.body;
+
+  if (!emoji && !messageId) {
+    throw HttpError(400, 'Invalid data passed into request');
+  }
+
+  const updateMessage = await Message.findByIdAndUpdate(
+    messageId,
+    { emoji },
+    { emoji: '' },
+    { new: true }
+  );
+
+  // socket io functionality
+  const receiverSocketId = getReceiverSocketId(receiver);
+  if (receiverSocketId) {
+    // io.to(socket_id).emit() used to send events to one specific clients
+    io.to(receiverSocketId).emit('addEmoji', emoji);
+  }
+
+  console.log('message: ', updateMessage);
+  res.status(200).json(updateMessage);
 };
 
 // GET MESSAGES
@@ -157,4 +187,5 @@ export const getMessages = async (req, res) => {
 export default {
   getMessages: ctrlWrapper(getMessages),
   sendMessage: ctrlWrapper(sendMessage),
+  sendEmoji: ctrlWrapper(sendEmoji),
 };
