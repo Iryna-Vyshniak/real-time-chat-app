@@ -12,6 +12,7 @@ const HomePage = lazy(() => import('./pages/home/HomePage'));
 const LoginPage = lazy(() => import('./pages/login/LoginPage'));
 const SignupPage = lazy(() => import('./pages/signup/SignupPage'));
 const UpdateProfilePage = lazy(() => import('./pages/update/UpdateProfilePage'));
+const UserInfoPage = lazy(() => import('./pages/user/UserInfoPage.jsx'));
 const NotFoundPage = lazy(() => import('./pages/notfound/NotFoundPage'));
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
             <Route path='/login' element={authUser ? <Navigate to='/' /> : <LoginPage />} />
             <Route path='/signup' element={authUser ? <Navigate to='/' /> : <SignupPage />} />
             <Route path='/update/:id' element={authUser ? <UpdateProfilePage /> : <SignupPage />} />
+            <Route path='/users/:id' element={authUser ? <UserInfoPage /> : <SignupPage />} />
             <Route path='*' element={<NotFoundPage />} />
           </Route>
         </Routes>
