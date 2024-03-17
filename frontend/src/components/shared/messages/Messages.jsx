@@ -42,7 +42,7 @@ const Messages = ({ onReply }) => {
         {!isLoading &&
           messageRef.current.length > 0 &&
           (totalPages === 0 || currentPage === totalPages) && (
-            <ul className='flex-1 px-4 overflow-auto touch-auto will-change-scroll'>
+            <ul className='flex-auto px-4 h-full overflow-auto touch-auto will-change-scroll'>
               {messageRef.current.map((message, index) => {
                 const previousMessage = messageRef.current[index - 1];
                 const currentDate = getFormattedDate(message.createdAt);

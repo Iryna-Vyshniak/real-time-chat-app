@@ -2,7 +2,7 @@ import Icon from './Icon';
 
 const DropdownButton = ({ children }) => {
   return (
-    <div className='dropdown dropdown-end absolute top-0 right-1 z-10'>
+    <div className='dropdown dropdown-end absolute top-0 right-1'>
       <button
         tabIndex={0}
         type='button'
