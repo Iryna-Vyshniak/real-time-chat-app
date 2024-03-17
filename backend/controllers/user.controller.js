@@ -7,6 +7,18 @@ import { HttpError } from '../helpers/index.js';
 import Message from '../models/message.model.js';
 import User from '../models/user.model.js';
 
+// get user for info
+const getUserInfo = async (req, res) => {
+  const { id } = req.params;
+
+  const user = await User.findOne({ _id: id });
+
+  if (!user) throw HttpError(404, 'User not found');
+
+  res.status(200).json(user);
+};
+
+// get users for sidebar
 const getUsersForSidebar = async (req, res) => {
   const loggedInUserId = req.user._id;
 
@@ -133,4 +145,5 @@ export default {
   getUsersForSidebar: ctrlWrapper(getUsersForSidebar),
   updateMessageStatus: ctrlWrapper(updateMessageStatus),
   updateUser: ctrlWrapper(updateUser),
+  getUserInfo: ctrlWrapper(getUserInfo),
 };
