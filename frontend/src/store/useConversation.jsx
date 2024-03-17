@@ -23,7 +23,6 @@ const useConversation = createWithEqualityFn(
         console.error('Error: messages is not an array');
         return;
       }
-
       const updatedMessages = messages.map((message) => {
         const isCurrentConversation = message.conversationId === conversationId;
         // Check if the current user is not the sender of the message
@@ -31,6 +30,23 @@ const useConversation = createWithEqualityFn(
           selectedConversation && selectedConversation._id !== message.sender._id;
         if (isInCommonChat && isCurrentConversation && !message.read) {
           return { ...message, read: true };
+        }
+        return message;
+      });
+
+      set({ messages: updatedMessages });
+    },
+    addEmoji: (messageId, emoji) => {
+      const messages = get().messages;
+      if (!Array.isArray(messages)) {
+        console.error('Error: messages is not an array');
+        return;
+      }
+      const updatedMessages = messages.map((message) => {
+        const isCurrentMessage = message._id === messageId;
+
+        if (isCurrentMessage && message.emoji === '') {
+          return { ...message, emoji };
         }
         return message;
       });
@@ -49,6 +65,13 @@ const useConversation = createWithEqualityFn(
     setMediaFile: (mediaFile) => set({ mediaFile }),
     mediaUrl: null,
     setMediaUrl: (mediaUrl) => set({ mediaUrl }),
+    // emoji
+    selectedEmojis: {},
+    setSelectedEmoji: (messageId, emoji) => {
+      set((state) => ({
+        selectedEmojis: { ...state.selectedEmojis, [messageId]: emoji },
+      }));
+    },
     // notifications
     lastMessages: [],
     setLastMessages: (lastMessages) => set({ lastMessages }),
