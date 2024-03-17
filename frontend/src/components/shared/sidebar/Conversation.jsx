@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 
 import { useSocketContext } from '../../../shared/context/SocketContext.jsx';
 import useConversation from '../../../store/useConversation.jsx';
@@ -55,7 +56,9 @@ const Conversation = ({
             onClick={handleClick}
           >
             <div className='relative'>
-              <Avatar src={avatar} selected={isSelected} isOnline={isOnline} />
+              <Link to={`/users/${_id}`} className='relative'>
+                <Avatar src={avatar} selected={isSelected} isOnline={isOnline} />
+              </Link>
 
               {filteredNotification.length > 0 && (
                 <div className='absolute bottom-0 right-0 z-10 flex items-end justify-end md:hidden'>
