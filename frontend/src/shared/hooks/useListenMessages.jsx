@@ -5,6 +5,7 @@ import useConversation from '../../store/useConversation';
 import { useSocketContext } from '../context/SocketContext';
 
 import messageSound from '../../assets/sounds/message-sound.mp3';
+import notifySound from '../../assets/sounds/notify-sound.mp3';
 
 export const useListenMessages = () => {
   const { socket, onlineUsers } = useSocketContext();
@@ -14,6 +15,7 @@ export const useListenMessages = () => {
   const handleNewMessage = useCallback(
     (newMessage) => {
       const sound = new Audio(messageSound);
+      const notify = new Audio(notifySound);
       const receiverIsOnline = onlineUsers.some((user) => user._id === newMessage.receiver._id);
       // Check if conversation is selected
       const conversationNotSelected =
@@ -22,7 +24,7 @@ export const useListenMessages = () => {
       if (!receiverIsOnline && conversationNotSelected) {
         if (!notification.includes(newMessage._id)) {
           setNotification([...notification, newMessage]);
-          sound.play();
+          notify.play();
         }
       } else {
         newMessage.shouldShake = true;
