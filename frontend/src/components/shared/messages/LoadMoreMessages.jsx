@@ -38,7 +38,7 @@ const LoadMoreMessages = () => {
       {!isLoading ? (
         <div
           ref={setRefs}
-          className='text-sm text-center p-2 pt-4 text-slate-200 drop-shadow-1xl-black'
+          className='w-full h-2 text-sm text-center p-1 text-slate-200 drop-shadow-1xl-black'
         ></div>
       ) : null}
     </>
