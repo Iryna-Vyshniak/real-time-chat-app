@@ -12,5 +12,12 @@ const messageValidate = validateBody(messageValidation);
 
 router.get('/:id', protectRoute, messageCtrl.getMessages);
 router.post('/send/:id', protectRoute, messageValidate, uploadMiddleware, messageCtrl.sendMessage);
+router.patch(
+  '/:id/emoji/:messageId',
+  protectRoute,
+  messageValidate,
+  uploadMiddleware,
+  messageCtrl.sendEmoji
+);
 
 export default router;
