@@ -3,27 +3,25 @@ import { useCallback, useEffect } from 'react';
 import { useSocketContext } from '../context/SocketContext';
 import useConversation from '../../store/useConversation';
 
-const useListenEmoji = (messageId) => {
+export const useListenEmoji = () => {
   const { socket } = useSocketContext();
 
   const { addEmoji } = useConversation();
 
   const handleEmoji = useCallback(
-    (emoji) => {
+    (messageId, emoji) => {
       addEmoji(messageId, emoji);
     },
-    [addEmoji, messageId]
+    [addEmoji]
   );
 
   useEffect(() => {
-    const socketListener = (emoji) => {
-      handleEmoji(emoji);
+    const socketListener = ({ messageId, emoji }) => {
+      handleEmoji(messageId, emoji);
     };
 
-    socket?.on('addEmoji', (emoji) => socketListener(emoji));
+    socket?.on('addEmoji', socketListener);
 
     return () => socket?.off('addEmoji');
   }, [handleEmoji, socket]);
 };
-
-export default useListenEmoji;

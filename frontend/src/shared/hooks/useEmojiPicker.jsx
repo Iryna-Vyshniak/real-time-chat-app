@@ -6,7 +6,7 @@ const useEmojiPicker = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [currentPopupId, setCurrentPopupId] = useState(null);
 
-  const {  addEmoji } = useConversation();
+  const { addEmoji } = useConversation();
   const emojiPickerRef = useRef(null);
 
   // show popup
