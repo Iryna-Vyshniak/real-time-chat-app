@@ -133,12 +133,13 @@ export const sendEmoji = async (req, res) => {
   const receiverSocketId = getReceiverSocketId(receiver);
   const senderSocketId = getReceiverSocketId(sender);
 
-  if (receiverSocketId && senderSocketId && messageId === updateMessage._id.toString()) {
-    // io.to(socket_id).emit() used to send events to one specific clients - and sender and receiver
+  if (receiverSocketId && senderSocketId) {
+    // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
     io.to(senderSocketId).emit('addEmoji', { messageId, emoji });
     io.to(receiverSocketId).emit('addEmoji', { messageId, emoji });
   }
 
+  console.log('message: ', updateMessage);
   res.status(200).json(updateMessage);
 };
 
