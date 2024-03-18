@@ -5,17 +5,22 @@ import Icon from '../../ui/Icon';
 
 const EmojiPopup = ({ id, fromMe }) => {
   const { sendEmoji } = useSendEmoji();
-  const { currentPopupId, showEmojiPicker, emojiPickerRef, addEmojis, openEmojiPicker } =
+  const { currentPopupId, showEmojiPicker, emojiPickerRef, openEmojiPicker, onEmojiClick } =
     useEmojiPicker();
 
   return (
     <a
       href='#'
       role='button'
-      className='flex items-center justify-start gap-2 text-slate-800 text-sm drop-shadow-2xl-white cursor-pointer'
+      className={`flex items-center justify-start gap-2 text-slate-800 text-sm drop-shadow-2xl-white cursor-pointer ${
+        fromMe && 'pointer-events-none text-slate-500/60'
+      }`}
       onClick={() => openEmojiPicker(id)}
     >
-      <Icon src='#icon-smile' style='drop-shadow-2xl-white w-4 h-4' />
+      <Icon
+        src='#icon-smile'
+        style={`${fromMe && 'fill-slate-500/60'} drop-shadow-2xl-white w-4 h-4`}
+      />
       Emoji
       {showEmojiPicker && currentPopupId === id && (
         <div
@@ -29,11 +34,11 @@ const EmojiPopup = ({ id, fromMe }) => {
                   type='button'
                   onClick={async (e) => {
                     e.preventDefault();
-                    addEmojis(id, emoji);
                     await sendEmoji({
                       messageId: id,
                       emoji,
                     });
+                    onEmojiClick();
                   }}
                 >
                   {emoji}

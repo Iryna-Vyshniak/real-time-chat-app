@@ -8,7 +8,7 @@ const DropdownMessage = ({ dropdownColor, message, onReply, fromMe }) => {
       tabIndex={0}
       className={`
                 ${dropdownColor} 
-                dropdown-content z-[50] menu mt-2 p-2 shadow rounded-box w-24 gap-2`}
+                dropdown-content menu mt-2 p-2 shadow rounded-box w-24 gap-2 z-[50]`}
     >
       <ReplyMessage message={message} onReply={onReply} />
       <DeleteMessage />

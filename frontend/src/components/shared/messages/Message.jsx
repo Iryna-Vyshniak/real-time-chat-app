@@ -8,7 +8,6 @@ const ImageDialog = lazy(() => import('../../shared/messages/ImageDialog'));
 import { useAuthContext } from '../../../shared/context/AuthContext';
 import useConversation from '../../../store/useConversation';
 import useEmojiPicker from '../../../shared/hooks/useEmojiPicker';
-import useListenEmoji from '../../../shared/hooks/useListenEmoji';
 
 import { extractTime } from '../../../shared/utils';
 
@@ -26,10 +25,10 @@ const Message = ({ message, onReply, quotedMessage }) => {
 
   const { onEmojiClick } = useEmojiPicker();
 
-  useListenEmoji(message._id);
-
+  // infinity scrolling - intersection-observer
   const { ref, inView } = useInView();
 
+  // find qouted message
   const quotedInfo = messages.find((message) => message._id === quotedMessage);
 
   const fromMe = message.sender._id === authUser._id;
@@ -40,6 +39,7 @@ const Message = ({ message, onReply, quotedMessage }) => {
   const avatar = fromMe ? authUser.avatar : selectedConversation?.avatar;
   const isMsgRead = message.read;
 
+  // read or not
   const messageStatus =
     isMsgRead && fromMe ? (
       <Icon src='#icon-checkmark-read' style='w-4 h-4 drop-shadow-3xl-red' />
