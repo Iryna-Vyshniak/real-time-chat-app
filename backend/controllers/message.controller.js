@@ -103,19 +103,19 @@ export const sendMessage = async (req, res) => {
 
   // socket io functionality
   const receiverSocketId = getReceiverSocketId(receiver);
+
   if (receiverSocketId) {
     // io.to(socket_id).emit() used to send events to one specific clients
     io.to(receiverSocketId).emit('newMessage', newMessage);
   }
 
-  console.log('newMessage: ', newMessage);
   res.status(201).json(newMessage);
 };
 
 // SEND EMOJI
 export const sendEmoji = async (req, res) => {
   const { id: receiver, messageId } = req.params;
-  console.log('receiver, messageId: ', receiver, messageId);
+  const sender = req.user._id; // its me
   const { emoji } = req.body;
 
   if (!emoji && !messageId) {
@@ -131,12 +131,14 @@ export const sendEmoji = async (req, res) => {
 
   // socket io functionality
   const receiverSocketId = getReceiverSocketId(receiver);
-  if (receiverSocketId) {
-    // io.to(socket_id).emit() used to send events to one specific clients
-    io.to(receiverSocketId).emit('addEmoji', emoji);
+  const senderSocketId = getReceiverSocketId(sender);
+
+  if (receiverSocketId && senderSocketId && messageId === updateMessage._id.toString()) {
+    // io.to(socket_id).emit() used to send events to one specific clients - and sender and receiver
+    io.to(senderSocketId).emit('addEmoji', { messageId, emoji });
+    io.to(receiverSocketId).emit('addEmoji', { messageId, emoji });
   }
 
-  console.log('message: ', updateMessage);
   res.status(200).json(updateMessage);
 };
 
