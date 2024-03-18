@@ -11,6 +11,7 @@ import QuotedMessage from './QuotedMessage';
 
 import { useListenReadMessages } from '../../../shared/hooks/useListenReadMessages';
 import { useListenMessages } from '../../../shared/hooks/useListenMessages';
+import { useListenEmoji } from '../../../shared/hooks/useListenEmoji';
 
 const MessagesBlock = ({ isOpen }) => {
   const [quotedMessage, setQuotedMessage] = useState(null);
@@ -27,8 +28,10 @@ const MessagesBlock = ({ isOpen }) => {
   };
 
   const { selectedConversation, setSelectedConversation, isLoading } = useConversation();
+  // listen socket events
   useListenMessages();
   useListenReadMessages();
+  useListenEmoji();
 
   useEffect(() => {
     // cleanup function when unmounted component
