@@ -6,8 +6,8 @@ import { useInView } from 'react-intersection-observer';
 const ImageDialog = lazy(() => import('../../shared/messages/ImageDialog'));
 
 import { useAuthContext } from '../../../shared/context/AuthContext';
+import { useRemoveEmoji } from '../../../shared/hooks/useRemoveEmoji';
 import useConversation from '../../../store/useConversation';
-import useEmojiPicker from '../../../shared/hooks/useEmojiPicker';
 
 import { extractTime } from '../../../shared/utils';
 
@@ -23,13 +23,18 @@ const Message = ({ message, onReply, quotedMessage }) => {
   const { authUser } = useAuthContext();
   const { selectedConversation, messages } = useConversation();
 
-  const { onEmojiClick } = useEmojiPicker();
+  const { removeEmoji } = useRemoveEmoji();
 
   // infinity scrolling - intersection-observer
   const { ref, inView } = useInView();
 
   // find qouted message
   const quotedInfo = messages.find((message) => message._id === quotedMessage);
+
+  // function to remove emoji -
+  const onRemoveEmoji = async (id) => {
+    await removeEmoji({ messageId: id });
+  };
 
   const fromMe = message.sender._id === authUser._id;
 
@@ -93,8 +98,9 @@ const Message = ({ message, onReply, quotedMessage }) => {
           </div>
           {message.emoji && (
             <button
-              onClick={onEmojiClick}
+              onClick={() => onRemoveEmoji(message._id)}
               className={`absolute -bottom-2 ${fromMe ? 'left-1' : 'right-1'} bg-transparent`}
+              disabled={fromMe}
             >
               {message.emoji}
             </button>
