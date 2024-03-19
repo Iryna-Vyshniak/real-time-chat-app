@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 const useSendEmoji = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { addEmoji, selectedConversation } = useConversation();
+  const { selectedConversation } = useConversation();
 
   const sendEmoji = useCallback(
     async ({ messageId, emoji }) => {
@@ -25,15 +25,13 @@ const useSendEmoji = () => {
         if (data.error || data.message) {
           throw new Error(data.error || data.message);
         }
-
-        addEmoji(data);
       } catch (error) {
         toast.error(error.message);
       } finally {
         setIsLoading(false);
       }
     },
-    [addEmoji, selectedConversation._id]
+    [selectedConversation._id]
   );
 
   return { isLoading, sendEmoji };
