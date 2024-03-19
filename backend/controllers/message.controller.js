@@ -129,6 +129,8 @@ export const sendEmoji = async (req, res) => {
     { new: true }
   );
 
+  if (!updateMessage) throw HttpError(404, 'Message not found');
+
   // socket io functionality
   const receiverSocketId = getReceiverSocketId(receiver);
   const senderSocketId = getReceiverSocketId(sender);
@@ -139,7 +141,38 @@ export const sendEmoji = async (req, res) => {
     io.to(receiverSocketId).emit('addEmoji', { messageId, emoji });
   }
 
-  console.log('message: ', updateMessage);
+  res.status(200).json(updateMessage);
+};
+
+// REMOVE EMOJI
+export const removeEmoji = async (req, res) => {
+  const { id: receiver, messageId } = req.params;
+  const sender = req.user._id; // its me
+
+  if (!messageId) {
+    throw HttpError(400, 'Invalid data passed into request');
+  }
+
+  const updateMessage = await Message.findOneAndUpdate(
+    { _id: messageId },
+    { $set: { emoji: '' } },
+    {
+      new: true,
+    }
+  ).exec();
+
+  if (!updateMessage) throw HttpError(404, 'Message not found');
+
+  // socket io functionality
+  const receiverSocketId = getReceiverSocketId(receiver);
+  const senderSocketId = getReceiverSocketId(sender);
+
+  if (receiverSocketId && senderSocketId) {
+    // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
+    io.to(receiverSocketId).emit('removeEmoji', { messageId });
+    io.to(senderSocketId).emit('removeEmoji', { messageId });
+  }
+
   res.status(200).json(updateMessage);
 };
 
@@ -191,4 +224,5 @@ export default {
   getMessages: ctrlWrapper(getMessages),
   sendMessage: ctrlWrapper(sendMessage),
   sendEmoji: ctrlWrapper(sendEmoji),
+  removeEmoji: ctrlWrapper(removeEmoji),
 };
