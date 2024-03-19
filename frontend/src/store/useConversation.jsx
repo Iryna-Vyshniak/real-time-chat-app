@@ -45,12 +45,29 @@ const useConversation = createWithEqualityFn(
       const updatedMessages = messages.map((message) => {
         const isCurrentMessage = message._id === messageId;
 
-        if (isCurrentMessage && message.emoji === '') {
+        if (isCurrentMessage) {
           return { ...message, emoji };
         }
         return message;
       });
+      // Update the state with the new messages
+      set({ messages: updatedMessages });
+    },
+    deleteEmoji: (messageId) => {
+      const messages = get().messages;
+      if (!Array.isArray(messages)) {
+        console.error('Error: messages is not an array');
+        return;
+      }
+      const updatedMessages = messages.map((message) => {
+        const isCurrentMessage = message._id === messageId;
 
+        if (isCurrentMessage) {
+          return { ...message, emoji: '' };
+        }
+        return message;
+      });
+      // Update the state with the new messages
       set({ messages: updatedMessages });
     },
     totalPages: 0,
