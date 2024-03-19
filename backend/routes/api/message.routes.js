@@ -19,5 +19,12 @@ router.patch(
   uploadMiddleware,
   messageCtrl.sendEmoji
 );
+router.patch(
+  '/:id/emoji-remove/:messageId',
+  protectRoute,
+  messageValidate,
+  uploadMiddleware,
+  messageCtrl.removeEmoji
+);
 
 export default router;
