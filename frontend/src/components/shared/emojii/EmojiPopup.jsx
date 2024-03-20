@@ -13,7 +13,7 @@ const EmojiPopup = ({ id, fromMe }) => {
       href='#'
       role='button'
       className={`flex items-center justify-start gap-2 text-slate-800 text-sm drop-shadow-2xl-white cursor-pointer ${
-        fromMe && 'pointer-events-none text-slate-500/60'
+        fromMe && 'pointer-events-none text-slate-500/50'
       }`}
       onClick={() => openEmojiPicker(id)}
     >
