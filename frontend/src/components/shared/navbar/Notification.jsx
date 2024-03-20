@@ -1,10 +1,16 @@
+import { useEffect } from 'react';
 import { uniqueSender } from '../../../shared/utils';
 import useConversation from '../../../store/useConversation';
 
 import Icon from '../../ui/Icon';
 
 const Notification = () => {
-  const { setSelectedConversation, notification, setNotification } = useConversation();
+  const { setSelectedConversation, notification, setNotification, lastMessages } =
+    useConversation();
+
+  useEffect(() => {
+    setNotification(lastMessages);
+  }, [lastMessages, setNotification]);
 
   const uniqueSenders = uniqueSender(notification);
 
@@ -43,7 +49,7 @@ const Notification = () => {
                 </li>
               ))}
             </ul>
-            {notification.length > 0 && (
+            {(notification.length > 0 || lastMessages.length > 0) && (
               <span className='absolute top-0 right-0 flex items-center justify-center w-[16px] h-[16px] rounded-full bg-primary indicator-item text-slate-800 text-[7px] drop-shadow-5xl-black'>
                 {notification.length > 9 ? '9+' : notification.length}
               </span>
