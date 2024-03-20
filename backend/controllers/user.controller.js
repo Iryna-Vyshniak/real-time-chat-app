@@ -26,15 +26,25 @@ const getUsersForSidebar = async (req, res) => {
   const allFilteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
 
   // Get the last unread messages from each sender
-  //   $match: Це етап фільтрації. Записи, які відповідають критеріям, зазначеним у цьому об'єкті, залишаються. У цьому випадку, фільтрується колекція повідомлень, вибираючи лише ті, які мають отримувача (receiverId) рівного loggedInUserId і які ще не були прочитані (read: false).
+  //   $match: Цей етап фільтрує записи, залишаючи лише ті, які відповідають вказаним умовам. У цьому випадку фільтрується колекція повідомлень, вибираючи ті, що мають отримувача (receiver) зі значенням, рівним loggedInUserId, і ще не були прочитані (read: false).
 
-  // $sort: Це етап сортування. Записи сортуються за значенням поля createdAt у зворотньому порядку (-1), що означає від найновіших до найдавніших.
+  // $sort: Цей етап сортує записи за значенням поля createdAt у зворотньому порядку (-1), щоб найновіші записи з'являлися першими.
 
-  // $group: Групує записи на основі певного поля. В даному випадку, записи групуються за значенням поля senderId. Під час групування, кожній групі присвоюється властивість lastMessages, яка містить масив об'єктів, що представляють кожен запис у цій групі.
+  // $group: У цьому кроці записи групуються за значенням поля sender. Кожній групі присвоюється властивість lastMessages, яка містить масив об'єктів, представляючих кожен запис у цій групі.
 
-  // $unwind: Це етап "розгортання" масиву. Використовується для розгортання масиву в окремі документи, щоб його можна було подальше обробити.
+  // $unwind: Цей етап "розгортає" масив lastMessages, розбиваючи його на окремі документи, щоб їх можна було подальше обробити.
 
-  // $project: Визначає поля, які будуть включені у вихідні дані. У цьому випадку, вихідні дані будуть містити _id з значенням senderId (встановлене на попередньому етапі групування) і lastMessage, який містить повний запис останнього повідомлення.
+  // $lookup: Виконує з'єднання з колекцією users, де значення поля _id у колекції Message (sender) збігається з значенням поля _id у колекції users. Результат з'єднання записується у поле senderInfo.
+
+  // $unwind: Цей крок розгортає масив senderInfo, розбиваючи його на окремі документи.
+
+  // Аналогічно до кроків 5-6, виконуються $lookup та $unwind для отримання даних про отримувача (receiverInfo).
+
+  // $addFields: Додає до об'єкту lastMessages поля sender та receiver, які містять розгорнуті дані про відправника та отримувача.
+
+  // $replaceRoot: Замінює корінь кожного документа на об'єкт lastMessages.
+
+  // $project: Виключає поля senderInfo та receiverInfo з вихідних даних.
   const lastMessages = await Message.aggregate([
     {
       $match: {
@@ -47,7 +57,7 @@ const getUsersForSidebar = async (req, res) => {
     },
     {
       $group: {
-        _id: '$senderId',
+        _id: '$sender',
         lastMessages: { $addToSet: '$$ROOT' },
       },
     },
@@ -55,9 +65,40 @@ const getUsersForSidebar = async (req, res) => {
       $unwind: '$lastMessages',
     },
     {
+      $lookup: {
+        from: 'users',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'senderInfo',
+      },
+    },
+    {
+      $unwind: '$senderInfo',
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'lastMessages.receiver',
+        foreignField: '_id',
+        as: 'receiverInfo',
+      },
+    },
+    {
+      $unwind: '$receiverInfo',
+    },
+    {
+      $addFields: {
+        'lastMessages.sender': '$senderInfo',
+        'lastMessages.receiver': '$receiverInfo',
+      },
+    },
+    {
+      $replaceRoot: { newRoot: '$lastMessages' },
+    },
+    {
       $project: {
-        _id: '$lastMessages.senderId',
-        lastMessage: '$lastMessages',
+        senderInfo: 0,
+        receiverInfo: 0,
       },
     },
   ]);
