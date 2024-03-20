@@ -26,5 +26,12 @@ router.patch(
   uploadMiddleware,
   messageCtrl.removeEmoji
 );
+router.delete(
+  '/delete/:id',
+  protectRoute,
+  messageValidate,
+  uploadMiddleware,
+  messageCtrl.deleteMessage
+);
 
 export default router;
