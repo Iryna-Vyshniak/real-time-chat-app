@@ -220,9 +220,44 @@ export const getMessages = async (req, res) => {
   });
 };
 
+// DELETE MESSAGE
+export const deleteMessage = async (req, res) => {
+  const { id } = req.params;
+  const senderId = req.user._id; // it`s me
+
+  const message = await Message.findById({ _id: id }).populate('receiver');
+  if (!message) throw HttpError(400, 'Message not found');
+  const receiverId = message.receiver._id;
+
+  await Message.findByIdAndDelete({ _id: id });
+
+  const deletedConversationMessage = await Conversation.updateMany(
+    {},
+    { $pull: { messages: id } },
+    { multi: true }
+  );
+
+  if (!deletedConversationMessage) throw HttpError(400, 'Message in coversation not found');
+
+  // socket io functionality
+  const receiverSocketId = getReceiverSocketId(receiverId);
+  console.log('receiverSocketId: ', receiverSocketId);
+  const senderSocketId = getReceiverSocketId(senderId);
+  console.log('senderSocketId: ', senderSocketId);
+
+  if ((receiverSocketId && senderSocketId) || senderSocketId) {
+    // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
+    io.to(receiverSocketId).emit('deleteMessage', { id });
+    io.to(senderSocketId).emit('deleteMessage', { id });
+  }
+
+  res.status(200).json({ info: 'Message success deleted' });
+};
+
 export default {
   getMessages: ctrlWrapper(getMessages),
   sendMessage: ctrlWrapper(sendMessage),
   sendEmoji: ctrlWrapper(sendEmoji),
   removeEmoji: ctrlWrapper(removeEmoji),
+  deleteMessage: ctrlWrapper(deleteMessage),
 };
