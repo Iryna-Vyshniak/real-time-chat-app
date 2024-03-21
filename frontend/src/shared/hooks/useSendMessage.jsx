@@ -9,7 +9,7 @@ export const useSendMessage = () => {
   const { messages, addMessage, selectedConversation } = useConversation();
 
   const sendMessages = useCallback(
-    async ({ message: text, img, audio, quote, quotedId }) => {
+    async ({ message: text, img, audio, video, quote, quotedId, emoji }) => {
       if (!selectedConversation?._id) return;
 
       setIsLoading(true);
@@ -19,7 +19,7 @@ export const useSendMessage = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ text, img, audio, quote, quotedId }),
+          body: JSON.stringify({ text, img, audio, video, quote, quotedId, emoji }),
         });
 
         const data = await res.json();
