@@ -18,6 +18,7 @@ import QuotedMessage from './QuotedMessage';
 import DropdownButton from '../../ui/DropdownButton';
 import DropdownMessage from './DropdownMessage';
 import DownloadImage from './DownloadImage';
+import VideoPlayer from '../video/VideoPlayer';
 
 const Message = ({ message, onReply, quotedMessage }) => {
   const { authUser } = useAuthContext();
@@ -73,7 +74,9 @@ const Message = ({ message, onReply, quotedMessage }) => {
           </div>
         </Link>
         <div
-          className={`chat-bubble pb-2 text-slate-800 ${chatColor} ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50 cursor-pointer`}
+          className={`chat-bubble pb-2 text-slate-800 ${
+            message.video ? 'bg-transparent' : chatColor
+          } ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50 cursor-pointer`}
         >
           {quotedMessage && (
             <QuotedMessage
@@ -91,9 +94,10 @@ const Message = ({ message, onReply, quotedMessage }) => {
             />
           </DropdownButton>
           {message.img && <DownloadImage message={message} />}
-          <div className='flex items-center justify-between gap-2'>
+          <div className='flex flex-col items-center justify-between gap-2'>
             {message.img && <ImageMessage message={message} />}
             {message.audio && <AudioPlayer src={message.audio} />}
+            {message.video && <VideoPlayer src={message.video} />}
             {message.text}
           </div>
           {message.emoji && (
