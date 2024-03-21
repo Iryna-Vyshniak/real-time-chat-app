@@ -59,7 +59,7 @@ const RecordView = ({ audio, video }) => {
 
       {videoStatus === 'idle' && (
         <button onClick={startVideoRecording} className='relative bg-transparent cursor-pointer'>
-          <Icon src='#icon-video-play' />
+          <Icon src='#icon-video-play' style='fill-[#f97316]' />
           {videoUrl && (
             <span className='absolute -bottom-1 -left-1 flex items-center justify-center w-3 h-3 rounded-full bg-primary indicator-item text-slate-800 text-[7px] drop-shadow-5xl-black'>
               1
@@ -69,22 +69,22 @@ const RecordView = ({ audio, video }) => {
       )}
       {audioStatus === 'recording' && (
         <button onClick={stopAudioRecording} className='bg-transparent cursor-pointer'>
-          <Icon src='#icon-media-stop' style='pulse' />
+          <Icon src='#icon-media-stop' style='pulse fill-[#f97316]' />
         </button>
       )}
       {videoStatus === 'recording' && (
         <button onClick={stopVideoRecording} className='bg-transparent cursor-pointer'>
-          <Icon src='#icon-media-stop' style='pulse' />
+          <Icon src='#icon-media-stop' style='pulse fill-[#f97316]' />
         </button>
       )}
       {audioStatus === 'stopped' && (
-        <div className='relative bg-transparent cursor-pointer'>
+        <div className='bg-transparent cursor-pointer'>
           <Icon src='#icon-mic' />
         </div>
       )}
       {videoStatus === 'stopped' && (
-        <div className='relative bg-transparent cursor-pointer'>
-          <Icon src='#icon-video-play' />
+        <div className='bg-transparent cursor-pointer'>
+          <Icon src='#icon-video-play' style='fill-[#f97316]' />
         </div>
       )}
     </div>

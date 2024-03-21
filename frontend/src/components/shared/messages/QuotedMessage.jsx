@@ -3,11 +3,11 @@ import Icon from '../../ui/Icon';
 const QuotedMessage = ({ message, showButton, onCloseQuote, dropdownColor }) => {
   if (!message) return;
 
-  const { sender, text, img, audio } = message;
+  const { sender, text, img, audio, video } = message;
 
   return (
     <>
-      <div className={showButton ? 'pl-10 pr-5 max-w-full w-full' : 'max-w-full w-full'}>
+      <div className={showButton ? 'pl-[66px] pr-5 max-w-full w-full' : 'max-w-full w-full'}>
         <div
           className={`relative flex flex-col items-start justify-center gap-2 border-l-2 border-accent p-1 pl-2 pr-4 w-full ${
             dropdownColor || 'bg-secondary'
@@ -31,6 +31,12 @@ const QuotedMessage = ({ message, showButton, onCloseQuote, dropdownColor }) => 
             {audio && (
               <>
                 <Icon src='#icon-audio' style='drop-shadow-1xl-white w-3 h-3' /> <span>Audio</span>
+              </>
+            )}
+            {video && (
+              <>
+                <Icon src='#icon-video-play' style='drop-shadow-1xl-white w-3 h-3' />{' '}
+                <span>Video</span>
               </>
             )}
           </div>

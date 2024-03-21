@@ -23,11 +23,9 @@ export const useBlobToFileOrUrl = () => {
       reader.onloadend = () => {
         const base64Data = reader.result;
         if (isAudio && blob.type.startsWith('audio/')) {
-          console.log('audio', base64Data);
           setAudioUrl(base64Data);
         }
         if (isVideo && blob.type.startsWith('video/')) {
-          console.log('video', base64Data);
           setVideoUrl(base64Data);
         }
       };
