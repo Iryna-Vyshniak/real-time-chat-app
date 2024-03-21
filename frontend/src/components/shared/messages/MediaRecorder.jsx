@@ -5,44 +5,86 @@ import { useBlobToFileOrUrl } from '../../../shared/hooks/useBlobToFileOrUrl';
 
 import Icon from '../../ui/Icon';
 
-const RecordView = ({ audio, video, screen }) => {
-  const { status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } =
-    useReactMediaRecorder(
-      audio && { audio: true },
-      video && { video: true },
-      screen && { screen: true }
-    );
+const RecordView = ({ audio, video }) => {
+  const {
+    status: audioStatus,
+    startRecording: startAudioRecording,
+    stopRecording: stopAudioRecording,
+    mediaBlobUrl: audioBlobUrl,
+    clearBlobUrl: clearAudioBlobUrl,
+  } = useReactMediaRecorder(audio && { audio: true });
+  const {
+    status: videoStatus,
+    startRecording: startVideoRecording,
+    stopRecording: stopVideoRecording,
+    mediaBlobUrl: videoBlobUrl,
+    clearBlobUrl: clearVideoBlobUrl,
+  } = useReactMediaRecorder(video && { video: true });
 
-  const { blobToBase64, mediaUrl } = useBlobToFileOrUrl();
+  const { blobToBase64, audioUrl, videoUrl } = useBlobToFileOrUrl();
 
   useEffect(() => {
-    if (status === 'stopped' && mediaBlobUrl) {
-      blobToBase64(mediaBlobUrl);
-      clearBlobUrl();
+    if (audioStatus === 'stopped' && audioBlobUrl) {
+      blobToBase64(audioBlobUrl, true, false);
+      clearAudioBlobUrl();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+    if (videoStatus === 'stopped' && videoBlobUrl) {
+      blobToBase64(videoBlobUrl, false, true);
+      clearVideoBlobUrl();
+    }
+  }, [
+    audio,
+    audioBlobUrl,
+    audioStatus,
+    blobToBase64,
+    clearAudioBlobUrl,
+    clearVideoBlobUrl,
+    video,
+    videoBlobUrl,
+    videoStatus,
+  ]);
 
   return (
-    <div>
-      {status === 'idle' && (
-        <button onClick={startRecording} className='bg-transparent cursor-pointer'>
+    <div className='flex items-center gap-1'>
+      {audioStatus === 'idle' && (
+        <button onClick={startAudioRecording} className='relative bg-transparent cursor-pointer'>
           <Icon src='#icon-mic' />
-          {mediaUrl && (
-            <span className='absolute bottom-1 -left-0 flex items-center justify-center w-3 h-3 rounded-full bg-primary indicator-item text-slate-800 text-[7px] drop-shadow-5xl-black'>
+          {audioUrl && (
+            <span className='absolute -bottom-1 -left-1 flex items-center justify-center w-3 h-3 rounded-full bg-primary indicator-item text-slate-800 text-[7px] drop-shadow-5xl-black'>
               1
             </span>
           )}
         </button>
       )}
-      {status === 'recording' && (
-        <button onClick={stopRecording} className='bg-transparent cursor-pointer'>
+
+      {videoStatus === 'idle' && (
+        <button onClick={startVideoRecording} className='relative bg-transparent cursor-pointer'>
+          <Icon src='#icon-video-play' />
+          {videoUrl && (
+            <span className='absolute -bottom-1 -left-1 flex items-center justify-center w-3 h-3 rounded-full bg-primary indicator-item text-slate-800 text-[7px] drop-shadow-5xl-black'>
+              1
+            </span>
+          )}
+        </button>
+      )}
+      {audioStatus === 'recording' && (
+        <button onClick={stopAudioRecording} className='bg-transparent cursor-pointer'>
           <Icon src='#icon-media-stop' style='pulse' />
         </button>
       )}
-      {status === 'stopped' && (
+      {videoStatus === 'recording' && (
+        <button onClick={stopVideoRecording} className='bg-transparent cursor-pointer'>
+          <Icon src='#icon-media-stop' style='pulse' />
+        </button>
+      )}
+      {audioStatus === 'stopped' && (
         <div className='relative bg-transparent cursor-pointer'>
           <Icon src='#icon-mic' />
+        </div>
+      )}
+      {videoStatus === 'stopped' && (
+        <div className='relative bg-transparent cursor-pointer'>
+          <Icon src='#icon-video-play' />
         </div>
       )}
     </div>
