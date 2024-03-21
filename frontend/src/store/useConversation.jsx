@@ -82,8 +82,10 @@ const useConversation = createWithEqualityFn(
     // media
     mediaFile: null,
     setMediaFile: (mediaFile) => set({ mediaFile }),
-    mediaUrl: null,
-    setMediaUrl: (mediaUrl) => set({ mediaUrl }),
+    audioUrl: null,
+    setAudioUrl: (audioUrl) => set({ audioUrl }),
+    videoUrl: null,
+    setVideoUrl: (videoUrl) => set({ videoUrl }),
     // emoji
     selectedEmojis: {},
     setSelectedEmoji: (messageId, emoji) => {
