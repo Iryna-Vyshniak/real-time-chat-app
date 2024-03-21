@@ -25,6 +25,7 @@ const messageSchema = new Schema(
       default: '',
     },
     audio: String,
+    video: String,
     emoji: {
       type: String,
       default: '',
