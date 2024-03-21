@@ -10,7 +10,15 @@ import useConversation from '../../../store/useConversation';
 const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
   const [message, setMessage] = useState('');
   const { handleImageChange, imgUrl, setImgUrl } = usePreviewImage();
-  const { mediaUrl, setMediaUrl } = useConversation();
+  const {
+    isLoading: globalIsLoading,
+    audioUrl,
+    setAudioUrl,
+    videoUrl,
+    setVideoUrl,
+    selectedEmoji,
+    setSelectedEmoji,
+  } = useConversation();
 
   const { isLoading, sendMessages } = useSendMessage();
 
@@ -18,17 +26,21 @@ const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (message || imgUrl || mediaUrl) {
+    if (message || imgUrl || audioUrl || videoUrl) {
       await sendMessages({
         message,
         img: imgUrl,
-        audio: mediaUrl,
+        audio: audioUrl,
+        video: videoUrl,
+        emoji: selectedEmoji,
         quote: isShowQuotedMessage,
         quotedId: quotedMessage?._id || '',
       });
       setMessage('');
       setImgUrl(null);
-      setMediaUrl(null);
+      setAudioUrl(null);
+      setVideoUrl(null);
+      setSelectedEmoji(null);
       onCloseQuote();
     }
   };
@@ -36,7 +48,7 @@ const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
   return (
     <form className='pl-2 pr-4 mt-auto w-full items-end' onSubmit={handleSubmit} autoComplete='off'>
       <div className='relative flex items-center justify-between gap-2 w-full'>
-        <RecordView audio={true} />
+        <RecordView audio={true} video={true} />
         <textarea
           type='text'
           placeholder={!isShowQuotedMessage ? 'Send a message' : 'Reply to message'}
@@ -62,7 +74,8 @@ const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
         <input type='file' ref={fileRef} hidden onChange={handleImageChange} />
         <button
           type='submit'
-          className='absolute top-[20%] right-0 flex items-center pe-3 cursor-pointer'
+          className={`absolute top-[20%] right-0 flex items-center pe-3 cursor-pointer`}
+          disabled={globalIsLoading}
         >
           {isLoading ? (
             <span className='loading loading-spinner'></span>
