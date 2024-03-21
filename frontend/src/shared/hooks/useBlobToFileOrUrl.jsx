@@ -1,8 +1,8 @@
 import useConversation from '../../store/useConversation';
 
 export const useBlobToFileOrUrl = () => {
-  const { mediaFile, setMediaFile } = useConversation();
-  const { mediaUrl, setMediaUrl } = useConversation();
+  const { mediaFile, setMediaFile, audioUrl, setAudioUrl, videoUrl, setVideoUrl } =
+    useConversation();
 
   const blobToAudioFile = (blob, filename) => {
     const newFile = new File([blob], filename, { type: 'audio/wav' });
@@ -14,15 +14,22 @@ export const useBlobToFileOrUrl = () => {
     setMediaFile(newFile);
   };
 
-  const blobToBase64 = async (blobUrl) => {
+  const blobToBase64 = async (blobUrl, isAudio, isVideo) => {
     try {
       const response = await fetch(blobUrl);
       const blob = await response.blob();
       const reader = new FileReader();
       reader.readAsDataURL(blob);
-      reader.onloadend = function () {
+      reader.onloadend = () => {
         const base64Data = reader.result;
-        setMediaUrl(base64Data);
+        if (isAudio && blob.type.startsWith('audio/')) {
+          console.log('audio', base64Data);
+          setAudioUrl(base64Data);
+        }
+        if (isVideo && blob.type.startsWith('video/')) {
+          console.log('video', base64Data);
+          setVideoUrl(base64Data);
+        }
       };
     } catch (error) {
       console.error('Error converting blob URL to base64:', error);
@@ -31,9 +38,8 @@ export const useBlobToFileOrUrl = () => {
 
   return {
     mediaFile,
-    mediaUrl,
-    setMediaFile,
-    setMediaUrl,
+    audioUrl,
+    videoUrl,
     blobToAudioFile,
     blobToVideoFile,
     blobToBase64,
