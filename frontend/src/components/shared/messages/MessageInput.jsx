@@ -4,7 +4,7 @@ import { useSendMessage } from '../../../shared/hooks/useSendMessage';
 
 import Icon from '../../ui/Icon';
 import { usePreviewImage } from '../../../shared/hooks/usePreviewImage';
-import RecordView from './MediaRecorder';
+import RecordView from '../media.recoder/MediaRecorder';
 import useConversation from '../../../store/useConversation';
 
 const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
@@ -36,13 +36,17 @@ const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
         quote: isShowQuotedMessage,
         quotedId: quotedMessage?._id || '',
       });
-      setMessage('');
-      setImgUrl(null);
-      setAudioUrl(null);
-      setVideoUrl(null);
-      setSelectedEmoji(null);
-      onCloseQuote();
+      clearForm();
     }
+  };
+
+  const clearForm = () => {
+    setMessage('');
+    setImgUrl(null);
+    setAudioUrl(null);
+    setVideoUrl(null);
+    setSelectedEmoji(null);
+    onCloseQuote();
   };
 
   return (
@@ -61,7 +65,9 @@ const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
           type='button'
           disabled={isLoading}
           onClick={() => fileRef.current.click()}
-          className='absolute top-[20%] right-8 flex items-center pe-2 bg-transparent cursor-pointer'
+          className={`absolute top-[20%] ${
+            message || imgUrl || audioUrl || videoUrl ? 'right-[4.2rem]' : 'right-8'
+          } flex items-center pe-2 bg-transparent cursor-pointer`}
         >
           <Icon src='#icon-paperclip' style='drop-shadow-1xl-black' />
 
@@ -74,7 +80,9 @@ const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
         <input type='file' ref={fileRef} hidden onChange={handleImageChange} />
         <button
           type='submit'
-          className={`absolute top-[20%] right-0 flex items-center pe-3 cursor-pointer`}
+          className={`absolute top-[20%] ${
+            message || imgUrl || audioUrl || videoUrl ? 'right-10' : 'right-0'
+          } flex items-center pe-3 cursor-pointer`}
           disabled={globalIsLoading}
         >
           {isLoading ? (
@@ -83,6 +91,19 @@ const MessageInput = ({ onCloseQuote, isShowQuotedMessage, quotedMessage }) => {
             <Icon src='#icon-paper-plane' style='drop-shadow-1xl-black' />
           )}
         </button>
+        {(message || imgUrl || audioUrl || videoUrl) && (
+          <button
+            type='reset'
+            className={`flex items-center pe-3 cursor-pointer`}
+            onClick={clearForm}
+          >
+            {isLoading ? (
+              <span className='loading loading-spinner'></span>
+            ) : (
+              <Icon src='#icon-trash' style='w-5 h-5 drop-shadow-1xl-black fill-[#f97316]' />
+            )}
+          </button>
+        )}
       </div>
     </form>
   );
