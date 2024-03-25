@@ -1,7 +1,9 @@
-import { emojiBook } from '../../../shared/data';
-import useEmojiPicker from '../../../shared/hooks/useEmojiPicker';
-import useSendEmoji from '../../../shared/hooks/useSendEmoji';
-import Icon from '../../ui/Icon';
+import { emojiBook } from '../../../../../shared/data';
+
+import useEmojiPicker from '../../../../../shared/hooks/useEmojiPicker';
+import useSendEmoji from '../../../../../shared/hooks/useSendEmoji';
+
+import Icon from '../../../../ui/Icon';
 
 const EmojiPopup = ({ id, fromMe }) => {
   const { sendEmoji } = useSendEmoji();
@@ -12,14 +14,14 @@ const EmojiPopup = ({ id, fromMe }) => {
     <a
       href='#'
       role='button'
-      className={`flex items-center justify-start gap-2 text-slate-800 text-sm drop-shadow-2xl-white cursor-pointer ${
-        fromMe && 'pointer-events-none text-slate-500/50'
+      className={`flex items-center justify-start gap-2 text-sm drop-shadow-2xl-white cursor-pointer ${
+        fromMe ? 'pointer-events-none text-slate-500/50' : 'text-slate-800'
       }`}
       onClick={() => openEmojiPicker(id)}
     >
       <Icon
         src='#icon-smile'
-        style={`${fromMe && 'fill-slate-500/60'} drop-shadow-2xl-white w-4 h-4`}
+        style={`${fromMe ? 'fill-slate-500/60' : 'fill-slate-800'} drop-shadow-2xl-white w-4 h-4`}
       />
       Emoji
       {showEmojiPicker && currentPopupId === id && (

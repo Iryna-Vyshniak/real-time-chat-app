@@ -1,11 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useReactMediaRecorder } from 'react-media-recorder';
 
-import { useBlobToFileOrUrl } from '../../../shared/hooks/useBlobToFileOrUrl';
+import { useBlobToFileOrUrl } from '../../../../../shared/hooks/useBlobToFileOrUrl';
 
-import Icon from '../../ui/Icon';
+import VideoPreview from '../video/VideoPreview';
+import Icon from '../../../../ui/Icon';
 
 const RecordView = ({ audio, video }) => {
+  const [showPreview, setShowPreview] = useState(false);
+  const [saveVideo, setSaveVideo] = useState(false);
+
   const {
     status: audioStatus,
     startRecording: startAudioRecording,
@@ -13,15 +17,28 @@ const RecordView = ({ audio, video }) => {
     mediaBlobUrl: audioBlobUrl,
     clearBlobUrl: clearAudioBlobUrl,
   } = useReactMediaRecorder(audio && { audio: true });
+
   const {
     status: videoStatus,
     startRecording: startVideoRecording,
     stopRecording: stopVideoRecording,
     mediaBlobUrl: videoBlobUrl,
     clearBlobUrl: clearVideoBlobUrl,
+    previewStream,
   } = useReactMediaRecorder(video && { video: true });
 
   const { blobToBase64, audioUrl, videoUrl } = useBlobToFileOrUrl();
+
+  const startVideo = () => {
+    setShowPreview(true);
+    startVideoRecording();
+  };
+
+  const stopVideo = () => {
+    setShowPreview(false);
+    stopVideoRecording();
+    setSaveVideo(true);
+  };
 
   useEffect(() => {
     if (audioStatus === 'stopped' && audioBlobUrl) {
@@ -29,7 +46,9 @@ const RecordView = ({ audio, video }) => {
       clearAudioBlobUrl();
     }
     if (videoStatus === 'stopped' && videoBlobUrl) {
-      blobToBase64(videoBlobUrl, false, true);
+      if (saveVideo) {
+        blobToBase64(videoBlobUrl, false, true);
+      }
       clearVideoBlobUrl();
     }
   }, [
@@ -39,9 +58,11 @@ const RecordView = ({ audio, video }) => {
     blobToBase64,
     clearAudioBlobUrl,
     clearVideoBlobUrl,
+    saveVideo,
     video,
     videoBlobUrl,
     videoStatus,
+    videoUrl,
   ]);
 
   return (
@@ -58,10 +79,10 @@ const RecordView = ({ audio, video }) => {
       )}
 
       {videoStatus === 'idle' && (
-        <button onClick={startVideoRecording} className='relative bg-transparent cursor-pointer'>
-          <Icon src='#icon-video-play' style='fill-[#f97316]' />
+        <button onClick={startVideo} className='relative bg-transparent cursor-pointer'>
+          <Icon src='#icon-video-play' style='fill-[#f97316]' />{' '}
           {videoUrl && (
-            <span className='absolute -bottom-1 -left-1 flex items-center justify-center w-3 h-3 rounded-full bg-primary indicator-item text-slate-800 text-[7px] drop-shadow-5xl-black'>
+            <span className='absolute -bottom-1 -left-1 z-[40] cursor-pointer flex items-center justify-center w-3 h-3 rounded-full bg-primary indicator-item text-slate-800 text-[7px] drop-shadow-5xl-black'>
               1
             </span>
           )}
@@ -73,7 +94,7 @@ const RecordView = ({ audio, video }) => {
         </button>
       )}
       {videoStatus === 'recording' && (
-        <button onClick={stopVideoRecording} className='bg-transparent cursor-pointer'>
+        <button onClick={stopVideo} className='bg-transparent cursor-pointer'>
           <Icon src='#icon-media-stop' style='pulse fill-[#f97316]' />
         </button>
       )}
@@ -87,6 +108,8 @@ const RecordView = ({ audio, video }) => {
           <Icon src='#icon-video-play' style='fill-[#f97316]' />
         </div>
       )}
+
+      {showPreview && previewStream && <VideoPreview stream={previewStream} />}
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
-const ImageDialog = lazy(() => import('../../shared/messages/ImageDialog'));
+const ImageDialog = lazy(() => import('./message.data/ImageDialog'));
 
 import { useAuthContext } from '../../../shared/context/AuthContext';
 import { useRemoveEmoji } from '../../../shared/hooks/useRemoveEmoji';
@@ -11,14 +11,16 @@ import useConversation from '../../../store/useConversation';
 
 import { extractTime } from '../../../shared/utils';
 
-import Icon from '../../ui/Icon';
-import AudioPlayer from '../audio/AudioPlayer';
-import ImageMessage from './ImageMessage';
-import QuotedMessage from './QuotedMessage';
+import ImageMessage from './message.data/ImageMessage';
+import QuotedMessage from './message.data/QuotedMessage';
+import DropdownMessage from './message.data/DropdownMessage';
+import DownloadImage from './message.data/DownloadImage';
+
 import DropdownButton from '../../ui/DropdownButton';
-import DropdownMessage from './DropdownMessage';
-import DownloadImage from './DownloadImage';
-import VideoPlayer from '../video/VideoPlayer';
+import Icon from '../../ui/Icon';
+
+import AudioPlayer from './message.data/audio/AudioPlayer';
+import VideoPlayer from './message.data/video/VideoPlayer';
 
 const Message = ({ message, onReply, quotedMessage }) => {
   const { authUser } = useAuthContext();

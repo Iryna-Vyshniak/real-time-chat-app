@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
-import Icon from '../../ui/Icon';
 import CircleRange from './CircleRange';
+import Icon from '../../../../ui/Icon';
 
 const VideoPlayer = ({ src }) => {
   const [isPlaying, setIsPlaying] = useState(false);
