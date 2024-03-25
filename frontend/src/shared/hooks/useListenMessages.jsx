@@ -17,9 +17,12 @@ export const useListenMessages = () => {
     setNotification,
     deleteNotification,
     deleteMessage,
+    setSelectedMessage,
     messages,
+    setMessages,
   } = useConversation();
 
+  // add message
   const handleNewMessage = useCallback(
     (newMessage) => {
       const sound = new Audio(messageSound);
@@ -48,6 +51,7 @@ export const useListenMessages = () => {
     [addMessage, notification, onlineUsers, selectedConversation, setNotification]
   );
 
+  // delete message
   const handleDeleteMessage = useCallback(
     (id) => {
       const senderId = messages
@@ -79,9 +83,35 @@ export const useListenMessages = () => {
     ]
   );
 
+  // edit message
+  const handleEditMessageSender = useCallback(
+    (messageId, text) => {
+      setSelectedMessage(messageId, text);
+      setMessages(
+        messages.map((message) => (message._id === messageId ? { ...message, text } : message))
+      );
+    },
+    [messages, setMessages, setSelectedMessage]
+  );
+  const handleEditMessageReceiver = useCallback(
+    (messageId, text) => {
+      setMessages(
+        messages.map((message) => (message._id === messageId ? { ...message, text } : message))
+      );
+    },
+    [messages, setMessages]
+  );
+
   useEffect(() => {
     const addMessageListener = (newMessage) => {
       handleNewMessage(newMessage);
+    };
+
+    const editMsgListenerSender = ({ messageId, text }) => {
+      handleEditMessageSender(messageId, text);
+    };
+    const editMsgListenerReceiver = ({ messageId, text }) => {
+      handleEditMessageReceiver(messageId, text);
     };
 
     const deleteMessageListener = ({ id }) => {
@@ -89,11 +119,21 @@ export const useListenMessages = () => {
     };
 
     socket?.on('newMessage', addMessageListener);
+    socket?.on('editMessageSender', editMsgListenerSender);
+    socket?.on('editMessageReceiver', editMsgListenerReceiver);
     socket?.on('deleteMessage', deleteMessageListener);
 
     return () => {
       socket?.off('newMessage');
+      socket?.off('editMessageSender');
+      socket?.off('editMessageReceiver');
       socket?.off('deleteMessage');
     };
-  }, [handleDeleteMessage, handleNewMessage, socket]);
+  }, [
+    handleDeleteMessage,
+    handleEditMessageReceiver,
+    handleEditMessageSender,
+    handleNewMessage,
+    socket,
+  ]);
 };
