@@ -10,6 +10,7 @@ import User from '../models/user.model.js';
 
 import { getReceiverSocketId, io } from '../socket/socket.js';
 
+// ADD MESSAGE
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
   const { text, img, audio, video, quote, quotedId, emoji } = req.body;
@@ -255,9 +256,7 @@ export const deleteMessage = async (req, res) => {
 
   // socket io functionality
   const receiverSocketId = getReceiverSocketId(receiverId);
-  console.log('receiverSocketId: ', receiverSocketId);
   const senderSocketId = getReceiverSocketId(senderId);
-  console.log('senderSocketId: ', senderSocketId);
 
   if ((receiverSocketId && senderSocketId) || senderSocketId) {
     // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
@@ -268,10 +267,35 @@ export const deleteMessage = async (req, res) => {
   res.status(200).json({ info: 'Message success deleted' });
 };
 
+// EDIT MESSAGE
+export const editMessage = async (req, res) => {
+  const { text } = req.body;
+  const { id: receiverId, messageId } = req.params;
+
+  const senderId = req.user.id;
+
+  const updatedMessage = await Message.findByIdAndUpdate(messageId, { text }, { new: true });
+
+  if (!updatedMessage) throw HttpError(404, `Message with id=${messageId} not found`);
+
+  // socket io functionality
+  const receiverSocketId = getReceiverSocketId(receiverId);
+  const senderSocketId = getReceiverSocketId(senderId);
+
+  if ((receiverSocketId && senderSocketId) || senderSocketId) {
+    // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
+    io.to(receiverSocketId).emit('editMessageReceiver', { messageId, text });
+    io.to(senderSocketId).emit('editMessageSender', { messageId, text });
+  }
+
+  res.status(200).json(updatedMessage);
+};
+
 export default {
   getMessages: ctrlWrapper(getMessages),
   sendMessage: ctrlWrapper(sendMessage),
   sendEmoji: ctrlWrapper(sendEmoji),
   removeEmoji: ctrlWrapper(removeEmoji),
   deleteMessage: ctrlWrapper(deleteMessage),
+  editMessage: ctrlWrapper(editMessage),
 };
