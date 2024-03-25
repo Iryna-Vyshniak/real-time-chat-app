@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react';
 
 import useConversation from '../../../store/useConversation';
-
-import Header from './Header';
-import MessageInput from './MessageInput';
-import Messages from './Messages';
-import NoChatSelected from './NoChatSelected';
-import LoadMoreMessages from './LoadMoreMessages';
-import QuotedMessage from './QuotedMessage';
-
 import { useListenReadMessages } from '../../../shared/hooks/useListenReadMessages';
 import { useListenMessages } from '../../../shared/hooks/useListenMessages';
 import { useListenEmoji } from '../../../shared/hooks/useListenEmoji';
 
+import MessagesBlockHeader from './MessagesBlockHeader';
+import MessagesBlockInput from './MessagesBlockInput';
+import Messages from './Messages';
+import QuotedMessage from './message.data/QuotedMessage';
+import NoChatSelected from './NoChatSelected';
+import LoadMoreMessages from './LoadMoreMessages';
+
 const MessagesBlock = ({ isOpen }) => {
   const [quotedMessage, setQuotedMessage] = useState(null);
-  const [isShowQuotedMessage, setIsShowQuotedMessage] = useState(true);
+  const [isShowQuotedMessage, setIsShowQuotedMessage] = useState(false);
 
   const handleClose = () => {
     setIsShowQuotedMessage(false);
@@ -48,7 +47,7 @@ const MessagesBlock = ({ isOpen }) => {
             <NoChatSelected />
           ) : (
             <>
-              <Header name={selectedConversation.fullName} />
+              <MessagesBlockHeader name={selectedConversation.fullName} />
               <Messages onReply={handleReply} />
               {!isLoading && <LoadMoreMessages />}
               <div className='flex flex-col items-center justify-center w-full'>
@@ -60,7 +59,7 @@ const MessagesBlock = ({ isOpen }) => {
                     onCloseQuote={handleClose}
                   />
                 )}
-                <MessageInput
+                <MessagesBlockInput
                   onCloseQuote={handleClose}
                   isShowQuotedMessage={isShowQuotedMessage}
                   quotedMessage={quotedMessage}
