@@ -93,6 +93,14 @@ const useConversation = createWithEqualityFn(
         selectedEmojis: { ...state.selectedEmojis, [messageId]: emoji },
       }));
     },
+    selectedMessage: null,
+    setSelectedMessage: (messageId, text) => {
+      if (messageId === null && text === undefined) {
+        set({ selectedMessage: null });
+      } else {
+        set({ selectedMessage: { messageId, text } });
+      }
+    },
     // notifications
     lastMessages: [],
     setLastMessages: (lastMessages) => set({ lastMessages }),
