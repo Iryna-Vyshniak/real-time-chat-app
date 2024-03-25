@@ -26,6 +26,7 @@ router.patch(
   uploadMiddleware,
   messageCtrl.removeEmoji
 );
+router.put('/edit/:id/:messageId', protectRoute, messageValidate, messageCtrl.editMessage);
 router.delete(
   '/delete/:id',
   protectRoute,
