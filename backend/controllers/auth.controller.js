@@ -26,9 +26,9 @@ const signup = async (req, res) => {
 
   //   avatar
   const manAvatar =
-    'https://res.cloudinary.com/dkqxaid79/image/upload/v1691497616/rewievs/image_474_ezymz2.png';
+    'https://res.cloudinary.com/dkqxaid79/image/upload/v1711450156/rewievs/man-emoji.png';
   const womanAvatar =
-    'https://res.cloudinary.com/dkqxaid79/image/upload/v1691497617/rewievs/image_70_j8immx.png';
+    'https://res.cloudinary.com/dkqxaid79/image/upload/v1711450156/rewievs/female-emoji.png';
 
   const newUser = await User.create({
     ...req.body,
