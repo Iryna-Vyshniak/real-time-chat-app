@@ -150,7 +150,7 @@ export const sendEmoji = async (req, res) => {
   const receiverSocketId = getReceiverSocketId(receiver);
   const senderSocketId = getReceiverSocketId(sender);
 
-  if (receiverSocketId && senderSocketId) {
+  if ((receiverSocketId && senderSocketId) || senderSocketId) {
     // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
     io.to(senderSocketId).emit('addEmoji', { messageId, emoji });
     io.to(receiverSocketId).emit('addEmoji', { messageId, emoji });
@@ -182,7 +182,7 @@ export const removeEmoji = async (req, res) => {
   const receiverSocketId = getReceiverSocketId(receiver);
   const senderSocketId = getReceiverSocketId(sender);
 
-  if (receiverSocketId && senderSocketId) {
+  if ((receiverSocketId && senderSocketId) || senderSocketId) {
     // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
     io.to(receiverSocketId).emit('removeEmoji', { messageId });
     io.to(senderSocketId).emit('removeEmoji', { messageId });
