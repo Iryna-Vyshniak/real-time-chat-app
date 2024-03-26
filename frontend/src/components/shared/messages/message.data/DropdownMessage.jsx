@@ -1,7 +1,7 @@
 import EmojiPopup from './emojii/EmojiPopup';
-import DeleteMessage from './DeleteMessage';
-import EditMessage from './EditMessage';
-import ReplyMessage from './ReplyMessage';
+import DeleteMessage from './delete/DeleteMessage';
+import EditMessage from './edit/EditMessage';
+import ReplyMessage from './reply/ReplyMessage';
 
 const DropdownMessage = ({ dropdownColor, message, onReply, fromMe }) => {
   return (
@@ -9,7 +9,7 @@ const DropdownMessage = ({ dropdownColor, message, onReply, fromMe }) => {
       tabIndex={0}
       className={`
                 ${dropdownColor} 
-                dropdown-content menu mt-2 p-2 shadow rounded-box w-24 gap-2 z-[50]`}
+                menu menu-xs dropdown-content z-[50] glass mt-2 p-2 shadow rounded-box w-24`}
     >
       <ReplyMessage message={message} onReply={onReply} />
       <EditMessage id={message._id} text={message.text} fromMe={fromMe} />

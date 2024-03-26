@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
-const ImageDialog = lazy(() => import('./message.data/ImageDialog'));
+const ImageDialog = lazy(() => import('./message.data/image/ImageDialog'));
 
 import { useAuthContext } from '../../../shared/context/AuthContext';
 import { useRemoveEmoji } from '../../../shared/hooks/useRemoveEmoji';
@@ -11,10 +11,10 @@ import useConversation from '../../../store/useConversation';
 
 import { extractTime } from '../../../shared/utils';
 
-import ImageMessage from './message.data/ImageMessage';
-import QuotedMessage from './message.data/QuotedMessage';
 import DropdownMessage from './message.data/DropdownMessage';
-import DownloadImage from './message.data/DownloadImage';
+import QuotedMessage from './message.data/reply/QuotedMessage';
+import ImageMessage from './message.data/image/ImageMessage';
+import DownloadImage from './message.data/image/DownloadImage';
 
 import DropdownButton from '../../ui/DropdownButton';
 import Icon from '../../ui/Icon';
@@ -87,7 +87,7 @@ const Message = ({ message, onReply, quotedMessage }) => {
               fromMe={fromMe}
             />
           )}
-          <DropdownButton>
+          <DropdownButton id={message._id} fromMe={fromMe} button={true}>
             <DropdownMessage
               dropdownColor={dropdownColor}
               message={message}

@@ -5,12 +5,12 @@ import { useListenReadMessages } from '../../../shared/hooks/useListenReadMessag
 import { useListenMessages } from '../../../shared/hooks/useListenMessages';
 import { useListenEmoji } from '../../../shared/hooks/useListenEmoji';
 
+import NoChatSelected from './NoChatSelected';
 import MessagesBlockHeader from './MessagesBlockHeader';
 import MessagesBlockInput from './MessagesBlockInput';
 import Messages from './Messages';
-import QuotedMessage from './message.data/QuotedMessage';
-import NoChatSelected from './NoChatSelected';
 import LoadMoreMessages from './LoadMoreMessages';
+import QuotedMessage from './message.data/reply/QuotedMessage';
 
 const MessagesBlock = ({ isOpen }) => {
   const [quotedMessage, setQuotedMessage] = useState(null);
