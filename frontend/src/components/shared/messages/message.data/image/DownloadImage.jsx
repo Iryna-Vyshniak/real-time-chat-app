@@ -1,6 +1,6 @@
-import { downloadImage } from '../../../../shared/utils/index';
+import { downloadImage } from '../../../../../shared/utils';
 
-import Icon from '../../../ui/Icon';
+import Icon from '../../../../ui/Icon';
 
 const DownloadImage = ({ message }) => {
   return (
