@@ -1,13 +1,5 @@
-import DropdownContent from './DropdownContent';
-
-const Dropdown = ({ avatar }) => {
-  return (
-    <div className='dropdown dropdown-bottom dropdown-left md:dropdown-right'>
-      {avatar}
-
-      <DropdownContent />
-    </div>
-  );
-};
+const Dropdown = ({ children }) => (
+  <div className='dropdown dropdown-bottom dropdown-left md:dropdown-right'>{children}</div>
+);
 
 export default Dropdown;

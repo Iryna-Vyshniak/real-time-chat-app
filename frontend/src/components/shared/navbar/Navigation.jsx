@@ -2,6 +2,7 @@ import { useAuthContext } from '../../../shared/context/AuthContext';
 
 import Avatar from '../../ui/Avatar';
 import Dropdown from './Dropdown';
+import DropdownContent from './DropdownContent';
 import Notification from './Notification';
 
 const Navigation = () => {
@@ -15,7 +16,10 @@ const Navigation = () => {
           <div className='navbar-end md:navbar'>
             <Notification />
           </div>
-          <Dropdown avatar={<Avatar src={authUser.avatar} />} />
+          <Dropdown>
+            <Avatar src={authUser.avatar} />
+            <DropdownContent />
+          </Dropdown>
         </>
       )}
     </nav>
