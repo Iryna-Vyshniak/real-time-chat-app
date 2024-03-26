@@ -1,4 +1,4 @@
-import Icon from '../../../ui/Icon';
+import Icon from '../../../../ui/Icon';
 
 const QuotedMessage = ({ message, showButton, onCloseQuote, dropdownColor }) => {
   if (!message) return;
