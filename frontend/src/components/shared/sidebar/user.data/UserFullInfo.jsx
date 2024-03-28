@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import Icon from '../../ui/Icon';
 
-const UserInfo = ({ user }) => {
+import Icon from '../../../ui/Icon';
+
+const UserFullInfo = ({ user }) => {
   return (
     <div className='p-4 w-[90%] md:w-1/3 h-auto bg-primary/10 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-1 rounded-md text-slate-300 text-lg drop-shadow-1xl-black'>
       <Link
@@ -40,4 +41,4 @@ const UserInfo = ({ user }) => {
   );
 };
 
-export default UserInfo;
+export default UserFullInfo;

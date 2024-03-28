@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import UserInfo from '../../components/shared/sidebar/UserInfo';
+import UserFullInfo from '../../components/shared/sidebar/user.data/UserFullInfo';
 
 import { useGetUserInfo } from '../../shared/hooks/useGetUserInfo';
 
@@ -15,7 +15,7 @@ const UserInfoPage = () => {
           <p className='loading loading-ring loading-lg'></p>
         </div>
       )}
-      {!isLoading && user && <UserInfo user={user} />}
+      {!isLoading && user && <UserFullInfo user={user} />}
     </>
   );
 };
