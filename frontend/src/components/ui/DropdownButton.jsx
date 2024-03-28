@@ -1,7 +1,7 @@
 import Icon from './Icon';
 
 const DropdownButton = ({ children, fromMe, style, button }) => {
-  const position = fromMe ? 'dropdown-left' : 'dropdown-left sm:dropdown-right';
+  const position = fromMe ? 'dropdown-left' : 'dropdown-right';
 
   return (
     <div className={style ? style : `dropdown ${position} absolute top-1 right-1`}>
