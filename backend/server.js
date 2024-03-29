@@ -7,6 +7,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import authRouter from './routes/api/auth.routes.js';
 import messageRouter from './routes/api/message.routes.js';
 import usersRouter from './routes/api/user.routes.js';
+import chatRouter from './routes/api/chat.routes.js';
 
 import connectToMongoDB from './db/connectToMongoDB.js';
 import { app, server } from './socket/socket.js';
@@ -30,6 +31,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRouter);
 app.use('/api/messages', messageRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/chat', chatRouter);
 
 // Serve static files from the frontend/dist directory
 app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
