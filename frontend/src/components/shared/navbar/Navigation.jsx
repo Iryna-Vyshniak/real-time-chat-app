@@ -2,7 +2,6 @@ import { useAuthContext } from '../../../shared/context/AuthContext';
 
 import Avatar from '../../ui/Avatar';
 import DropdownButton from '../../ui/DropdownButton';
-// import Dropdown from './Dropdown';
 import DropdownContent from './DropdownContent';
 import Notification from './Notification';
 

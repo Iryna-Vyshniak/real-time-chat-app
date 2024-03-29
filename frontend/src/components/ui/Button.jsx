@@ -1,11 +1,11 @@
-const Button = ({ children, style, onClick }, props) => {
+const Button = ({ children, style, onClick, width }, props) => {
   return (
     <button
       onClick={onClick}
       className={`${
         style
-          ? 'btn-sm btn-circle rounded-full h-9 min-h-9 w-9'
-          : 'mt-2 btn-block h-10 min-h-10 rounded-lg'
+          ? `btn-sm btn-circle rounded-full h-9 min-h-9 w-9`
+          : `mt-2 btn-block h-10 min-h-10 rounded-lg ${width}`
       } btn btn-md bg-primary text-slate-800 text-sm font-medium uppercase tracking-widest shadow-md hover:bg-green transition duration-200 ease-in-out hover:shadow-lg active:bg-green`}
       {...props}
     >

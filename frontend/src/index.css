@@ -67,20 +67,18 @@ div {
 }
 
 .avatar.online:before {
-  content: '';
-  position: absolute;
-  z-index: 10;
-  display: block;
-  border-radius: 9999px;
-  --tw-bg-opacity: 1;
   background-color: #ff8400;
-  outline-style: solid;
   outline-width: 2px;
-  outline-color: var(--fallback-b1, oklch(var(--b1) / 1));
   width: 15%;
   height: 15%;
   top: 7%;
   right: 7%;
+}
+
+.avatar-group :where(.avatar) {
+  border-width: 2px;
+  --tw-border-opacity: 1;
+  border-color: #e6f4cf;
 }
 
 .radio {

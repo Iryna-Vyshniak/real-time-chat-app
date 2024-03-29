@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
@@ -7,7 +8,6 @@ import useConversation from '../../../store/useConversation.jsx';
 
 import Avatar from '../../ui/Avatar';
 import Divider from '../../ui/Divider.jsx';
-import { useState } from 'react';
 
 const Conversation = ({
   conversation: { _id, fullName, username, avatar },
