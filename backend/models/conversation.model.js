@@ -5,6 +5,7 @@ import { addUpdateSettings, handleMongooseError } from '../helpers/index.js';
 const conversationSchema = new Schema(
   {
     chatName: { type: String, trim: true, default: 'New group' },
+    chatAvatar: { type: String, default: '' },
     isGroupChat: { type: Boolean, default: false },
     groupAdmin: { type: Schema.Types.ObjectId, ref: 'User' },
     participants: [
