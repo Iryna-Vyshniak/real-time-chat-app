@@ -6,8 +6,9 @@ import { HttpError } from '../helpers/index.js';
 
 import Message from '../models/message.model.js';
 import User from '../models/user.model.js';
+import Conversation from '../models/conversation.model.js';
 
-// get user for info
+// @description - get user for info
 const getUserInfo = async (req, res) => {
   const { id } = req.params;
 
@@ -18,7 +19,7 @@ const getUserInfo = async (req, res) => {
   res.status(200).json(user);
 };
 
-// get users for sidebar
+// @description - get users for sidebar
 const getUsersForSidebar = async (req, res) => {
   const loggedInUserId = req.user._id;
 
@@ -103,10 +104,23 @@ const getUsersForSidebar = async (req, res) => {
     },
   ]);
 
-  res.status(200).json({ allFilteredUsers, lastMessages });
+  // filter chats where user is a participant
+  const userGroupChats = await Conversation.aggregate([
+    { $match: { isGroupChat: true, participants: loggedInUserId } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'participants',
+        foreignField: '_id',
+        as: 'participantsData',
+      },
+    },
+  ]);
+
+  res.status(200).json({ allFilteredUsers, lastMessages, userGroupChats });
 };
 
-// update unread messages
+// @description -  update unread messages
 const updateMessageStatus = async (req, res) => {
   const { id } = req.body;
   const filter = { senderId: id };
@@ -122,7 +136,7 @@ const updateMessageStatus = async (req, res) => {
   }
 };
 
-// update user profile
+// @description - update user profile
 const updateUser = async (req, res) => {
   const { fullName, username, password, gender, avatar } = req.body;
 
