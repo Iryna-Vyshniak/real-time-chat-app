@@ -26,7 +26,10 @@ export const sendMessage = async (req, res) => {
   });
 
   if (!conversation) {
-    conversation = await Conversation.create({ participants: [sender, receiver] });
+    conversation = await Conversation.create({
+      groupAdmin: null,
+      participants: [sender, receiver],
+    });
   }
 
   const senderInfo = await User.findById({ _id: sender });
