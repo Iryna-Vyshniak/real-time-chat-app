@@ -2,7 +2,7 @@ const Logo = () => {
   return (
     <div className='hidden md:flex flex-1 cursor-pointer'>
       <img
-        src='/logo1.svg'
+        src='/avatar-logo.svg'
         alt='logo chat'
         width='44px'
         height='44px'
