@@ -111,9 +111,19 @@ const useConversation = createWithEqualityFn(
     conversations: [],
     setConversations: (conversations) => set({ conversations }),
     selectedConversation: null,
-    setSelectedConversation: (selectedConversation) => set({ selectedConversation }),
+    setSelectedConversation: (conversation) => {
+      if (conversation !== null) {
+        const { type, data } = conversation;
+        set({ selectedConversation: { type, data } });
+      } else {
+        set({ selectedConversation: null });
+      }
+    },
     conversationId: null,
     setConversationId: (conversationId) => set({ conversationId }),
+    // GROUPS
+    groups: [],
+    setGroups: (groups) => set({ groups }),
   }),
   shallow
 );
