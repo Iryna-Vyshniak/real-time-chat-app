@@ -6,7 +6,7 @@ import { HttpError } from '../helpers/index.js';
 import { ctrlWrapper } from '../decorators/index.js';
 import generateTokenAndSetCookie from '../utils/generateToken.js';
 
-// SIGNUP
+// @description - SIGNUP
 const signup = async (req, res) => {
   const { username, password, confirmPassword, gender } = req.body;
 
@@ -14,9 +14,9 @@ const signup = async (req, res) => {
     throw HttpError(400, 'Passwords don`t match');
   }
 
-  const user = await User.findOne({ username });
+  const userExists = await User.findOne({ username });
 
-  if (user) {
+  if (userExists) {
     throw HttpError(400, 'Username already exists');
   }
 
@@ -34,6 +34,7 @@ const signup = async (req, res) => {
     ...req.body,
     password: hashPassword,
     avatar: gender === 'female' ? womanAvatar : manAvatar,
+    isAdmin: false,
   });
 
   if (!newUser) {
@@ -48,10 +49,11 @@ const signup = async (req, res) => {
     fullName: newUser.fullName,
     username: newUser.username,
     avatar: newUser.avatar,
+    isAdmin: newUser.isAdmin,
   });
 };
 
-// LOGIN
+// @description - LOGIN
 const login = async (req, res) => {
   const { username, password } = req.body;
 
@@ -69,10 +71,11 @@ const login = async (req, res) => {
     fullName: user.fullName,
     username: user.username,
     avatar: user.avatar,
+    isAdmin: user.isAdmin,
   });
 };
 
-// LOGOUT
+// @description - LOGOUT
 const logout = (req, res) => {
   res.cookie('jwt', '', { maxAge: 0 });
   res.status(200).json({ message: 'Successfully logged out' });
