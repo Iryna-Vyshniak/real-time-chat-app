@@ -7,7 +7,7 @@ import Conversation from '../models/conversation.model.js';
 
 export const createGroupChat = async (req, res) => {
   const { users, chatname } = req.body;
-  const sender = req.user; // its me
+  const sender = req.user; // it`s me
 
   if (!users || !chatname) throw HttpError(400, 'Please fill all the fields');
 
@@ -28,6 +28,7 @@ export const createGroupChat = async (req, res) => {
     isGroupChat: true,
     participants: users,
     groupAdmin: sender,
+    receiverType: 'group',
   });
 
   const getDetailedGroupChat = await Conversation.findOne({ _id: groupChat._id })
