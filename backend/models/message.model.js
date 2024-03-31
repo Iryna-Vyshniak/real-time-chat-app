@@ -12,7 +12,12 @@ const messageSchema = new Schema(
     },
     receiver: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      required: true,
+      refPath: 'onModel',
+    },
+    onModel: {
+      type: String,
+      enum: ['User', 'Conversation'],
       required: true,
     },
     text: {
