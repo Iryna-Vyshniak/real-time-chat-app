@@ -27,45 +27,31 @@ const getUsersForSidebar = async (req, res) => {
   const allFilteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
 
   // Get the last unread messages from each sender
-  //   $match: Цей етап фільтрує записи, залишаючи лише ті, які відповідають вказаним умовам. У цьому випадку фільтрується колекція повідомлень, вибираючи ті, що мають отримувача (receiver) зі значенням, рівним loggedInUserId, і ще не були прочитані (read: false).
-
-  // $sort: Цей етап сортує записи за значенням поля createdAt у зворотньому порядку (-1), щоб найновіші записи з'являлися першими.
-
-  // $group: У цьому кроці записи групуються за значенням поля sender. Кожній групі присвоюється властивість lastMessages, яка містить масив об'єктів, представляючих кожен запис у цій групі.
-
-  // $unwind: Цей етап "розгортає" масив lastMessages, розбиваючи його на окремі документи, щоб їх можна було подальше обробити.
-
-  // $lookup: Виконує з'єднання з колекцією users, де значення поля _id у колекції Message (sender) збігається з значенням поля _id у колекції users. Результат з'єднання записується у поле senderInfo.
-
-  // $unwind: Цей крок розгортає масив senderInfo, розбиваючи його на окремі документи.
-
-  // Аналогічно до кроків 5-6, виконуються $lookup та $unwind для отримання даних про отримувача (receiverInfo).
-
-  // $addFields: Додає до об'єкту lastMessages поля sender та receiver, які містять розгорнуті дані про відправника та отримувача.
-
-  // $replaceRoot: Замінює корінь кожного документа на об'єкт lastMessages.
-
-  // $project: Виключає поля senderInfo та receiverInfo з вихідних даних.
   const lastMessages = await Message.aggregate([
     {
+      //   $match: Цей етап фільтрує записи, залишаючи лише ті, які відповідають вказаним умовам. У цьому випадку фільтрується колекція повідомлень, вибираючи ті, що мають отримувача (receiver) зі значенням, рівним loggedInUserId, і ще не були прочитані (read: false).
       $match: {
         receiver: loggedInUserId,
         read: false,
       },
     },
     {
+      // $sort: Цей етап сортує записи за значенням поля createdAt у зворотньому порядку (-1), щоб найновіші записи з'являлися першими.
       $sort: { createdAt: -1 },
     },
     {
+      // $group: У цьому кроці записи групуються за значенням поля sender. Кожній групі присвоюється властивість lastMessages, яка містить масив об'єктів, представляючих кожен запис у цій групі.
       $group: {
         _id: '$sender',
         lastMessages: { $addToSet: '$$ROOT' },
       },
     },
     {
+      // $unwind: Цей етап "розгортає" масив lastMessages, розбиваючи його на окремі документи, щоб їх можна було подальше обробити.
       $unwind: '$lastMessages',
     },
     {
+      // $lookup: Виконує з'єднання з колекцією users, де значення поля _id у колекції Message (sender) збігається з значенням поля _id у колекції users. Результат з'єднання записується у поле senderInfo
       $lookup: {
         from: 'users',
         localField: '_id',
@@ -74,6 +60,7 @@ const getUsersForSidebar = async (req, res) => {
       },
     },
     {
+      // $unwind: Цей крок розгортає масив senderInfo, розбиваючи його на окремі документи.
       $unwind: '$senderInfo',
     },
     {
@@ -88,15 +75,18 @@ const getUsersForSidebar = async (req, res) => {
       $unwind: '$receiverInfo',
     },
     {
+      // $addFields: Додає до об'єкту lastMessages поля sender та receiver, які містять розгорнуті дані про відправника та отримувача.
       $addFields: {
         'lastMessages.sender': '$senderInfo',
         'lastMessages.receiver': '$receiverInfo',
       },
     },
     {
+      // $replaceRoot: Замінює корінь кожного документа на об'єкт lastMessages.
       $replaceRoot: { newRoot: '$lastMessages' },
     },
     {
+      // $project: Виключає поля senderInfo та receiverInfo з вихідних даних.
       $project: {
         senderInfo: 0,
         receiverInfo: 0,
@@ -104,10 +94,11 @@ const getUsersForSidebar = async (req, res) => {
     },
   ]);
 
-  // filter chats where user is a participant
+  // filter chats where user is a participant and add field with participants info
   const userGroupChats = await Conversation.aggregate([
     { $match: { isGroupChat: true, participants: loggedInUserId } },
     {
+      // This part performs a “join” operation with the users collection. It looks for users whose _id are in the participants list of each chat and adds those users to a new participantsData field in each chat.
       $lookup: {
         from: 'users',
         localField: 'participants',
