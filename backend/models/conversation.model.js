@@ -25,6 +25,11 @@ const conversationSchema = new Schema(
         default: [],
       },
     ],
+    receiverType: {
+      type: String,
+      enum: ['user', 'group'],
+      required: true,
+    },
   },
   { versionKey: false, timestamps: true }
 );
