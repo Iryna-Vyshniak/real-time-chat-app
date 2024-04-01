@@ -47,7 +47,13 @@ const MessagesBlock = ({ isOpen }) => {
             <NoChatSelected />
           ) : (
             <>
-              <MessagesBlockHeader name={selectedConversation.fullName} />
+              <MessagesBlockHeader
+                name={
+                  selectedConversation?.type === 'private'
+                    ? selectedConversation?.data.fullName
+                    : selectedConversation?.data.chatName
+                }
+              />
               <Messages onReply={handleReply} />
               {!isLoading && <LoadMoreMessages />}
               <div className='flex flex-col items-center justify-center w-full'>

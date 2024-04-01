@@ -44,7 +44,12 @@ const Message = ({ message, onReply, quotedMessage }) => {
   const chatClassName = fromMe ? 'chat-end' : 'chat-start';
   const chatColor = fromMe ? 'bg-beige/80' : 'bg-green/80';
   const dropdownColor = fromMe ? 'bg-green' : 'bg-beige';
-  const avatar = fromMe ? authUser.avatar : selectedConversation?.avatar;
+  const avatar = fromMe
+    ? authUser.avatar
+    : selectedConversation?.type === 'private'
+    ? selectedConversation?.data?.avatar
+    : message.sender.avatar;
+
   const isMsgRead = message.read;
 
   // read or not

@@ -2,9 +2,9 @@ import { lazy, useEffect, useState } from 'react';
 
 import { useGetMessages } from '../../shared/hooks/useGetMessages';
 
-const MessagesBlock = lazy(() => import('../../components/shared/messages/MessagesBlock'));
-const Sidebar = lazy(() => import('../../components/shared/sidebar/Sidebar'));
-const Navbar = lazy(() => import('../../components/shared/navbar/Navbar'));
+const MessagesBlock = lazy(() => import('../../components/features/messages/MessagesBlock'));
+const Sidebar = lazy(() => import('../../components/features/sidebar/Sidebar'));
+const Navbar = lazy(() => import('../../components/features/navbar/Navbar'));
 
 const HomePage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

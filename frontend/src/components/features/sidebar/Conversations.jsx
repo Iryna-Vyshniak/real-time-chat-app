@@ -19,11 +19,15 @@ const Conversations = ({ toggleSidebar }) => {
   const { isLoading, conversations } = useGetConversations();
   const { selectedConversation, notification } = useConversation();
 
-  const filteredConversation = useFilterConversations(conversations, selectedConversation);
+  const filteredConversation = useFilterConversations(
+    conversations,
+    selectedConversation?.data,
+    'private'
+  );
 
   const nonFilteredConversations = useConversation((state) =>
     state.conversations.filter((conversation) =>
-      state.selectedConversation ? conversation._id !== state.selectedConversation._id : true
+      state.selectedConversation ? conversation._id !== state.selectedConversation?.data?._id : true
     )
   );
 

@@ -34,7 +34,10 @@ const Notification = () => {
                 <li
                   key={_id + idx}
                   onClick={() => {
-                    setSelectedConversation({ _id, fullName, username, avatar });
+                    setSelectedConversation({
+                      type: 'private',
+                      data: { _id, fullName, username, avatar },
+                    });
                     setNotification(
                       notification.filter(({ sender: { _id: idSender } }) => idSender !== _id)
                     );

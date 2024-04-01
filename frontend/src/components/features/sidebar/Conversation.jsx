@@ -31,14 +31,14 @@ const Conversation = ({
   const { onlineUsers } = useSocketContext();
   const isOnline = onlineUsers.includes(_id);
 
-  const isSelected = selectedConversation?._id === _id;
+  const isSelected = selectedConversation?.data?._id === _id;
 
   const handleClick = () => {
     // implementing click disabling for previously clicked items
     if (clicked) return;
     // resetting the current page
     resetCurrentPage();
-    setSelectedConversation({ _id, fullName, username, avatar });
+    setSelectedConversation({ type: 'private', data: { _id, fullName, username, avatar } });
     setNotification(notification.filter(({ sender: { _id: idSender } }) => idSender !== _id));
     toggleSidebar();
     setClicked(true);

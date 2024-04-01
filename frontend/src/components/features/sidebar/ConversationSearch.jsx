@@ -18,13 +18,14 @@ const ConversationSearch = () => {
     const searchConversation = conversations.find((conversation) =>
       conversation.fullName.toLowerCase().includes(search.toLowerCase().trim())
     );
+    console.log('searchConversation: ', searchConversation);
 
     if (!searchConversation) {
       return toast.error('Not found user');
     }
 
     if (searchConversation) {
-      setSelectedConversation(searchConversation);
+      setSelectedConversation({ type: 'private', data: searchConversation });
       setSearch('');
     }
   };
