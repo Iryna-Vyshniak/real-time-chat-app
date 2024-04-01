@@ -6,7 +6,8 @@ import useConversation from '../../store/useConversation';
 export const useGetConversations = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const { lastMessages, setLastMessages, conversations, setConversations } = useConversation();
+  const { lastMessages, setLastMessages, conversations, setConversations, setGroups } =
+    useConversation();
 
   const getConversations = useCallback(async () => {
     setIsLoading(true);
@@ -19,12 +20,13 @@ export const useGetConversations = () => {
 
       setConversations(data.allFilteredUsers);
       setLastMessages(data.lastMessages);
+      setGroups(data.userGroupChats);
     } catch (error) {
       toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
-  }, [setConversations, setLastMessages]);
+  }, [setConversations, setGroups, setLastMessages]);
 
   useEffect(() => {
     getConversations();
