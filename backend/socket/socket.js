@@ -26,6 +26,28 @@ io.on('connection', (socket) => {
   const userId = socket.handshake.query.userId;
   if (userId !== 'undefined') userSocketMap[userId] = socket.id;
 
+  // Join chat room based on conversation ID
+  socket.on('joinRoom', (room) => {
+    // Get information about users who are in the room
+    const roomUsers = io.sockets.adapter.rooms.get('group_' + room);
+
+    // Check if the user is in the room
+    if (!roomUsers || !roomUsers.has(socket.id)) {
+      // If the user is not in the room, then we add him to it
+      socket.join('group_' + room);
+      console.log(`User ${socket.id} joined room: group_${room}`);
+    }
+  });
+
+  // Leave chat room based on conversation ID
+  socket.on('leaveRoom', (room) => {
+    console.log('room: ', room);
+    socket.leave('group_' + room);
+    console.log(`User ${socket.id} leave Room: `, room);
+  });
+
+  console.log('rooms', socket.rooms);
+
   // io.emit() is used to send events to all the connected clients - for ex: who is online or offline
   io.emit('getOnlineUsers', Object.keys(userSocketMap));
 
