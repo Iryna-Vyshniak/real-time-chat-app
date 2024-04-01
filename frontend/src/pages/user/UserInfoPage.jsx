@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import UserFullInfo from '../../components/shared/sidebar/user.data/UserFullInfo';
+import UserFullInfo from '../../components/features/sidebar/user.data/UserFullInfo';
 
 import { useGetUserInfo } from '../../shared/hooks/useGetUserInfo';
 
