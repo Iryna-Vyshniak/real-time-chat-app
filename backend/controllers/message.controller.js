@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import { Types } from 'mongoose';
 
 import { ctrlWrapper } from '../decorators/index.js';
 import { HttpError } from '../helpers/index.js';
@@ -10,9 +11,10 @@ import User from '../models/user.model.js';
 
 import { getReceiverSocketId, io } from '../socket/socket.js';
 
-// ADD MESSAGE
+//  @description - ADD MESSAGE
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
+
   const { text, img, audio, video, quote, quotedId, emoji } = req.body;
 
   const sender = req.user._id; // its me
@@ -21,19 +23,46 @@ export const sendMessage = async (req, res) => {
     throw HttpError(400, 'Invalid data passed into request');
   }
 
-  let conversation = await Conversation.findOne({
-    participants: { $all: [sender, receiver] },
-  });
+  let receiverType;
+  let conversation;
+  let receiverInfo;
+  let hasGroupChat = false;
+
+  // check whether the recipient ID is a valid ObjectId
+  if (Types.ObjectId.isValid(receiver)) {
+    // If so, assume the recipient is a user
+    receiverType = 'user';
+    receiverInfo = await User.findById(receiver);
+    if (receiverInfo) {
+      // If the user exists, we are looking for a conversation with this user
+      conversation = await Conversation.findOne({
+        participants: { $all: [sender, receiver] },
+        isGroupChat: false,
+      });
+      hasGroupChat = false;
+    } else {
+      // If the user doesn't exist, we assume it's a group and look for the conversation by ID
+      receiverType = 'group';
+      conversation = await Conversation.findById(receiver);
+      receiverInfo = receiver;
+      hasGroupChat = true;
+    }
+  }
 
   if (!conversation) {
     conversation = await Conversation.create({
       groupAdmin: null,
       participants: [sender, receiver],
+      receiverType,
     });
   }
 
+  if (conversation.receiverType === 'user') {
+    receiverInfo = await User.findById({ _id: receiver });
+  } else if (conversation.receiverType === 'group') {
+    receiverInfo = receiver;
+  }
   const senderInfo = await User.findById({ _id: sender });
-  const receiverInfo = await User.findById({ _id: receiver });
 
   // retrieve information about the quoted message if a quoted message ID is provided
   let repliedInfo = null;
@@ -99,7 +128,8 @@ export const sendMessage = async (req, res) => {
   const newMessage = await Message.create({
     conversationId: conversation._id,
     sender: senderInfo,
-    receiver: receiverInfo,
+    receiver: conversation.receiverType === 'user' ? receiverInfo : conversation._id,
+    onModel: conversation.receiverType === 'user' ? 'User' : 'Conversation',
     text,
     img: imgUrl,
     audio: audioUrl,
@@ -120,20 +150,24 @@ export const sendMessage = async (req, res) => {
   await Promise.all([conversation.save(), newMessage.save()]);
 
   // socket io functionality
-  const receiverSocketId = getReceiverSocketId(receiver);
+  if (hasGroupChat) {
+    io.to('group_' + receiver).emit('newMessage', newMessage);
+  } else {
+    const receiverSocketId = getReceiverSocketId(receiver);
 
-  if (receiverSocketId) {
-    // io.to(socket_id).emit() used to send events to one specific clients
-    io.to(receiverSocketId).emit('newMessage', newMessage);
+    if (receiverSocketId) {
+      // io.to(socket_id).emit() used to send events to one specific clients
+      io.to(receiverSocketId).emit('newMessage', newMessage);
+    }
   }
 
   res.status(201).json(newMessage);
 };
 
-// SEND EMOJI
+//  @description - SEND EMOJI
 export const sendEmoji = async (req, res) => {
   const { id: receiver, messageId } = req.params;
-  const sender = req.user._id; // its me
+  const sender = req.user._id; // it`s me
   const { emoji } = req.body;
 
   if (!emoji && !messageId) {
@@ -162,7 +196,7 @@ export const sendEmoji = async (req, res) => {
   res.status(200).json(updateMessage);
 };
 
-// REMOVE EMOJI
+//  @description - REMOVE EMOJI
 export const removeEmoji = async (req, res) => {
   const { id: receiver, messageId } = req.params;
   const sender = req.user._id; // its me
@@ -194,25 +228,42 @@ export const removeEmoji = async (req, res) => {
   res.status(200).json(updateMessage);
 };
 
-// GET MESSAGES
-
+//  @description - GET ALL MESSAGES
 export const getMessages = async (req, res) => {
   const { id: receiver } = req.params; // my receiver
+
   const sender = req.user._id; // it`s me
   const { page: currentPage, limit: currentLimit } = req.query;
 
   const { page, limit, skip } = pagination(currentPage, currentLimit);
 
-  // get actual messages
-  const conversation = await Conversation.findOne({
-    participants: { $all: [sender, receiver] },
-  }).populate({
-    path: 'messages',
-    populate: [
-      { path: 'sender', model: 'User', select: ' _id fullName username avatar' },
-      { path: 'receiver', model: 'User', select: ' _id fullName username avatar' },
-    ],
-  });
+  if (!receiver) throw HttpError(400, 'Receiver ID is required');
+
+  let receiverType;
+  let conversation;
+
+  if (Types.ObjectId.isValid(receiver)) {
+    // If receiver is a valid ObjectId, assume it is a user
+    receiverType = 'user';
+    const user = await User.findById(receiver);
+    if (user) {
+      // If the user exists, we are looking for a conversation with this user
+      conversation = await Conversation.findOne({
+        participants: { $all: [sender, receiver] },
+        isGroupChat: false,
+      }).populate({
+        path: 'messages',
+        populate: [
+          { path: 'sender', model: 'User', select: '-password' },
+          { path: 'receiver', model: 'User', select: '-password' },
+        ],
+      });
+    } else {
+      // If the user doesn't exist, we assume it's a group and look for the conversation by ID
+      receiverType = 'group';
+      conversation = await Conversation.findById(receiver);
+    }
+  }
 
   if (!conversation)
     return res
@@ -224,8 +275,12 @@ export const getMessages = async (req, res) => {
     .skip(skip) // Skip previous messages
     .limit(limit) // Limit the number of messages per page
     .populate([
-      { path: 'sender', model: 'User', select: '_id fullName username avatar' },
-      { path: 'receiver', model: 'User', select: '_id fullName username avatar' },
+      { path: 'sender', model: 'User', select: '-password' },
+      {
+        path: 'receiver',
+        model: receiverType === 'user' ? 'User' : 'Conversation',
+        select: '-password',
+      },
     ]);
   const totalMessages = conversation.messages.length;
 
@@ -238,7 +293,7 @@ export const getMessages = async (req, res) => {
   });
 };
 
-// DELETE MESSAGE
+//  @description - DELETE MESSAGE
 export const deleteMessage = async (req, res) => {
   const { id } = req.params;
   const senderId = req.user._id; // it`s me
@@ -270,7 +325,7 @@ export const deleteMessage = async (req, res) => {
   res.status(200).json({ info: 'Message success deleted' });
 };
 
-// EDIT MESSAGE
+//  @description - EDIT MESSAGE
 export const editMessage = async (req, res) => {
   const { text } = req.body;
   const { id: receiverId, messageId } = req.params;
