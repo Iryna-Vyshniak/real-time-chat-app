@@ -8,17 +8,20 @@ export const useEditMessage = () => {
 
   const editMessage = useCallback(
     async ({ messageId, text }) => {
-      if (!selectedConversation?._id) return;
+      if (!selectedConversation?.data?._id) return;
 
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/messages/edit/${selectedConversation?._id}/${messageId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ text }),
-        });
+        const res = await fetch(
+          `/api/messages/edit/${selectedConversation?.data?._id}/${messageId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text }),
+          }
+        );
 
         const data = await res.json();
 
@@ -31,7 +34,7 @@ export const useEditMessage = () => {
         setIsLoading(false);
       }
     },
-    [selectedConversation?._id]
+    [selectedConversation?.data?._id]
   );
 
   return { isLoading, editMessage };

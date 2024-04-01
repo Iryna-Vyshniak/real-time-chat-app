@@ -9,12 +9,12 @@ export const useRemoveEmoji = () => {
 
   const removeEmoji = useCallback(
     async ({ messageId }) => {
-      if (!selectedConversation?._id) return;
+      if (!selectedConversation?.data?._id) return;
 
       setIsLoading(true);
       try {
         const res = await fetch(
-          `/api/messages/${selectedConversation._id}/emoji-remove/${messageId}`,
+          `/api/messages/${selectedConversation?.data?._id}/emoji-remove/${messageId}`,
           {
             method: 'PATCH',
             headers: {
@@ -34,7 +34,7 @@ export const useRemoveEmoji = () => {
         setIsLoading(false);
       }
     },
-    [selectedConversation._id]
+    [selectedConversation?.data?._id]
   );
 
   return { isLoading, removeEmoji };

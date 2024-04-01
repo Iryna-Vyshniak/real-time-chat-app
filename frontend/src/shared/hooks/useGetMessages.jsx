@@ -23,7 +23,7 @@ export const useGetMessages = () => {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const lastConversationId = selectedConversation?._id;
+      const lastConversationId = selectedConversation.data._id;
       if (!lastConversationId || lastConversationId === '') {
         return;
       }
@@ -54,7 +54,7 @@ export const useGetMessages = () => {
     }
   }, [
     setIsLoading,
-    selectedConversation?._id,
+    selectedConversation?.data?._id,
     currentPage,
     limit,
     setConversationId,
@@ -68,12 +68,12 @@ export const useGetMessages = () => {
   useEffect(() => {
     let isCancel = false;
 
-    if (!isCancel && selectedConversation && selectedConversation?._id) {
+    if (!isCancel && selectedConversation && selectedConversation?.data?._id) {
       fetchData();
     }
 
     return () => (isCancel = true);
-  }, [fetchData, selectedConversation, selectedConversation?._id]);
+  }, [fetchData, selectedConversation, selectedConversation?.data?._id]);
 
   return { messages, conversationId };
 };

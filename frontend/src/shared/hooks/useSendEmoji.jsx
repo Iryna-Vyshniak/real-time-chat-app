@@ -8,17 +8,20 @@ const useSendEmoji = () => {
 
   const sendEmoji = useCallback(
     async ({ messageId, emoji }) => {
-      if (!selectedConversation?._id) return;
+      if (!selectedConversation?.data?._id) return;
 
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/messages/${selectedConversation._id}/emoji/${messageId}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ emoji }),
-        });
+        const res = await fetch(
+          `/api/messages/${selectedConversation?.data?._id}/emoji/${messageId}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ emoji }),
+          }
+        );
 
         const data = await res.json();
 
@@ -31,7 +34,7 @@ const useSendEmoji = () => {
         setIsLoading(false);
       }
     },
-    [selectedConversation._id]
+    [selectedConversation?.data?._id]
   );
 
   return { isLoading, sendEmoji };

@@ -10,11 +10,11 @@ export const useSendMessage = () => {
 
   const sendMessages = useCallback(
     async ({ message: text, img, audio, video, quote, quotedId, emoji }) => {
-      if (!selectedConversation?._id) return;
+      if (!selectedConversation?.data?._id) return;
 
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/messages/send/${selectedConversation._id}`, {
+        const res = await fetch(`/api/messages/send/${selectedConversation?.data?._id}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ export const useSendMessage = () => {
         setIsLoading(false);
       }
     },
-    [messages, selectedConversation._id, addMessage]
+    [messages, selectedConversation?.data?._id, addMessage]
   );
 
   return { isLoading, sendMessages };

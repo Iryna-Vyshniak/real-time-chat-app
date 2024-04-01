@@ -24,12 +24,12 @@ export const useListenReadMessages = () => {
       messages?.length > 0 &&
       messages[messages.length - 1]?.sender._id !== authUser._id &&
       selectedConversation &&
-      selectedConversation?._id &&
+      selectedConversation?.data?._id &&
       conversationId
     ) {
       socket.emit('markMessagesAsRead', {
         conversationId: conversationId,
-        userId: selectedConversation?._id,
+        userId: selectedConversation?.data?._id,
       });
     }
 
@@ -45,7 +45,7 @@ export const useListenReadMessages = () => {
   }, [
     authUser._id,
     conversationId,
-    selectedConversation?._id,
+    selectedConversation?.data?._id,
     handleMessagesRead,
     messages,
     selectedConversation,
