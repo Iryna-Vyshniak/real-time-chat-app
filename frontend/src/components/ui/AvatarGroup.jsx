@@ -1,8 +1,8 @@
-const AvatarGroup = ({ avatars }) => {
+const AvatarGroup = ({ avatars, id }) => {
   return (
     <ul className='avatar-group -space-x-[18px] rtl:space-x-reverse'>
-      {avatars.slice(0, 3).map((avatar) => (
-        <li key={avatar} className='avatar'>
+      {avatars.slice(0, 3).map((avatar, idx) => (
+        <li key={id + `_${idx}`} className='avatar'>
           <div className='w-8 h-8 rounded-full'>
             <img src={avatar} className='w-10 h-10 rounded-full' />
           </div>
