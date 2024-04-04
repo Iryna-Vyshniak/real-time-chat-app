@@ -26,27 +26,28 @@ io.on('connection', (socket) => {
   const userId = socket.handshake.query.userId;
   if (userId !== 'undefined') userSocketMap[userId] = socket.id;
 
-  // Join chat room based on conversation ID
-  socket.on('joinRoom', (room) => {
-    // Get information about users who are in the room
-    const roomUsers = io.sockets.adapter.rooms.get('group_' + room);
+  // Join group chat room
+  socket.on('joinRoom', ({ room, username }) => {
+    socket.currentRoom = room;
 
-    // Check if the user is in the room
-    if (!roomUsers || !roomUsers.has(socket.id)) {
-      // If the user is not in the room, then we add him to it
-      socket.join('group_' + room);
-      console.log(`User ${socket.id} joined room: group_${room}`);
+    if (!socket.rooms.has('group_' + socket.currentRoom)) {
+      socket.join('group_' + socket.currentRoom);
+      console.log(`${username} has entered the group: ${socket.currentRoom}`);
+      io.to('group_' + socket.currentRoom).emit('newUserJoined', username);
     }
   });
 
-  // Leave chat room based on conversation ID
-  socket.on('leaveRoom', (room) => {
-    console.log('room: ', room);
-    socket.leave('group_' + room);
-    console.log(`User ${socket.id} leave Room: `, room);
+  // Leave group chat room
+  socket.on('leaveRoom', ({ room, username }) => {
+    if (room === socket.currentRoom) {
+      console.log(`User ${username} has left the group: ${room}`);
+      socket.leave('group_' + room);
+      socket.currentRoom = null;
+      io.to('group_' + room).emit('userLeftGroup', username);
+    } else {
+      console.log(`${username} tried to leave the group: ${room}, but they are not in this group.`);
+    }
   });
-
-  console.log('rooms', socket.rooms);
 
   // io.emit() is used to send events to all the connected clients - for ex: who is online or offline
   io.emit('getOnlineUsers', Object.keys(userSocketMap));
@@ -64,8 +65,11 @@ io.on('connection', (socket) => {
   // socket.on() is used to listen to the events; can be used both on client and server side
   socket.on('disconnect', () => {
     console.log('user disconnected', socket.id);
-    delete userSocketMap[userId];
-    io.emit('getOnlineUsers', Object.keys(userSocketMap));
+
+    if (userSocketMap[socket.id]) {
+      delete userSocketMap[userId];
+      io.emit('getOnlineUsers', Object.keys(userSocketMap));
+    }
   });
 });
 
