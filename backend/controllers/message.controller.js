@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { Types } from 'mongoose';
 
 import { ctrlWrapper } from '../decorators/index.js';
 import { HttpError } from '../helpers/index.js';
@@ -12,8 +11,10 @@ import User from '../models/user.model.js';
 import { getReceiverSocketId, io } from '../socket/socket.js';
 
 //  @description - ADD MESSAGE
+//  @route - POST /api/messages/send/:id
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
+  const { type } = req.query;
 
   const { text, img, audio, video, quote, quotedId, emoji } = req.body;
 
@@ -23,37 +24,32 @@ export const sendMessage = async (req, res) => {
     throw HttpError(400, 'Invalid data passed into request');
   }
 
-  let receiverType;
   let conversation;
   let receiverInfo;
-  let hasGroupChat = false;
 
-  // check whether the recipient ID is a valid ObjectId
-  if (Types.ObjectId.isValid(receiver)) {
-    // If so, assume the recipient is a user
-    receiverType = 'user';
+  // check type
+  if (type === 'private') {
+    // If so, the recipient is a user
     receiverInfo = await User.findById(receiver);
+    console.log('receiverInfo: ', receiverInfo);
     if (receiverInfo) {
       // If the user exists, we are looking for a conversation with this user
       conversation = await Conversation.findOne({
         participants: { $all: [sender, receiver] },
         isGroupChat: false,
       });
-      hasGroupChat = false;
-    } else {
-      // If the user doesn't exist, we assume it's a group and look for the conversation by ID
-      receiverType = 'group';
-      conversation = await Conversation.findById(receiver);
-      receiverInfo = receiver;
-      hasGroupChat = true;
     }
+  } else {
+    // it's a group and look for the conversation by ID
+    conversation = await Conversation.findById(receiver);
+    receiverInfo = receiver;
   }
 
   if (!conversation) {
     conversation = await Conversation.create({
       groupAdmin: null,
       participants: [sender, receiver],
-      receiverType,
+      receiverType: type,
     });
   }
 
@@ -123,8 +119,8 @@ export const sendMessage = async (req, res) => {
   const newMessage = await Message.create({
     conversationId: conversation._id,
     sender: senderInfo,
-    receiver: conversation.receiverType === 'user' ? receiverInfo : conversation._id,
-    onModel: conversation.receiverType === 'user' ? 'User' : 'Conversation',
+    receiver: conversation.receiverType === 'private' ? receiverInfo : conversation._id,
+    onModel: conversation.receiverType === 'private' ? 'User' : 'Conversation',
     text,
     img: imgUrl,
     audio: audioUrl,
@@ -145,7 +141,7 @@ export const sendMessage = async (req, res) => {
   await Promise.all([conversation.save(), newMessage.save()]);
 
   // socket io functionality
-  if (hasGroupChat) {
+  if (type === 'group') {
     io.to('group_' + conversation.chatName).emit('newMessage', newMessage);
   } else {
     const receiverSocketId = getReceiverSocketId(receiver);
@@ -156,6 +152,7 @@ export const sendMessage = async (req, res) => {
     }
   }
 
+  console.log('newMessage: ', newMessage);
   res.status(201).json(newMessage);
 };
 
@@ -228,19 +225,16 @@ export const getMessages = async (req, res) => {
   const { id: receiver } = req.params; // my receiver
 
   const sender = req.user._id; // it`s me
-  const { page: currentPage, limit: currentLimit } = req.query;
+  const { page: currentPage, limit: currentLimit, type } = req.query;
 
   const { page, limit, skip } = pagination(currentPage, currentLimit);
-  console.log('page: ', page);
 
   if (!receiver) throw HttpError(400, 'Receiver ID is required');
 
-  let receiverType;
   let conversation;
 
-  if (Types.ObjectId.isValid(receiver)) {
-    // If receiver is a valid ObjectId, assume it is a user
-    receiverType = 'user';
+  if (type === 'private') {
+    // If type === 'private', assume it is a user
     const user = await User.findById(receiver);
     if (user) {
       // If the user exists, we are looking for a conversation with this user
@@ -254,11 +248,10 @@ export const getMessages = async (req, res) => {
           { path: 'receiver', model: 'User', select: '-password' },
         ],
       });
-    } else {
-      // If the user doesn't exist, we assume it's a group and look for the conversation by ID
-      receiverType = 'group';
-      conversation = await Conversation.findById(receiver);
     }
+  } else {
+    // assume it's a group and look for the conversation by ID
+    conversation = await Conversation.findById(receiver);
   }
 
   if (!conversation)
@@ -274,7 +267,7 @@ export const getMessages = async (req, res) => {
       { path: 'sender', model: 'User', select: '-password' },
       {
         path: 'receiver',
-        model: receiverType === 'user' ? 'User' : 'Conversation',
+        model: type === 'private' ? 'User' : 'Conversation',
         select: '-password',
       },
     ]);
