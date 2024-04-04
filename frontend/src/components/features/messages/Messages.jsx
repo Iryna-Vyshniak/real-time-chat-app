@@ -34,10 +34,11 @@ const Messages = ({ onReply }) => {
   return (
     <div className='relative mb-4 px-4 flex-auto w-full overflow-auto touch-auto will-change-scroll'>
       {isLoading && (
-        <div className='flex items-center justify-center'>
+        <div className='absolute top-1/2 left-1/2 translate-x-1/2 translate-y-1/2 z-[50] flex items-center justify-center'>
           <p className='loading loading-ring loading-lg'></p>
         </div>
       )}
+
       {!isLoading &&
         messageRef.current.length > 0 &&
         (totalPages === 0 || currentPage === totalPages) && (
@@ -106,153 +107,16 @@ const Messages = ({ onReply }) => {
           </ul>
         )}
 
-      {!isLoading && messageRef.current.length === 0 && (
-        <p className='text-accent text-center drop-shadow-2xl-red'>
-          Send a message to start the conversation
-        </p>
-      )}
+      {!isLoading &&
+        (messageRef.current.length === 0 ||
+          (selectedConversation?.type === 'group' &&
+            selectedConversation?.data.messages.length === 0)) && (
+          <p className='text-accent text-center drop-shadow-2xl-red'>
+            Send a message to start the conversation
+          </p>
+        )}
     </div>
   );
 };
 
 export default Messages;
-
-//  return (
-//    <div className='relative mb-4 px-4 flex-auto w-full overflow-auto touch-auto will-change-scroll'>
-//      {isLoading && (
-//        <div className='flex items-center justify-center'>
-//          <p className='loading loading-ring loading-lg'></p>
-//        </div>
-//      )}
-//      {!isLoading &&
-//        messageRef.current.length > 0 &&
-//        (totalPages === 0 || currentPage === totalPages) && (
-//          <ul className='flex-auto px-4 h-full overflow-auto touch-auto will-change-scroll'>
-//            {messageRef.current.map((message, index) => {
-//              console.log('message: ', message);
-//              const previousMessage = messageRef.current[index - 1];
-//              const currentDate = getFormattedDate(message.createdAt);
-//              const previousDate = previousMessage
-//                ? getFormattedDate(previousMessage.createdAt)
-//                : null;
-//              console.log(selectedConversation.type);
-//              console.log(
-//                'group',
-//                selectedConversation.type === 'group' && // Перевірка на груповий чат
-//                  message.conversationId === selectedConversation.data._id
-//              );
-//              console.log(
-//                'private',
-//                selectedConversation.type === 'private' &&
-//                  (message.receiver._id === selectedConversation?.data?._id ||
-//                    message.sender._id === selectedConversation?.data?._id)
-//              );
-//              // Перевірка типу бесіди та рендеринг повідомлень залежно від типу
-//              if (
-//                selectedConversation.type === 'group' && // Перевірка на груповий чат
-//                message.conversationId === selectedConversation.data._id
-//              ) {
-//                if (hasDateChanged(previousDate, currentDate)) {
-//                  return (
-//                    <Fragment key={message._id}>
-//                      <li
-//                        key={`date_${currentDate}_${index}`}
-//                        className='flex items-center justify-center gap-2 after:content-[""] after:ml-0.5 after:w-20 after:h-[1px] after:bg-primary before:content-[""] before:ml-0.5 before:w-20 before:h-[1px] before:bg-primary text-sm text-center p-2 pt-4 text-slate-200 drop-shadow-1xl-black'
-//                      >
-//                        {currentDate}
-//                      </li>
-//                      <li
-//                        key={message._id}
-//                        ref={(element) => {
-//                          if (index === messageRef.current.length - 1) {
-//                            lastMessageElement.current = element;
-//                          }
-//                        }}
-//                      >
-//                        <Message
-//                          message={message}
-//                          onReply={onReply}
-//                          quotedMessage={message.repliedTo}
-//                        />
-//                      </li>
-//                    </Fragment>
-//                  );
-//                } else {
-//                  return (
-//                    <li
-//                      key={message._id}
-//                      ref={(element) => {
-//                        if (index === messageRef.current.length - 1) {
-//                          lastMessageElement.current = element;
-//                        }
-//                      }}
-//                    >
-//                      <Message
-//                        message={message}
-//                        onReply={onReply}
-//                        quotedMessage={message.repliedTo}
-//                      />
-//                    </li>
-//                  );
-//                }
-//              } else if (
-//                selectedConversation.type === 'private' &&
-//                (message.receiver._id === selectedConversation?.data?._id ||
-//                  message.sender._id === selectedConversation?.data?._id)
-//              ) {
-//                if (hasDateChanged(previousDate, currentDate)) {
-//                  return (
-//                    <Fragment key={message._id}>
-//                      <li
-//                        key={`date_${currentDate}_${index}`}
-//                        className='flex items-center justify-center gap-2 after:content-[""] after:ml-0.5 after:w-20 after:h-[1px] after:bg-primary before:content-[""] before:ml-0.5 before:w-20 before:h-[1px] before:bg-primary text-sm text-center p-2 pt-4 text-slate-200 drop-shadow-1xl-black'
-//                      >
-//                        {currentDate}
-//                      </li>
-//                      <li
-//                        key={message._id}
-//                        ref={(element) => {
-//                          if (index === messageRef.current.length - 1) {
-//                            lastMessageElement.current = element;
-//                          }
-//                        }}
-//                      >
-//                        <Message
-//                          message={message}
-//                          onReply={onReply}
-//                          quotedMessage={message.repliedTo}
-//                        />
-//                      </li>
-//                    </Fragment>
-//                  );
-//                } else {
-//                  return (
-//                    <li
-//                      key={message._id}
-//                      ref={(element) => {
-//                        if (index === messageRef.current.length - 1) {
-//                          lastMessageElement.current = element;
-//                        }
-//                      }}
-//                    >
-//                      <Message
-//                        message={message}
-//                        onReply={onReply}
-//                        quotedMessage={message.repliedTo}
-//                      />
-//                    </li>
-//                  );
-//                }
-//              }
-//              return null; // Додайте null, щоб уникнути відображення непотрібних елементів у списку
-//            })}
-//          </ul>
-//        )}
-
-//      {!isLoading && messageRef.current.length === 0 && (
-//        <p className='text-accent text-center drop-shadow-2xl-red'>
-//          Send a message to start the conversation
-//        </p>
-//      )}
-//    </div>
-//  );

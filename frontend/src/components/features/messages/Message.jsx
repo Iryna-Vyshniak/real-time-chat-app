@@ -21,9 +21,12 @@ import Icon from '../../ui/Icon';
 
 import AudioPlayer from './message.data/audio/AudioPlayer';
 import VideoPlayer from './message.data/video/VideoPlayer';
+import { useSocketContext } from '../../../shared/context/SocketContext';
 
 const Message = ({ message, onReply, quotedMessage }) => {
   const { authUser } = useAuthContext();
+  const { participants } = useSocketContext();
+
   const { selectedConversation, messages } = useConversation();
 
   const { removeEmoji } = useRemoveEmoji();
@@ -61,6 +64,15 @@ const Message = ({ message, onReply, quotedMessage }) => {
     );
   const shakeClass = message.shouldShake ? 'shake-msg' : '';
 
+  const isOnline = participants[message.sender.fullName]?.status === 'joined';
+  let onlineStatus = '';
+  let groupStatus = '';
+
+  if (!fromMe) {
+    onlineStatus = selectedConversation?.type === 'group' && (isOnline ? 'online' : 'offline');
+    groupStatus = selectedConversation?.type === 'group' ? '-group' : '';
+  }
+
   return (
     <motion.div
       key={message._id}
@@ -74,7 +86,7 @@ const Message = ({ message, onReply, quotedMessage }) => {
         {' '}
         <Link
           to={fromMe ? `/users/${authUser._id}` : `/users/${message.sender._id}`}
-          className='chat-image avatar cursor-pointer'
+          className={`chat-image avatar cursor-pointer ${onlineStatus} ${onlineStatus}${groupStatus} `}
         >
           <div className='w-10 rounded-full shadow-lg shadow-primary/40 border-[1px] border-green'>
             <img alt='user avatar' src={avatar} width='40px' height='40px' />
