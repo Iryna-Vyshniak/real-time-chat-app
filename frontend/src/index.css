@@ -74,6 +74,26 @@ div {
   top: 7%;
   right: 7%;
 }
+.avatar.online-group:before {
+  background-color: #e8c89d;
+  outline-color: #ff8400;
+  outline-width: 1px;
+  width: 15%;
+  height: 15%;
+  top: 7%;
+  right: 7%;
+  animation: pulse 1000ms infinite;
+}
+.avatar.offline-group:before {
+  background-color: #d4ec8c;
+  outline-color: #fafbf7;
+  opacity: 0.8;
+  outline-width: 1.5px;
+  width: 10%;
+  height: 10%;
+  top: 7%;
+  right: 10%;
+}
 
 .avatar-group :where(.avatar) {
   border-width: 2px;
