@@ -57,11 +57,6 @@ export const sendMessage = async (req, res) => {
     });
   }
 
-  if (conversation.receiverType === 'user') {
-    receiverInfo = await User.findById({ _id: receiver });
-  } else if (conversation.receiverType === 'group') {
-    receiverInfo = receiver;
-  }
   const senderInfo = await User.findById({ _id: sender });
 
   // retrieve information about the quoted message if a quoted message ID is provided
@@ -151,7 +146,7 @@ export const sendMessage = async (req, res) => {
 
   // socket io functionality
   if (hasGroupChat) {
-    io.to('group_' + receiver).emit('newMessage', newMessage);
+    io.to('group_' + conversation.chatName).emit('newMessage', newMessage);
   } else {
     const receiverSocketId = getReceiverSocketId(receiver);
 
@@ -236,6 +231,7 @@ export const getMessages = async (req, res) => {
   const { page: currentPage, limit: currentLimit } = req.query;
 
   const { page, limit, skip } = pagination(currentPage, currentLimit);
+  console.log('page: ', page);
 
   if (!receiver) throw HttpError(400, 'Receiver ID is required');
 
