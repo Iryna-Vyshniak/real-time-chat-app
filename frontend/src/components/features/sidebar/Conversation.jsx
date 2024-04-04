@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
@@ -17,7 +16,6 @@ const Conversation = ({
   toggleSidebar,
   filtered,
 }) => {
-  const [clicked, setClicked] = useState(false);
   const { ref, inView } = useInView();
 
   const {
@@ -35,13 +33,12 @@ const Conversation = ({
 
   const handleClick = () => {
     // implementing click disabling for previously clicked items
-    if (clicked) return;
+    if (isSelected) return;
     // resetting the current page
     resetCurrentPage();
     setSelectedConversation({ type: 'private', data: { _id, fullName, username, avatar } });
     setNotification(notification.filter(({ sender: { _id: idSender } }) => idSender !== _id));
     toggleSidebar();
-    setClicked(true);
   };
 
   return (
