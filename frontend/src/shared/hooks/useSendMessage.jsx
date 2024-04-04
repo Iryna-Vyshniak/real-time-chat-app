@@ -14,13 +14,16 @@ export const useSendMessage = () => {
 
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/messages/send/${selectedConversation?.data?._id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ text, img, audio, video, quote, quotedId, emoji }),
-        });
+        const res = await fetch(
+          `/api/messages/send/${selectedConversation?.data?._id}?type=${selectedConversation?.type}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text, img, audio, video, quote, quotedId, emoji }),
+          }
+        );
 
         const data = await res.json();
 

@@ -24,12 +24,13 @@ export const useGetMessages = () => {
     setIsLoading(true);
     try {
       const lastConversationId = selectedConversation.data._id;
-      if (!lastConversationId || lastConversationId === '') {
+
+      if (!lastConversationId || lastConversationId === '' || !selectedConversation) {
         return;
       }
 
       const res = await fetch(
-        `/api/messages/${lastConversationId}?page=${currentPage}&limit=${limit}`
+        `/api/messages/${lastConversationId}?page=${currentPage}&limit=${limit}&type=${selectedConversation.type}`
       );
       const data = await res.json();
 
@@ -54,7 +55,7 @@ export const useGetMessages = () => {
     }
   }, [
     setIsLoading,
-    selectedConversation?.data?._id,
+    selectedConversation,
     currentPage,
     limit,
     setConversationId,
