@@ -11,10 +11,12 @@ import MessagesBlockInput from './MessagesBlockInput';
 import Messages from './Messages';
 import LoadMoreMessages from './LoadMoreMessages';
 import QuotedMessage from './message.data/reply/QuotedMessage';
+import GroupConnectedClients from './GroupConnectedClients';
 
 const MessagesBlock = ({ isOpen }) => {
   const [quotedMessage, setQuotedMessage] = useState(null);
   const [isShowQuotedMessage, setIsShowQuotedMessage] = useState(false);
+  const [isShowGroupParticipants, setIsShowGroupParticipants] = useState(true);
 
   const handleClose = () => {
     setIsShowQuotedMessage(false);
@@ -24,6 +26,10 @@ const MessagesBlock = ({ isOpen }) => {
   const handleReply = (message) => {
     setQuotedMessage(message);
     setIsShowQuotedMessage(true);
+  };
+
+  const toggleShowParticipants = () => {
+    setIsShowGroupParticipants(!isShowGroupParticipants);
   };
 
   const { selectedConversation, setSelectedConversation, isLoading } = useConversation();
@@ -47,13 +53,21 @@ const MessagesBlock = ({ isOpen }) => {
             <NoChatSelected />
           ) : (
             <>
-              <MessagesBlockHeader
-                name={
-                  selectedConversation?.type === 'private'
-                    ? selectedConversation?.data.fullName
-                    : selectedConversation?.data.chatName
-                }
-              />
+              <div className='relative w-full'>
+                {' '}
+                <MessagesBlockHeader
+                  name={
+                    selectedConversation?.type === 'private'
+                      ? selectedConversation?.data.fullName
+                      : selectedConversation?.data.chatName
+                  }
+                />
+                <GroupConnectedClients
+                  isShow={isShowGroupParticipants}
+                  toggleShow={toggleShowParticipants}
+                />
+              </div>
+
               <Messages onReply={handleReply} />
               {!isLoading && <LoadMoreMessages />}
               <div className='flex flex-col items-center justify-center w-full'>
