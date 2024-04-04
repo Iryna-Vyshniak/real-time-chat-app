@@ -27,7 +27,7 @@ const conversationSchema = new Schema(
     ],
     receiverType: {
       type: String,
-      enum: ['user', 'group'],
+      enum: ['private', 'group'],
       required: true,
     },
   },
