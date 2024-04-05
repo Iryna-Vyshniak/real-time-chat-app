@@ -1,13 +1,12 @@
-import { useSocketContext } from '../../../shared/context/SocketContext';
+import { useGroupParticipants } from '../../../shared/hooks/useGroupParticipants';
 import useConversation from '../../../store/useConversation';
 
 import Button from '../../ui/Button';
 import Icon from '../../ui/Icon';
 
 const GroupConnectedClients = ({ isShow, toggleShow }) => {
-  const { participants } = useSocketContext();
-
   const { selectedConversation } = useConversation();
+  const { participants, onlineGroupUsers } = useGroupParticipants();
 
   return (
     <>
@@ -19,22 +18,33 @@ const GroupConnectedClients = ({ isShow, toggleShow }) => {
           <Icon src='#icon-users' style='w-4 h-4 z-10 drop-shadow-1xl-white' />
         </Button>
       )}
+
       {participants && selectedConversation.type === 'group' && isShow && (
         <div className='absolute top-[2.8rem] md:top-[2.3rem] left-0 z-[50] w-full p-2 rounded-lg bg-primary/50 bg-clip-padding backdrop-filter backdrop-blur-lg md:border-b border-slate-300'>
-          {Object.entries(participants).map(([username, status], idx) => {
+          {onlineGroupUsers &&
+            onlineGroupUsers.onlineUsers?.length > 0 &&
+            selectedConversation.type === 'group' && (
+              <div className='flex align-items justify-center gap-2'>
+                <h3 className='text-center text-slate-700 text-xs'>Online: </h3>
+                {onlineGroupUsers.onlineUsers.map((user, idx) => (
+                  <p key={idx + user} className='text-center text-slate-700 text-xs'>
+                    {user}
+                  </p>
+                ))}
+              </div>
+            )}
+
+          {Object.entries(participants).map(([username, { status, room }], idx) => {
             if (
               selectedConversation.type === 'group' &&
-              selectedConversation.data.chatName === status.room
+              selectedConversation.data.chatName === room
             ) {
               return (
-                <p
-                  key={`${status.room + idx + username}`}
-                  className='text-center text-slate-500 text-xs'
-                >
+                <p key={`${room + idx + username}`} className='text-center text-slate-500 text-xs'>
                   {username}{' '}
-                  {status.status === 'joined'
-                    ? `has entered the group: ${status.room}`
-                    : `has left the group: ${status.room}`}
+                  {status === 'joined'
+                    ? `has entered the group: ${room}`
+                    : `has left the group: ${room}`}
                 </p>
               );
             }
