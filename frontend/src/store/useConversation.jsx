@@ -124,6 +124,9 @@ const useConversation = createWithEqualityFn(
     // GROUPS
     groups: [],
     setGroups: (groups) => set({ groups }),
+    onlineGroupUsers: [],
+    setOnlineGroupUsers: ({ room, onlineUsers }) =>
+      set({ onlineGroupUsers: { room, onlineUsers } }),
   }),
   shallow
 );
