@@ -13,13 +13,11 @@ export const useSocketContext = () => {
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [participants, setParticipants] = useState({});
   const { authUser } = useAuthContext();
 
   useEffect(() => {
     if (authUser) {
-      const socket = io('http://localhost:5000', {
-        // const socket = io('https://chat-mern-ujj2.onrender.com', {
+      const socket = io('https://chat-mern-ujj2.onrender.com', {
         query: {
           userId: authUser._id,
         },
@@ -42,8 +40,6 @@ export const SocketContextProvider = ({ children }) => {
   }, [authUser]);
 
   return (
-    <SocketContext.Provider value={{ socket, onlineUsers, participants, setParticipants }}>
-      {children}
-    </SocketContext.Provider>
+    <SocketContext.Provider value={{ socket, onlineUsers }}>{children}</SocketContext.Provider>
   );
 };
