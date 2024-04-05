@@ -21,13 +21,11 @@ import Icon from '../../ui/Icon';
 
 import AudioPlayer from './message.data/audio/AudioPlayer';
 import VideoPlayer from './message.data/video/VideoPlayer';
-import { useSocketContext } from '../../../shared/context/SocketContext';
 
 const Message = ({ message, onReply, quotedMessage }) => {
   const { authUser } = useAuthContext();
-  const { participants } = useSocketContext();
 
-  const { selectedConversation, messages } = useConversation();
+  const { selectedConversation, messages, onlineGroupUsers } = useConversation();
 
   const { removeEmoji } = useRemoveEmoji();
 
@@ -64,7 +62,8 @@ const Message = ({ message, onReply, quotedMessage }) => {
     );
   const shakeClass = message.shouldShake ? 'shake-msg' : '';
 
-  const isOnline = participants[message.sender.fullName]?.status === 'joined';
+  const isOnline = onlineGroupUsers.onlineUsers.some((user) => message.sender.fullName === user);
+
   let onlineStatus = '';
   let groupStatus = '';
 
