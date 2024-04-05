@@ -19,6 +19,7 @@ export const getReceiverSocketId = (receiverId) => {
 };
 
 const userSocketMap = {}; // {userId: socketId}
+const onlineUsersByGroup = {};
 
 io.on('connection', (socket) => {
   console.log('user connected', socket.id);
@@ -33,8 +34,27 @@ io.on('connection', (socket) => {
     if (!socket.rooms.has('group_' + socket.currentRoom)) {
       socket.join('group_' + socket.currentRoom);
       console.log(`${username} has entered the group: ${socket.currentRoom}`);
-      io.to('group_' + socket.currentRoom).emit('newUserJoined', username);
     }
+
+    if (!onlineUsersByGroup[room]) {
+      onlineUsersByGroup[room] = [];
+    }
+
+    if (!onlineUsersByGroup[room].includes(username)) {
+      onlineUsersByGroup[room].push(username);
+
+      // Emit event to inform existing participants about the new user
+      io.to('group_' + socket.currentRoom).emit('newUserJoined', {
+        room: socket.currentRoom,
+        username,
+        online: true,
+      });
+    }
+
+    io.to('group_' + socket.currentRoom).emit('updateOnlineUsers', {
+      room,
+      onlineUsers: onlineUsersByGroup[room],
+    });
   });
 
   // Leave group chat room
@@ -43,9 +63,18 @@ io.on('connection', (socket) => {
       console.log(`User ${username} has left the group: ${room}`);
       socket.leave('group_' + room);
       socket.currentRoom = null;
-      io.to('group_' + room).emit('userLeftGroup', username);
     } else {
       console.log(`${username} tried to leave the group: ${room}, but they are not in this group.`);
+    }
+    // Emit event to inform remaining participants about the leaving user
+    io.to('group_' + room).emit('userLeftGroup', { room, username, online: false });
+
+    if (onlineUsersByGroup[room]) {
+      onlineUsersByGroup[room] = onlineUsersByGroup[room].filter((user) => user !== username);
+      io.to('group_' + room).emit('updateOnlineUsers', {
+        room,
+        onlineUsers: onlineUsersByGroup[room],
+      });
     }
   });
 
