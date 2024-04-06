@@ -12,6 +12,7 @@ import { getReceiverSocketId, io } from '../socket/socket.js';
 
 //  @description - ADD MESSAGE
 //  @route - POST /api/messages/send/:id
+
 export const sendMessage = async (req, res) => {
   const { id: receiver } = req.params; // receiver
   const { type } = req.query;
@@ -31,7 +32,6 @@ export const sendMessage = async (req, res) => {
   if (type === 'private') {
     // If so, the recipient is a user
     receiverInfo = await User.findById(receiver);
-    console.log('receiverInfo: ', receiverInfo);
     if (receiverInfo) {
       // If the user exists, we are looking for a conversation with this user
       conversation = await Conversation.findOne({
@@ -78,8 +78,6 @@ export const sendMessage = async (req, res) => {
   let videoUrl = '';
 
   if (img) {
-    imgUrl = img;
-
     const uploadResponse = await cloudinary.uploader.upload(img, {
       folder: `chat`,
       public_id: `chat-${sender}-${Date.now()}`,
@@ -92,8 +90,6 @@ export const sendMessage = async (req, res) => {
   }
 
   if (audio) {
-    audioUrl = audio;
-
     const uploadResponse = await cloudinary.uploader.upload(audio, {
       folder: 'chat/audio',
       public_id: `chat-${sender}-${Date.now()}`,
@@ -104,8 +100,6 @@ export const sendMessage = async (req, res) => {
     audioUrl = uploadResponse.secure_url;
   }
   if (video) {
-    videoUrl = video;
-
     const uploadResponse = await cloudinary.uploader.upload(video, {
       folder: 'chat/video',
       public_id: `chat-${sender}-${Date.now()}`,
@@ -152,15 +146,19 @@ export const sendMessage = async (req, res) => {
     }
   }
 
-  console.log('newMessage: ', newMessage);
   res.status(201).json(newMessage);
 };
 
+// ----------------------------------------
+
 //  @description - SEND EMOJI
+//  @route - PATCH /:id/emoji/:messageId
+
 export const sendEmoji = async (req, res) => {
   const { id: receiver, messageId } = req.params;
   const sender = req.user._id; // it`s me
   const { emoji } = req.body;
+  const { type } = req.query;
 
   if (!emoji && !messageId) {
     throw HttpError(400, 'Invalid data passed into request');
@@ -175,23 +173,38 @@ export const sendEmoji = async (req, res) => {
 
   if (!updateMessage) throw HttpError(404, 'Message not found');
 
+  let conversation;
+
+  if (type === 'group') {
+    conversation = await Conversation.findById(receiver);
+  }
+
   // socket io functionality
   const receiverSocketId = getReceiverSocketId(receiver);
   const senderSocketId = getReceiverSocketId(sender);
 
-  if ((receiverSocketId && senderSocketId) || senderSocketId) {
-    // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
-    io.to(senderSocketId).emit('addEmoji', { messageId, emoji });
-    io.to(receiverSocketId).emit('addEmoji', { messageId, emoji });
+  if (type === 'group') {
+    io.to('group_' + conversation.chatName).emit('addEmoji', { messageId, emoji });
+  } else {
+    if ((receiverSocketId && senderSocketId) || senderSocketId) {
+      // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
+      io.to(senderSocketId).emit('addEmoji', { messageId, emoji });
+      io.to(receiverSocketId).emit('addEmoji', { messageId, emoji });
+    }
   }
 
   res.status(200).json(updateMessage);
 };
 
+// ----------------------------------------
+
 //  @description - REMOVE EMOJI
+//  @route - PATCH /:id/emoji-remove/:messageId
+
 export const removeEmoji = async (req, res) => {
   const { id: receiver, messageId } = req.params;
   const sender = req.user._id; // its me
+  const { type } = req.query;
 
   if (!messageId) {
     throw HttpError(400, 'Invalid data passed into request');
@@ -207,20 +220,34 @@ export const removeEmoji = async (req, res) => {
 
   if (!updateMessage) throw HttpError(404, 'Message not found');
 
+  let conversation;
+
+  if (type === 'group') {
+    conversation = await Conversation.findById(receiver);
+  }
+
   // socket io functionality
   const receiverSocketId = getReceiverSocketId(receiver);
   const senderSocketId = getReceiverSocketId(sender);
 
-  if ((receiverSocketId && senderSocketId) || senderSocketId) {
-    // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
-    io.to(receiverSocketId).emit('removeEmoji', { messageId });
-    io.to(senderSocketId).emit('removeEmoji', { messageId });
+  if (type === 'group') {
+    io.to('group_' + conversation.chatName).emit('removeEmoji', { messageId });
+  } else {
+    if ((receiverSocketId && senderSocketId) || senderSocketId) {
+      // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
+      io.to(receiverSocketId).emit('removeEmoji', { messageId });
+      io.to(senderSocketId).emit('removeEmoji', { messageId });
+    }
   }
 
   res.status(200).json(updateMessage);
 };
 
+// ----------------------------------------
+
 //  @description - GET ALL MESSAGES
+//  @route - GET /:id
+
 export const getMessages = async (req, res) => {
   const { id: receiver } = req.params; // my receiver
 
@@ -282,14 +309,25 @@ export const getMessages = async (req, res) => {
   });
 };
 
+// ----------------------------------------
+
 //  @description - DELETE MESSAGE
+//  @route - DELETE /delete/:id
+
 export const deleteMessage = async (req, res) => {
   const { id } = req.params;
   const senderId = req.user._id; // it`s me
+  const { type } = req.query;
 
   const message = await Message.findById({ _id: id }).populate('receiver');
   if (!message) throw HttpError(400, 'Message not found');
   const receiverId = message.receiver._id;
+
+  let conversation;
+
+  if (type === 'group') {
+    conversation = await Conversation.findOne({ messages: { $in: id } });
+  }
 
   await Message.findByIdAndDelete({ _id: id });
 
@@ -305,21 +343,36 @@ export const deleteMessage = async (req, res) => {
   const receiverSocketId = getReceiverSocketId(receiverId);
   const senderSocketId = getReceiverSocketId(senderId);
 
-  if ((receiverSocketId && senderSocketId) || senderSocketId) {
-    // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
-    io.to(receiverSocketId).emit('deleteMessage', { id });
-    io.to(senderSocketId).emit('deleteMessage', { id });
+  if (type === 'group') {
+    io.to('group_' + conversation.chatName).emit('deleteMessage', { id });
+  } else {
+    if ((receiverSocketId && senderSocketId) || senderSocketId) {
+      // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
+      io.to(receiverSocketId).emit('deleteMessage', { id });
+      io.to(senderSocketId).emit('deleteMessage', { id });
+    }
   }
 
-  res.status(200).json({ info: 'Message success deleted' });
+  res.status(200).json({ info: 'Message successfully deleted' });
 };
 
+// ----------------------------------------
+
 //  @description - EDIT MESSAGE
+//  @route - PUT /edit/:id/:messageId
+
 export const editMessage = async (req, res) => {
   const { text } = req.body;
   const { id: receiverId, messageId } = req.params;
+  const { type } = req.query;
 
   const senderId = req.user.id;
+
+  let conversation;
+
+  if (type === 'group') {
+    conversation = await Conversation.findById(receiverId);
+  }
 
   const updatedMessage = await Message.findByIdAndUpdate(messageId, { text }, { new: true });
 
@@ -329,10 +382,14 @@ export const editMessage = async (req, res) => {
   const receiverSocketId = getReceiverSocketId(receiverId);
   const senderSocketId = getReceiverSocketId(senderId);
 
-  if ((receiverSocketId && senderSocketId) || senderSocketId) {
-    // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
-    io.to(receiverSocketId).emit('editMessageReceiver', { messageId, text });
-    io.to(senderSocketId).emit('editMessageSender', { messageId, text });
+  if (type === 'group') {
+    io.to('group_' + conversation.chatName).emit('editMessageReceiver', { messageId, text });
+  } else {
+    if ((receiverSocketId && senderSocketId) || senderSocketId) {
+      // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
+      io.to(receiverSocketId).emit('editMessageReceiver', { messageId, text });
+      io.to(senderSocketId).emit('editMessageSender', { messageId, text });
+    }
   }
 
   res.status(200).json(updatedMessage);
