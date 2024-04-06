@@ -111,7 +111,7 @@ const Messages = ({ onReply }) => {
         (messageRef.current.length === 0 ||
           (selectedConversation?.type === 'group' &&
             selectedConversation?.data.messages.length === 0)) && (
-          <p className='text-accent text-center drop-shadow-2xl-red'>
+          <p className='mt-10 text-accent text-center drop-shadow-2xl-red'>
             Send a message to start the conversation
           </p>
         )}
