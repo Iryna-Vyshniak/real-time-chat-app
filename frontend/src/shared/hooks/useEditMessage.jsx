@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
+
 import useConversation from '../../store/useConversation';
 
 export const useEditMessage = () => {
@@ -13,7 +14,7 @@ export const useEditMessage = () => {
       setIsLoading(true);
       try {
         const res = await fetch(
-          `/api/messages/edit/${selectedConversation?.data?._id}/${messageId}`,
+          `/api/messages/edit/${selectedConversation?.data?._id}/${messageId}?type=${selectedConversation?.type}`,
           {
             method: 'PUT',
             headers: {
@@ -34,7 +35,7 @@ export const useEditMessage = () => {
         setIsLoading(false);
       }
     },
-    [selectedConversation?.data?._id]
+    [selectedConversation?.data?._id, selectedConversation?.type]
   );
 
   return { isLoading, editMessage };

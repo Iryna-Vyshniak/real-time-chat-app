@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
-import useConversation from '../../store/useConversation';
 import toast from 'react-hot-toast';
+
+import useConversation from '../../store/useConversation';
 
 const useSendEmoji = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,7 +14,7 @@ const useSendEmoji = () => {
       setIsLoading(true);
       try {
         const res = await fetch(
-          `/api/messages/${selectedConversation?.data?._id}/emoji/${messageId}`,
+          `/api/messages/${selectedConversation?.data?._id}/emoji/${messageId}?type=${selectedConversation?.type}`,
           {
             method: 'PATCH',
             headers: {
@@ -34,7 +35,7 @@ const useSendEmoji = () => {
         setIsLoading(false);
       }
     },
-    [selectedConversation?.data?._id]
+    [selectedConversation?.data?._id, selectedConversation.type]
   );
 
   return { isLoading, sendEmoji };

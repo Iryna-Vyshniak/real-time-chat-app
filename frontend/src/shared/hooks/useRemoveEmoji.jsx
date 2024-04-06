@@ -14,7 +14,7 @@ export const useRemoveEmoji = () => {
       setIsLoading(true);
       try {
         const res = await fetch(
-          `/api/messages/${selectedConversation?.data?._id}/emoji-remove/${messageId}`,
+          `/api/messages/${selectedConversation?.data?._id}/emoji-remove/${messageId}?type=${selectedConversation?.type}`,
           {
             method: 'PATCH',
             headers: {
@@ -34,7 +34,7 @@ export const useRemoveEmoji = () => {
         setIsLoading(false);
       }
     },
-    [selectedConversation?.data?._id]
+    [selectedConversation?.data?._id, selectedConversation?.type]
   );
 
   return { isLoading, removeEmoji };
