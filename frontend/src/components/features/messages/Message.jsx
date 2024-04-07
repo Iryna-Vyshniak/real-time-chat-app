@@ -62,7 +62,7 @@ const Message = ({ message, onReply, quotedMessage }) => {
     );
   const shakeClass = message.shouldShake ? 'shake-msg' : '';
 
-  const isOnline = onlineGroupUsers.onlineUsers.some((user) => message.sender.fullName === user);
+  const isOnline = onlineGroupUsers?.onlineUsers?.some((user) => message.sender.fullName === user);
 
   let onlineStatus = '';
   let groupStatus = '';
