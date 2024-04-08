@@ -61,7 +61,12 @@ const GroupBadge = ({ group, toggleSidebar }) => {
       >
         {' '}
         {group.participantsData?.length > 0 ? (
-          <AvatarGroup avatars={avatars} id={group._id} />
+          <AvatarGroup
+            avatars={avatars}
+            id={group._id}
+            isCount={true}
+            style='-space-x-[18px] rtl:space-x-reverse'
+          />
         ) : (
           <Avatar src={group.chatAvatar} />
         )}

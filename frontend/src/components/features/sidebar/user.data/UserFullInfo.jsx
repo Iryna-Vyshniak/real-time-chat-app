@@ -8,7 +8,7 @@ const UserFullInfo = ({ user }) => {
   const backLinkLocationRef = useRef(location.state?.from ?? '/');
 
   return (
-    <div className='p-4 w-[90%] md:w-1/3 h-auto bg-primary/10 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-1 rounded-md text-slate-300 text-lg drop-shadow-1xl-black'>
+    <>
       <LinkToBack to={backLinkLocationRef.current}>Back</LinkToBack>
       <div className='flex flex-col items-center justify-center gap-4'>
         {' '}
@@ -31,7 +31,7 @@ const UserFullInfo = ({ user }) => {
           </p>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

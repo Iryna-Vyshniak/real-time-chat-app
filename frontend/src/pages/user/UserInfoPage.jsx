@@ -15,7 +15,11 @@ const UserInfoPage = () => {
           <p className='loading loading-ring loading-lg'></p>
         </div>
       )}
-      {!isLoading && user && <UserFullInfo user={user} />}
+      {!isLoading && user && (
+        <div className='p-4 w-[90%] md:w-1/3 h-auto bg-primary/10 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-1 rounded-md text-slate-300 text-lg drop-shadow-1xl-black'>
+          <UserFullInfo user={user} />
+        </div>
+      )}
     </>
   );
 };

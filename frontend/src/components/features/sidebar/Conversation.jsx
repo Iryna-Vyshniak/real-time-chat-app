@@ -9,7 +9,7 @@ import Avatar from '../../ui/Avatar';
 import Divider from '../../ui/Divider.jsx';
 
 const Conversation = ({
-  conversation: { _id, fullName, username, avatar },
+  conversation: { _id, fullName, username, avatar, gender, createdAt },
   emoji,
   lastIdx,
   filteredNotification,
@@ -36,7 +36,10 @@ const Conversation = ({
     if (isSelected) return;
     // resetting the current page
     resetCurrentPage();
-    setSelectedConversation({ type: 'private', data: { _id, fullName, username, avatar } });
+    setSelectedConversation({
+      type: 'private',
+      data: { _id, fullName, username, avatar, gender, createdAt },
+    });
     setNotification(notification.filter(({ sender: { _id: idSender } }) => idSender !== _id));
     toggleSidebar();
   };
