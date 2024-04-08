@@ -22,8 +22,6 @@ const GroupBadge = ({ group, toggleSidebar }) => {
     if (isSelected) return;
     if (isLoading) return;
 
-    resetCurrentPage();
-
     // check if the user is already in the group before subscribing to receive messages, and only subscribe to receive messages if we are not already connected to that group.
     if (selectedConversation?.data?._id !== group._id) {
       // Check whether the current group is different from the clicked group
@@ -39,6 +37,8 @@ const GroupBadge = ({ group, toggleSidebar }) => {
         socket.currentRoom = group.chatName;
       }
     }
+
+    resetCurrentPage();
 
     setSelectedConversation({
       type: 'group',
