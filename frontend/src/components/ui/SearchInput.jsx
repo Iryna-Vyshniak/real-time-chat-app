@@ -35,7 +35,7 @@ const SearchInput = ({ search, setSearch, handleSearch, hasForm }) => {
             onChange={(e) => setSearch(e.target.value)}
             className='input input-bordered h-9 rounded-full bg-beige text-slate-900 placeholder:text-slate-600'
           />
-          <Button type='button' style='btn-circle' onClick={handleSearch}>
+          <Button type='button' style='btn-circle btn-sm' onClick={handleSearch}>
             <Icon
               src='#icon-search'
               style='w-[18px] h-[18px] drop-shadow-[0px_1px_0.5px_rgba(0,0,0,1)]'

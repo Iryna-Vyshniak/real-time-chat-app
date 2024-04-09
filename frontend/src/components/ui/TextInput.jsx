@@ -1,4 +1,4 @@
-const TextInput = ({ name, setName }) => {
+const TextInput = ({ name, setName, style }) => {
   return (
     <input
       type='text'
@@ -6,7 +6,9 @@ const TextInput = ({ name, setName }) => {
       name='name'
       value={name}
       onChange={(e) => setName(e.target.value)}
-      className='input input-bordered w-64 self-center h-9 rounded-lg bg-beige text-slate-900 placeholder:text-slate-600'
+      className={`input input-bordered w-64 ${
+        style ? style : 'self-center'
+      } h-9 rounded-lg bg-beige text-slate-900 placeholder:text-slate-600`}
     />
   );
 };
