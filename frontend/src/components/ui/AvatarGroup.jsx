@@ -1,18 +1,22 @@
 import Icon from './Icon';
 
-const AvatarGroup = ({ avatars, id, isCount, isAdmin, style, onClick }) => {
+const AvatarGroup = ({ avatars, isCount, isAdmin, adminName, style, onClick }) => {
   return (
-    <ul className={`avatar-group p-2 ${style ? style : ''}`}>
+    <ul
+      className={`${
+        !isCount ? 'flex flex-wrap items-center justify-start gap-2' : 'avatar-group'
+      } p-2 ${style ? style : ''}`}
+    >
       {isCount
-        ? avatars.slice(0, 3).map((avatar, idx) => (
-            <li key={id + `_${idx}`} className='avatar'>
+        ? avatars.slice(0, 3).map(({ avatar, _id }) => (
+            <li key={_id} className='avatar'>
               <div className='w-8 h-8 rounded-full'>
                 <img src={avatar} className='w-full h-full rounded-full' />
               </div>
             </li>
           ))
-        : avatars.map((avatar, idx) => (
-            <li key={id + `_${idx}`} className='relative'>
+        : avatars.map(({ avatar, _id, fullName, username }) => (
+            <li key={_id} className='relative tooltip' data-tip={username}>
               <div className='avatar'>
                 {' '}
                 <div className='w-8 h-8 rounded-full'>
@@ -20,11 +24,12 @@ const AvatarGroup = ({ avatars, id, isCount, isAdmin, style, onClick }) => {
                 </div>
               </div>
 
-              {isAdmin && (
+              {isAdmin && adminName.fullName !== fullName && (
                 <button
                   type='button'
+                  disabled={adminName.fullName === fullName}
                   className='absolute top-0 right-0 transform translate-x-[6%] translate-y-[15%] w-3 h-3 rounded-full border-none cursor-pointer bg-primary transition duration-200 ease-in-out'
-                  onClick={onClick}
+                  onClick={() => onClick(_id)}
                 >
                   <Icon
                     src='#icon-remove'
