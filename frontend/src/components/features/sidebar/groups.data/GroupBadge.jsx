@@ -14,7 +14,7 @@ const GroupBadge = ({ group, toggleSidebar }) => {
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
 
-  const avatars = group.participantsData?.map((participant) => participant.avatar);
+  const avatars = group.participantsData?.map((participant) => participant);
 
   const isSelected = selectedConversation?.data?._id === group._id;
 
