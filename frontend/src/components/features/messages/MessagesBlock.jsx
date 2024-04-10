@@ -61,11 +61,10 @@ const MessagesBlock = ({ isOpen }) => {
                       ? selectedConversation?.data.fullName
                       : selectedConversation?.data.chatName
                   }
-                />
-                <GroupConnectedClients
-                  isShow={isShowGroupParticipants}
+                  data={selectedConversation?.data}
                   toggleShow={toggleShowParticipants}
                 />
+                <GroupConnectedClients isShow={isShowGroupParticipants} />
               </div>
 
               <Messages onReply={handleReply} />
