@@ -32,7 +32,8 @@ const MessagesBlock = ({ isOpen }) => {
     setIsShowGroupParticipants(!isShowGroupParticipants);
   };
 
-  const { selectedConversation, setSelectedConversation, isLoading } = useConversation();
+  const { groups, selectedConversation, setSelectedConversation, isLoading } = useConversation();
+
   // listen socket events
   useListenMessages();
   useListenReadMessages();
@@ -44,6 +45,8 @@ const MessagesBlock = ({ isOpen }) => {
       setSelectedConversation(null);
     };
   }, [setSelectedConversation]);
+
+  const groupData = groups.find((group) => group._id === selectedConversation?.data?._id);
 
   return (
     <>
@@ -59,9 +62,13 @@ const MessagesBlock = ({ isOpen }) => {
                   name={
                     selectedConversation?.type === 'private'
                       ? selectedConversation?.data.fullName
-                      : selectedConversation?.data.chatName
+                      : groupData.chatName
                   }
-                  data={selectedConversation?.data}
+                  data={
+                    selectedConversation?.type === 'private'
+                      ? selectedConversation?.data
+                      : groupData
+                  }
                   toggleShow={toggleShowParticipants}
                 />
                 <GroupConnectedClients isShow={isShowGroupParticipants} />
