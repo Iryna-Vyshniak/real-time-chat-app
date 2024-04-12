@@ -1,6 +1,4 @@
-import Icon from './Icon';
-
-const AvatarGroup = ({ avatars, isCount, isAdmin, adminName, style, onClick }) => {
+const AvatarGroup = ({ avatars, isCount, style }) => {
   return (
     <ul
       className={`${
@@ -15,7 +13,7 @@ const AvatarGroup = ({ avatars, isCount, isAdmin, adminName, style, onClick }) =
               </div>
             </li>
           ))
-        : avatars.map(({ avatar, _id, fullName, username }) => (
+        : avatars.map(({ avatar, _id, username }) => (
             <li key={_id} className='relative tooltip' data-tip={username}>
               <div className='avatar'>
                 {' '}
@@ -23,20 +21,6 @@ const AvatarGroup = ({ avatars, isCount, isAdmin, adminName, style, onClick }) =
                   <img src={avatar} className='w-full h-full rounded-full' />
                 </div>
               </div>
-
-              {isAdmin && adminName.fullName !== fullName && (
-                <button
-                  type='button'
-                  disabled={adminName.fullName === fullName}
-                  className='absolute top-0 right-0 transform translate-x-[6%] translate-y-[15%] w-3 h-3 rounded-full border-none cursor-pointer bg-primary transition duration-200 ease-in-out'
-                  onClick={() => onClick(_id)}
-                >
-                  <Icon
-                    src='#icon-remove'
-                    style='w-3 h-3 fill-slate-700 transition duration-200 ease-in-out'
-                  />
-                </button>
-              )}
             </li>
           ))}
       {avatars.length > 3 && isCount && (
