@@ -8,7 +8,7 @@ const SelectedUsersList = ({ selectedUsers, handleDelete, adminName, style }) =>
         selectedUsers.map((user) => (
           <li
             key={user._id}
-            className='min-w-[10rem] w-fit bg-primary hover:bg-green text-slate-800 rounded-lg shadow-md transition-all duration-200 ease-out'
+            className='min-w-[12rem] w-fit bg-primary hover:bg-green text-slate-800 rounded-lg shadow-md transition-all duration-200 ease-out'
           >
             {' '}
             <UserSimpleInfo

@@ -29,7 +29,6 @@ export const useEditGroup = () => {
           throw new Error(data.error || data.message);
         }
         const updatedGroups = groups.map((group) => (group._id === data._id ? data : group));
-        console.log('updatedGroups: ', updatedGroups);
         setGroups(updatedGroups);
       } catch (error) {
         toast.error(error.message);
