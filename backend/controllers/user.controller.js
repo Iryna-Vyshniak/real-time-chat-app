@@ -94,19 +94,13 @@ const getUsersForSidebar = async (req, res) => {
     },
   ]);
 
-  // filter chats where user is a participant and add field with participants info
-  const userGroupChats = await Conversation.aggregate([
-    { $match: { isGroupChat: true, participants: loggedInUserId } },
-    {
-      // This part performs a “join” operation with the users collection. It looks for users whose _id are in the participants list of each chat and adds those users to a new participantsData field in each chat.
-      $lookup: {
-        from: 'users',
-        localField: 'participants',
-        foreignField: '_id',
-        as: 'participantsData',
-      },
-    },
-  ]);
+  // filter chats where user is a participant and add fields with participants and admin info
+  const userGroupChats = await Conversation.find({
+    isGroupChat: true,
+    participants: loggedInUserId,
+  })
+    .populate('participants', '-password')
+    .populate('groupAdmin', '-password');
 
   res.status(200).json({ allFilteredUsers, lastMessages, userGroupChats });
 };
