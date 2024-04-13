@@ -56,6 +56,7 @@ const GroupChatModal = () => {
     setSelectedUsers(selectedUsers.filter((user) => user._id !== deleteUser._id));
 
   const handleSubmit = async () => {
+    if (!groupChatName || selectedUsers.length === 0) return;
     await createGroupChat({ chatname: groupChatName, users: selectedUsers });
     setFoundUsers([]);
     setSelectedUsers([]);
@@ -72,12 +73,16 @@ const GroupChatModal = () => {
         <span>New Group</span>
       </Button>
       <Divider />
-      <dialog id='group-chat' className='modal'>
+      <dialog id='group-chat' className='modal sm:modal-middle'>
         <div className='modal-box'>
           <form
             method='dialog'
             className='flex flex-col items-center gap-2 text-slate-800'
-            onSubmit={handleSubmit}
+            onSubmit={() => {
+              if (groupChatName || selectedUsers.length > 0) {
+                handleSubmit();
+              }
+            }}
           >
             <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2'>✕</button>
 
