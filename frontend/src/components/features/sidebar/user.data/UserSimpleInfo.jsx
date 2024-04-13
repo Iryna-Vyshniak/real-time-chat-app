@@ -8,7 +8,7 @@ const UserSimpleInfo = ({ handleGroup, user, adminName, close }) => {
         <h1 className='text-xs'>{user.fullName}</h1>
         <p className='text-xs'>@{user.username}</p>
       </div>
-      {close && adminName.fullName !== user.fullName && (
+      {close && (!adminName || adminName.fullName !== user.fullName) && (
         <button className='btn btn-xs btn-circle btn-ghost absolute right-0 top-0 text-[8px]'>
           ✕
         </button>
