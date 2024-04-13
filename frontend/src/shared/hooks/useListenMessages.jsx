@@ -33,7 +33,7 @@ export const useListenMessages = () => {
       // Check if receiver online or not
       const receiverIsOnline = onlineUsers.some((user) => user === newMessage.receiver._id);
       // Check if the current user is a member of the group if group exists
-      const isMemberOfGroup = selectedConversation?.data?.participantsData?.some(
+      const isMemberOfGroup = selectedConversation?.data?.participants?.some(
         ({ _id }) => _id === authUser._id
       );
 
