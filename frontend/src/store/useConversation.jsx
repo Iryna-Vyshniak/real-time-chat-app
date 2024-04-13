@@ -127,6 +127,14 @@ const useConversation = createWithEqualityFn(
     onlineGroupUsers: [],
     setOnlineGroupUsers: ({ room, onlineUsers }) =>
       set({ onlineGroupUsers: { room, onlineUsers } }),
+
+    // initial values for modal groups
+    initialGroupChatName: null,
+    setInitialGroupChatName: (groupChatName) => set({ initialGroupChatName: groupChatName }),
+    initialSelectedUsers: null,
+    setInitialSelectedUsers: (selectedUsers) => set({ initialSelectedUsers: selectedUsers }),
+    initialImgUrl: null,
+    setInitialImgUrl: (imgUrl) => set({ initialImgUrl: imgUrl }),
   }),
   shallow
 );
