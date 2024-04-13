@@ -8,8 +8,15 @@ import AvatarGroup from '../../../ui/AvatarGroup';
 import Divider from '../../../ui/Divider';
 
 const GroupBadge = ({ group, toggleSidebar }) => {
-  const { isLoading, selectedConversation, setSelectedConversation, resetCurrentPage } =
-    useConversation();
+  const {
+    isLoading,
+    selectedConversation,
+    setSelectedConversation,
+    resetCurrentPage,
+    setInitialGroupChatName,
+    setInitialSelectedUsers,
+    setInitialImgUrl,
+  } = useConversation();
 
   const { authUser } = useAuthContext();
   const { socket } = useSocketContext();
@@ -44,6 +51,11 @@ const GroupBadge = ({ group, toggleSidebar }) => {
       type: 'group',
       data: { ...group },
     });
+
+    // Save the initial values for modal group
+    setInitialGroupChatName(group.chatName);
+    setInitialSelectedUsers(group.participants);
+    setInitialImgUrl(group.chatAvatar);
   };
 
   return (
