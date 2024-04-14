@@ -85,7 +85,13 @@ io.on('connection', (socket) => {
     try {
       await Message.updateMany({ conversationId, read: false }, { read: true }, { new: true });
 
-      io.to(userSocketMap[userId]).emit('messagesRead', { conversationId });
+      if (Array.isArray(userId)) {
+        userId.forEach((user) =>
+          io.to(userSocketMap[user._id]).emit('messagesRead', { conversationId })
+        );
+      } else {
+        io.to(userSocketMap[userId]).emit('messagesRead', { conversationId });
+      }
     } catch (error) {
       console.log(error);
     }
