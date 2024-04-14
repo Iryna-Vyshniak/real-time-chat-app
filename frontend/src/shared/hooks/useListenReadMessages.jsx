@@ -27,10 +27,19 @@ export const useListenReadMessages = () => {
       selectedConversation?.data?._id &&
       conversationId
     ) {
-      socket.emit('markMessagesAsRead', {
-        conversationId: conversationId,
-        userId: selectedConversation?.data?._id,
-      });
+      if (selectedConversation?.type === 'private') {
+        socket.emit('markMessagesAsRead', {
+          conversationId: conversationId,
+          userId: selectedConversation?.data?._id,
+        });
+      } else {
+        selectedConversation?.data?.participants.forEach((participant) => {
+          socket.emit('markMessagesAsRead', {
+            conversationId: conversationId,
+            userId: participant._id,
+          });
+        });
+      }
     }
 
     const messagesReadListener = ({ conversationId }) => {
