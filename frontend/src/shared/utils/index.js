@@ -28,12 +28,12 @@ export const uniqueSender = (notification) => {
     return Object.values(
       notification.reduce((acc, curr) => {
         const {
-          sender: { _id, fullName, username, avatar },
+          sender: { _id, fullName, username, avatar, gender, createdAt },
         } = curr;
 
         if (!acc[_id]) {
           acc[_id] = {
-            sender: { _id, fullName, username, avatar },
+            sender: { _id, fullName, username, avatar, gender, createdAt },
             count: 1,
           };
         } else {
