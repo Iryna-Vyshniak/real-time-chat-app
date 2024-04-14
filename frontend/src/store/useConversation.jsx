@@ -29,7 +29,7 @@ const useConversation = createWithEqualityFn(
         const isCurrentConversation = message.conversationId === conversationId;
         // Check if the current user is not the sender of the message
         const isInCommonChat =
-          selectedConversation && selectedConversation._id !== message.sender._id;
+          selectedConversation && selectedConversation.data._id !== message.sender._id;
         if (isInCommonChat && isCurrentConversation && !message.read) {
           return { ...message, read: true };
         }
