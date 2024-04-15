@@ -106,7 +106,8 @@ const useConversation = createWithEqualityFn(
     setLastMessages: (lastMessages) => set({ lastMessages }),
     notification: [],
     setNotification: (notification) => set({ notification }),
-    deleteNotification: (id) => set((state) => state.notification.filter((n) => n._id !== id)),
+    deleteNotification: (id) =>
+      set((state) => state.notification.filter(({ newMessage }) => newMessage._id !== id)),
     // CONVERSATION
     conversations: [],
     setConversations: (conversations) => set({ conversations }),
