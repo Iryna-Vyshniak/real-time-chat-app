@@ -27,17 +27,22 @@ export const uniqueSender = (notification) => {
   if (notification) {
     return Object.values(
       notification.reduce((acc, curr) => {
-        const {
-          sender: { _id, fullName, username, avatar, gender, createdAt },
-        } = curr;
-
-        if (!acc[_id]) {
-          acc[_id] = {
+        if (curr.newMessage && curr.newMessage.sender) {
+          const {
             sender: { _id, fullName, username, avatar, gender, createdAt },
-            count: 1,
-          };
-        } else {
-          acc[_id].count += 1;
+            receiver,
+          } = curr.newMessage;
+
+          if (!acc[_id]) {
+            acc[_id] = {
+              type: curr.type,
+              sender: { _id, fullName, username, avatar, gender, createdAt },
+              receiver,
+              count: 1,
+            };
+          } else {
+            acc[_id].count += 1;
+          }
         }
         return acc;
       }, {})
