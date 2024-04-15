@@ -113,7 +113,7 @@ export const sendMessage = async (req, res) => {
   const newMessage = await Message.create({
     conversationId: conversation._id,
     sender: senderInfo,
-    receiver: conversation.receiverType === 'private' ? receiverInfo : conversation._id,
+    receiver: conversation.receiverType === 'private' ? receiverInfo : conversation,
     onModel: conversation.receiverType === 'private' ? 'User' : 'Conversation',
     text,
     img: imgUrl,
