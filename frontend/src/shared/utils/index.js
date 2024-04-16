@@ -35,7 +35,7 @@ export const uniqueSender = (notification) => {
 
           if (!acc[_id]) {
             acc[_id] = {
-              type: curr.type,
+              type: curr.newMessage.onModel === 'User' ? 'private' : 'group',
               sender: { _id, fullName, username, avatar, gender, createdAt },
               receiver,
               count: 1,
