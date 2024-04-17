@@ -69,23 +69,23 @@ const GroupBadge = ({ group, toggleSidebar }) => {
       <div
         className={`relative flex items-center justify-between gap-2 p-3 rounded-lg cursor-pointer transition duration-200 ease-in-out ${
           isSelected ? 'border-[1px] border-green/30 shadow-md md:bg-secondary/10' : 'border-none'
-        }`}
+        } dropdown dropdown-hover`}
       >
-        {' '}
-        {group.participants?.length > 0 ? (
+        <Avatar src={group.chatAvatar} isTooltip={true} />
+
+        <p className='font-semibold text-slate-300 tracking-wider drop-shadow-1xl-black'>
+          {' '}
+          {group.chatName}
+        </p>
+
+        <div className='flex dropdown-content z-[1] bg-beige rounded-md'>
           <AvatarGroup
             avatars={avatars}
             id={group._id}
             isCount={true}
             style='-space-x-[18px] rtl:space-x-reverse'
           />
-        ) : (
-          <Avatar src={group.chatAvatar} />
-        )}
-        <p className='font-semibold text-slate-300 tracking-wider drop-shadow-1xl-black'>
-          {' '}
-          {group.chatName}
-        </p>
+        </div>
       </div>
 
       <Divider />
