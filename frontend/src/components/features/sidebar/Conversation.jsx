@@ -40,7 +40,15 @@ const Conversation = ({
       type: 'private',
       data: { _id, fullName, username, avatar, gender, createdAt },
     });
-    setNotification(notification.filter(({ sender: { _id: idSender } }) => idSender !== _id));
+    setNotification(
+      notification.filter(
+        ({
+          newMessage: {
+            sender: { _id: idSender },
+          },
+        }) => idSender !== _id
+      )
+    );
     toggleSidebar();
   };
 
@@ -60,7 +68,7 @@ const Conversation = ({
                 <Avatar src={avatar} selected={isSelected} isOnline={isOnline} />
               </Link>
 
-              {filteredNotification.length > 0 && (
+              {filteredNotification.length > 0 && selectedConversation.type === 'private' && (
                 <div className='absolute bottom-0 right-0 z-10 flex items-end justify-end md:hidden'>
                   <span className='flex items-center justify-center shadow bg-primary h-4 w-4 text-[10px] rounded-full text-slate-800'>
                     {filteredNotification[0].count}
@@ -74,7 +82,7 @@ const Conversation = ({
                 {fullName}
               </p>
               <div className='flex items-center justify-center w-8 h-8 rounded-full bg-slate-500/20 shadow-md'>
-                {filteredNotification.length > 0 ? (
+                {filteredNotification.length > 0 && selectedConversation.type === 'private' ? (
                   <div className='absolute z-[10] flex items-center justify-center h-full right-0 top-0 mr-4'>
                     <span className='flex items-center justify-center shadow bg-primary h-6 w-6 text-xs rounded-full text-slate-800'>
                       {filteredNotification[0].count}
