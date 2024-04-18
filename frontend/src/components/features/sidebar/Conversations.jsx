@@ -33,7 +33,10 @@ const Conversations = ({ toggleSidebar }) => {
 
   const unreadMessagesCounts = uniqueSender(notification);
 
-  const filterNotification = (id) => unreadMessagesCounts.filter(({ sender }) => sender._id === id);
+  const filterNotification = (id) =>
+    unreadMessagesCounts.filter(
+      ({ sender, receiver }) => sender._id === id && receiver.fullName !== undefined
+    );
 
   // keep emoji values stable when rerendering, using useMemo for performance optimization
   const generateConversationsWithEmoji = useMemo(() => {
