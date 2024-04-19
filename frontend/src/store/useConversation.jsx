@@ -3,6 +3,11 @@ import { shallow } from 'zustand/shallow';
 
 const useConversation = createWithEqualityFn(
   (set, get) => ({
+    // SOCKET
+    socket: null,
+    onlineUsers: [],
+    setSocket: (socket) => set((state) => ({ ...state, socket })),
+    setOnlineUsers: (users) => set((state) => ({ ...state, onlineUsers: users })),
     // MESSAGES
     // loading
     isLoading: false,

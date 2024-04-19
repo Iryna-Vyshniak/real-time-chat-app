@@ -1,11 +1,9 @@
 import { useEffect } from 'react';
 
-import { useSocketContext } from '../context/SocketContext';
 import useConversation from '../../store/useConversation';
 
 export const useListenEmoji = () => {
-  const { socket } = useSocketContext();
-  const { addEmoji, deleteEmoji } = useConversation();
+  const { socket, addEmoji, deleteEmoji } = useConversation();
 
   useEffect(() => {
     const addEmojiListener = ({ messageId, emoji }) => {

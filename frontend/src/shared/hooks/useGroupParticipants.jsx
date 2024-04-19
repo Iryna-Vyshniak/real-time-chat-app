@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { useSocketContext } from '../context/SocketContext';
 import useConversation from '../../store/useConversation';
 
 export const useGroupParticipants = () => {
   const [participants, setParticipants] = useState({});
-  const { onlineGroupUsers, setOnlineGroupUsers } = useConversation();
-
-  const { socket } = useSocketContext();
+  const { socket, onlineGroupUsers, setOnlineGroupUsers } = useConversation();
 
   useEffect(() => {
     const handleNewUserJoined = ({ room, username }) => {

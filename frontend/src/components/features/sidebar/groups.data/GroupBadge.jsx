@@ -1,7 +1,6 @@
 import useConversation from '../../../../store/useConversation';
 
 import { useAuthContext } from '../../../../shared/context/AuthContext';
-import { useSocketContext } from '../../../../shared/context/SocketContext';
 
 import Avatar from '../../../ui/Avatar';
 import AvatarGroup from '../../../ui/AvatarGroup';
@@ -9,6 +8,7 @@ import Divider from '../../../ui/Divider';
 
 const GroupBadge = ({ group, toggleSidebar }) => {
   const {
+    socket,
     isLoading,
     selectedConversation,
     setSelectedConversation,
@@ -19,7 +19,6 @@ const GroupBadge = ({ group, toggleSidebar }) => {
   } = useConversation();
 
   const { authUser } = useAuthContext();
-  const { socket } = useSocketContext();
 
   const avatars = group.participants?.map((participant) => participant);
 
@@ -57,6 +56,9 @@ const GroupBadge = ({ group, toggleSidebar }) => {
     setInitialSelectedUsers(group.participants);
     setInitialImgUrl(group.chatAvatar);
   };
+
+  console.log('selectedConversation: ', selectedConversation);
+  console.log('selectedConversation?.type', selectedConversation?.type);
 
   return (
     <li

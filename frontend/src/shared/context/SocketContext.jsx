@@ -1,7 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { createContext, useContext, useEffect } from 'react';
 import io from 'socket.io-client';
 
 import { useAuthContext } from './AuthContext';
+import useConversation from '../../store/useConversation';
 
 const SocketContext = createContext();
 
@@ -11,32 +13,30 @@ export const useSocketContext = () => {
 };
 
 export const SocketContextProvider = ({ children }) => {
-  const [socket, setSocket] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
+  const { socket, setSocket, onlineUsers, setOnlineUsers } = useConversation();
   const { authUser } = useAuthContext();
 
   useEffect(() => {
     if (authUser) {
-      const socket = io('https://chat-mern-ujj2.onrender.com', {
+      const newSocket = io('https://chat-mern-ujj2.onrender.com', {
         query: {
           userId: authUser._id,
         },
       });
-      setSocket(socket);
+      setSocket(newSocket);
 
       // socket.on() is used to listen to the events; can be used both on client and server side
-      socket.on('getOnlineUsers', (users) => {
+      newSocket.on('getOnlineUsers', (users) => {
         setOnlineUsers(users);
       });
 
-      return () => socket.close();
+      return () => newSocket.close();
     } else {
       if (socket) {
         socket.close();
         setSocket(null);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser]);
 
   return (
