@@ -91,8 +91,6 @@ export const updateGroupChat = async (req, res) => {
     new: true,
   });
 
-  console.log('updatedGroupChat: ', updatedGroupChat);
-
   if (!updatedGroupChat) throw HttpError(404, `Group with id=${groupId} not found`);
 
   const getDetailedGroupChat = await Conversation.findOne({ _id: updatedGroupChat._id })

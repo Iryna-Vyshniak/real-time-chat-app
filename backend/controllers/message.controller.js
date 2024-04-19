@@ -8,7 +8,7 @@ import Conversation from '../models/conversation.model.js';
 import Message from '../models/message.model.js';
 import User from '../models/user.model.js';
 
-import { getReceiverSocketId, io } from '../socket/socket.js';
+import { getReceiverSocketId, io, userSocketMap } from '../socket/socket.js';
 
 //  @description - ADD MESSAGE
 //  @route - POST /api/messages/send/:id
@@ -42,7 +42,7 @@ export const sendMessage = async (req, res) => {
   } else {
     // it's a group and look for the conversation by ID
     conversation = await Conversation.findById(receiver);
-    receiverInfo = receiver;
+    // receiverInfo = receiver;
   }
 
   if (!conversation) {
@@ -136,7 +136,14 @@ export const sendMessage = async (req, res) => {
 
   // socket io functionality
   if (type === 'group') {
-    io.to('group_' + conversation.chatName).emit('newMessage', newMessage);
+    const senderSocketId = userSocketMap[sender.toString()];
+    const senderSocket = io.sockets.sockets.get(senderSocketId);
+
+    if (senderSocketId && senderSocket) {
+      senderSocket.broadcast.to('group_' + conversation.chatName).emit('newMessage', newMessage);
+    } else {
+      console.log(`No connected socket found for sender: ${sender}`);
+    }
   } else {
     const receiverSocketId = getReceiverSocketId(receiver);
 
