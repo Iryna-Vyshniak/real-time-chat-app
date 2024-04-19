@@ -18,7 +18,7 @@ export const getReceiverSocketId = (receiverId) => {
   return userSocketMap[receiverId];
 };
 
-const userSocketMap = {}; // {userId: socketId}
+export const userSocketMap = {}; // {userId: socketId}
 const onlineUsersByGroup = {};
 
 io.on('connection', (socket) => {
@@ -85,12 +85,20 @@ io.on('connection', (socket) => {
     try {
       await Message.updateMany({ conversationId, read: false }, { read: true }, { new: true });
 
+      const senderSocketId = socket.id; // save the ID of the socket that sent the request
+
       if (Array.isArray(userId)) {
-        userId.forEach((user) =>
-          io.to(userSocketMap[user._id]).emit('messagesRead', { conversationId })
-        );
+        userId.forEach((user) => {
+          const userSocketId = userSocketMap[user._id];
+          if (userSocketId !== senderSocketId) {
+            io.to(userSocketId).emit('messagesRead', { conversationId });
+          }
+        });
       } else {
-        io.to(userSocketMap[userId]).emit('messagesRead', { conversationId });
+        const userSocketId = userSocketMap[userId];
+        if (userSocketId !== senderSocketId) {
+          io.to(userSocketId).emit('messagesRead', { conversationId });
+        }
       }
     } catch (error) {
       console.log(error);
