@@ -19,6 +19,7 @@ const Conversation = ({
   const { ref, inView } = useInView();
 
   const {
+    isLoading,
     selectedConversation,
     setSelectedConversation,
     setNotification,
@@ -34,6 +35,7 @@ const Conversation = ({
   const handleClick = () => {
     // implementing click disabling for previously clicked items
     if (isSelected) return;
+    if (isLoading) return;
     // resetting the current page
     resetCurrentPage();
     setSelectedConversation({
@@ -49,7 +51,6 @@ const Conversation = ({
         }) => idSender !== _id
       )
     );
-    toggleSidebar();
   };
 
   return (
@@ -61,7 +62,10 @@ const Conversation = ({
             className={`relative flex items-center justify-between gap-2 p-3 rounded-lg cursor-pointer transition duration-200 ease-in-out ${
               isSelected ? 'md:bg-secondary/30' : ''
             }`}
-            onClick={handleClick}
+            onClick={() => {
+              handleClick();
+              toggleSidebar();
+            }}
           >
             <div className='relative'>
               <Link to={`/users/${_id}`} className='relative'>
