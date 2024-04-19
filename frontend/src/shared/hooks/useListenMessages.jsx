@@ -3,17 +3,16 @@ import { useCallback, useEffect } from 'react';
 import useConversation from '../../store/useConversation';
 
 import { useAuthContext } from '../context/AuthContext';
-import { useSocketContext } from '../context/SocketContext';
 
 import messageSound from '../../assets/sounds/message-sound.mp3';
 import notifySound from '../../assets/sounds/notify-sound.mp3';
 
 export const useListenMessages = () => {
-  const { socket, onlineUsers } = useSocketContext();
-
   const { authUser } = useAuthContext();
 
   const {
+    socket,
+    // onlineUsers,
     addMessage,
     selectedConversation,
     notification,
@@ -25,46 +24,48 @@ export const useListenMessages = () => {
     setMessages,
   } = useConversation();
 
-  // add message
+  // --------------------------------------------------------
   const handleNewMessage = useCallback(
     (newMessage) => {
       const sound = new Audio(messageSound);
       const notify = new Audio(notifySound);
-      // Check if receiver online or not
-      const receiverIsOnline = onlineUsers.some((user) => user === newMessage.receiver._id);
-      // Check if the current user is a member of the group if group exists
-      const isMemberOfGroup = selectedConversation?.data?.participants?.some(
-        ({ _id }) => _id === authUser._id
-      );
 
-      // Check if conversation is selected
-      const conversationNotSelected =
-        !selectedConversation || selectedConversation?.data?._id !== newMessage.sender._id;
+      // Check if there was already a notification for this message
+      const hasNotification = notification?.some((msg) => msg.newMessage._id === newMessage._id);
 
-      // checking whether the recipient is different from the sender before adding a notification - help you avoid accidentally adding notifications for your own messages.
-      const isDifferentRecipient = newMessage.receiver._id !== newMessage.sender._id;
-      const hasNotification = notification.some((msg) => msg._id === newMessage._id);
+      // Check if the user is a member of the group to which the message was sent
+      let isMemberOfGroup = false;
+      if (newMessage.receiver.participants) {
+        isMemberOfGroup = newMessage.receiver.participants.includes(authUser._id);
+      }
 
-      if (!selectedConversation || selectedConversation?.type === 'private') {
-        if (receiverIsOnline && isDifferentRecipient && conversationNotSelected) {
-          if (!hasNotification) {
-            setNotification([...notification, newMessage]);
-            notify.play();
-          }
-        } else {
-          newMessage.shouldShake = true;
-          sound.play();
-          addMessage(newMessage);
-        }
-      } else if (selectedConversation?.type === 'group') {
-        if (isMemberOfGroup && newMessage.sender._id !== authUser._id) {
-          newMessage.shouldShake = true;
-          sound.play();
-          addMessage(newMessage);
+      // Check if the selected conversation is private and matches the conversation of the new message
+      const isSamePrivateConversationSelected =
+        selectedConversation?.data?._id === newMessage.sender._id &&
+        newMessage.receiver.fullName !== undefined;
+
+      // Check if the selected conversation is group and matches the conversation of the new message
+      const isSameGroupConversationSelected =
+        selectedConversation?.data?._id === newMessage.conversationId &&
+        newMessage.receiver.chatName !== undefined;
+
+      if (isMemberOfGroup && isSameGroupConversationSelected) {
+        newMessage.shouldShake = true;
+        sound.play();
+        addMessage(newMessage);
+      } else if (isSamePrivateConversationSelected) {
+        newMessage.shouldShake = true;
+        sound.play();
+        addMessage(newMessage);
+      } else {
+        if (!hasNotification) {
+          const notificationType = isMemberOfGroup ? 'group' : 'private';
+          setNotification([...notification, { newMessage, type: notificationType }]);
+          notify.play();
         }
       }
     },
-    [addMessage, authUser._id, notification, onlineUsers, selectedConversation, setNotification]
+    [addMessage, authUser._id, notification, selectedConversation, setNotification]
   );
 
   // delete message
@@ -80,11 +81,10 @@ export const useListenMessages = () => {
         !selectedConversation || selectedConversation?.data?._id !== senderId;
 
       if (conversationNotSelected) {
-        const findNotification = notification.find((n) => n._id === id);
-
+        const findNotification = notification?.find(({ newMessage }) => newMessage._id === id);
         if (findNotification) {
           deleteNotification(id);
-          setNotification(notification.filter((n) => n._id !== id));
+          setNotification(notification?.filter(({ newMessage }) => newMessage._id !== id));
         }
       }
       deleteMessage(id);
