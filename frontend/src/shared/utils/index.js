@@ -83,3 +83,17 @@ export const hasDateChanged = (previousDate, currentDate) => {
 export const downloadImage = (url) => {
   return `${url.split('/upload/')[0]}/upload/fl_attachment/${url.split('/upload/')[1]}`;
 };
+
+// replaces the URL with a hyperlink
+export const parseMessage = (message) => {
+  const urlPattern = /\b(https?:\/\/\S+)/gim;
+  if (urlPattern.test(message)) {
+    const parsedMessage = message.replace(
+      urlPattern,
+      '<a href="$1" target="_blank" className="text-blue-700 hover:underline  hover:underline-offset-4 hover:text-blue-800 transition duration-200 ease-in-out">Link</a>'
+    );
+    return parsedMessage;
+  } else {
+    return message;
+  }
+};
