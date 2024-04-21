@@ -112,7 +112,9 @@ const ChatInfoModal = ({ data, type }) => {
             }
           }}
         >
-          <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2'>✕</button>
+          <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white/50'>
+            ✕
+          </button>
           {type === 'private' ? (
             <UserFullInfo user={data} />
           ) : (

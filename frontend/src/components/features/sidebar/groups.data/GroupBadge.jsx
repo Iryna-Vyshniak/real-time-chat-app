@@ -57,9 +57,6 @@ const GroupBadge = ({ group, toggleSidebar }) => {
     setInitialImgUrl(group.chatAvatar);
   };
 
-  console.log('selectedConversation: ', selectedConversation);
-  console.log('selectedConversation?.type', selectedConversation?.type);
-
   return (
     <li
       className='w-full'
