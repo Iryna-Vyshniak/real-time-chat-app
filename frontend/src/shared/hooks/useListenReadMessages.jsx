@@ -2,13 +2,11 @@ import { useCallback, useEffect } from 'react';
 
 import useConversation from '../../store/useConversation';
 import { useAuthContext } from '../context/AuthContext';
-import { useSocketContext } from '../context/SocketContext';
 
 export const useListenReadMessages = () => {
-  const { socket } = useSocketContext();
   const { authUser } = useAuthContext();
 
-  const { messages, selectedConversation, updateMessagesStatus } = useConversation();
+  const { socket, messages, selectedConversation, updateMessagesStatus } = useConversation();
 
   const conversationId = useConversation((state) => state.conversationId);
 
