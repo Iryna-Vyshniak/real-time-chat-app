@@ -10,7 +10,9 @@ const useConversation = createWithEqualityFn(
     setOnlineUsers: (users) => set((state) => ({ ...state, onlineUsers: users })),
     socketStatus: 'disconnected',
     setSocketStatus: (socketStatus) => set({ socketStatus }),
-
+    // LOCATION
+    position: null,
+    setPosition: (position) => set({ position }),
     // MESSAGES
     // loading
     isLoading: false,
