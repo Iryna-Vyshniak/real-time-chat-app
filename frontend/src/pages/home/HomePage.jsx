@@ -1,6 +1,7 @@
 import { lazy, useEffect, useState } from 'react';
 
 import { useGetMessages } from '../../shared/hooks/useGetMessages';
+import { useListenLocation } from '../../shared/hooks/useListenLocation';
 
 const MessagesBlock = lazy(() => import('../../components/features/messages/MessagesBlock'));
 const Sidebar = lazy(() => import('../../components/features/sidebar/Sidebar'));
@@ -11,6 +12,7 @@ const HomePage = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useGetMessages();
+  useListenLocation();
 
   useEffect(() => {
     const handleResize = () => {
