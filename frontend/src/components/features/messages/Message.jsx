@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import parse from 'html-react-parser';
 
 const ImageDialog = lazy(() => import('./message.data/image/ImageDialog'));
 
@@ -9,7 +10,7 @@ import { useAuthContext } from '../../../shared/context/AuthContext';
 import { useRemoveEmoji } from '../../../shared/hooks/useRemoveEmoji';
 import useConversation from '../../../store/useConversation';
 
-import { extractTime } from '../../../shared/utils';
+import { extractTime, parseMessage } from '../../../shared/utils';
 
 import DropdownMessage from './message.data/DropdownMessage';
 import QuotedMessage from './message.data/reply/QuotedMessage';
@@ -31,6 +32,9 @@ const Message = ({ message, onReply, quotedMessage }) => {
 
   // infinity scrolling - intersection-observer
   const { ref, inView } = useInView();
+
+  // parse message if it has link
+  const parsedMessage = parse(parseMessage(message.text));
 
   // find qouted message
   const quotedInfo = messages.find((message) => message._id === quotedMessage);
@@ -94,7 +98,7 @@ const Message = ({ message, onReply, quotedMessage }) => {
         <div
           className={`chat-bubble pb-2 text-slate-800 ${
             message.video ? 'bg-transparent' : chatColor
-          } ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50 cursor-pointer`}
+          } ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50 cursor-pointer break-all`}
         >
           {quotedMessage && (
             <QuotedMessage
@@ -116,7 +120,7 @@ const Message = ({ message, onReply, quotedMessage }) => {
             {message.img && <ImageMessage message={message} />}
             {message.audio && <AudioPlayer src={message.audio} />}
             {message.video && <VideoPlayer src={message.video} />}
-            {message.text}
+            {parsedMessage}
           </div>
           {message.emoji && (
             <button

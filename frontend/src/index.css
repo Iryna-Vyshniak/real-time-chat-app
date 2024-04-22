@@ -120,6 +120,10 @@ div {
   color: #1e293b;
 }
 
+.chat-bubble {
+  word-break: break-all;
+}
+
 /*  style for audio recorder */
 
 @keyframes pulse {
