@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { bgImages } from '../../../shared/data/index.js';
+import { bgImages } from '../../../../shared/data/index.js';
 
 const Settings = () => {
   const [bgImage, setBgImages] = useState(localStorage.getItem('bg') || bgImages[0].img);
@@ -16,7 +16,7 @@ const Settings = () => {
   }, [bgImage]);
 
   return (
-    <dialog id='settings' className='modal'>
+    <dialog id='settings' className='modal sm:modal-middle'>
       <div className='modal-box p-6 w-[18rem] max-w-full min-h-[26rem] rounded-lg shadow-lg'>
         <form method='dialog'>
           <button className='btn btn-sm btn-circle btn-ghost absolute z-[1000] right-2 top-2 text-white/50'>

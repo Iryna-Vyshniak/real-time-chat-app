@@ -1,4 +1,4 @@
-import { useLogout } from '../../../shared/hooks/useLogout';
+import { useLogout } from '../../../../shared/hooks/useLogout';
 
 const Logout = () => {
   const { isLoading, logout } = useLogout();

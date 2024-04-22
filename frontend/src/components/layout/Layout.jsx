@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import Settings from '../features/navbar/Settings';
+import Settings from '../features/navbar/dropdown.content/Settings';
 
 const Layout = () => {
   return (

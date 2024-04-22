@@ -2,7 +2,7 @@ import { useAuthContext } from '../../../shared/context/AuthContext';
 
 import Avatar from '../../ui/Avatar';
 import DropdownButton from '../../ui/DropdownButton';
-import DropdownContent from './DropdownContent';
+import DropdownContent from './dropdown.content/DropdownContent';
 import Notification from './Notification';
 
 const Navigation = () => {

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { useAuthContext } from '../../../shared/context/AuthContext';
+import { useAuthContext } from '../../../../shared/context/AuthContext';
 
 import Logout from './Logout';
 
@@ -19,6 +19,14 @@ const DropdownContent = () => {
         >
           Profile
           <span className='badge'>New</span>
+        </Link>
+      </li>
+      <li>
+        <Link
+          to={`/location/${authUser._id}`}
+          className='justify-between text-slate-800 font-semibold tracking-widest'
+        >
+          Location
         </Link>
       </li>
       <li>
