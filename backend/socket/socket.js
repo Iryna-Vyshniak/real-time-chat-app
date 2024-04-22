@@ -20,12 +20,31 @@ export const getReceiverSocketId = (receiverId) => {
 
 export const userSocketMap = {}; // {userId: socketId}
 const onlineUsersByGroup = {};
+export const userLocationMap = {};
 
 io.on('connection', (socket) => {
   console.log('user connected', socket.id);
 
   const userId = socket.handshake.query.userId;
-  if (userId !== 'undefined') userSocketMap[userId] = socket.id;
+  const userLocation = socket.handshake.query.location;
+
+  // io.emit() is used to send events to all the connected clients - for ex: who is online or offline
+  io.emit('getOnlineUsers', Object.keys(userSocketMap));
+
+  if (userId !== 'undefined') {
+    userSocketMap[userId] = socket.id;
+    userLocationMap[userId] = userLocation;
+  }
+
+  // Emit the location right away if it exists
+  if (userLocationMap[userId]) {
+    io.emit('updateLocationResponse', userLocationMap[userId]);
+  }
+  // socket location
+  socket.on('updateLocation', ({ position, userId }) => {
+    userLocationMap[userId] = position; // Store the user's location in a separate map
+    io.emit('updateLocationResponse', { position });
+  });
 
   // Join group chat room
   socket.on('joinRoom', ({ room, username }) => {
@@ -78,9 +97,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // io.emit() is used to send events to all the connected clients - for ex: who is online or offline
-  io.emit('getOnlineUsers', Object.keys(userSocketMap));
-
   socket.on('markMessagesAsRead', async ({ conversationId, userId }) => {
     try {
       await Message.updateMany({ conversationId, read: false }, { read: true }, { new: true });
@@ -112,6 +128,9 @@ io.on('connection', (socket) => {
     if (userSocketMap[socket.id]) {
       delete userSocketMap[userId];
       io.emit('getOnlineUsers', Object.keys(userSocketMap));
+    }
+    if (userLocationMap[userId]) {
+      delete userLocationMap[userId];
     }
   });
 });
