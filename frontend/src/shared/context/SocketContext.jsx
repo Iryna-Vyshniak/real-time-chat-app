@@ -13,7 +13,9 @@ export const useSocketContext = () => {
 };
 
 export const SocketContextProvider = ({ children }) => {
-  const { socket, setSocket, onlineUsers, setOnlineUsers } = useConversation();
+  const { socket, setSocket, setSocketStatus, position, onlineUsers, setOnlineUsers } =
+    useConversation();
+
   const { authUser } = useAuthContext();
 
   useEffect(() => {
@@ -21,23 +23,42 @@ export const SocketContextProvider = ({ children }) => {
       const newSocket = io('https://chat-mern-ujj2.onrender.com', {
         query: {
           userId: authUser._id,
+          userLocation: position,
         },
       });
       setSocket(newSocket);
+      setSocketStatus('connected');
 
       // socket.on() is used to listen to the events; can be used both on client and server side
       newSocket.on('getOnlineUsers', (users) => {
         setOnlineUsers(users);
       });
 
-      return () => newSocket.close();
+      // listen location
+      position && authUser && newSocket.emit('updateLocation', { position, userId: authUser._id });
+
+      return () => {
+        newSocket.off('getOnlineUsers');
+        newSocket.off('updateLocation');
+        newSocket.close();
+      };
     } else {
       if (socket) {
         socket.close();
+        setSocketStatus('disconnected');
         setSocket(null);
       }
     }
   }, [authUser]);
+
+  useEffect(() => {
+    if (socket && position && authUser) {
+      socket.emit('updateLocation', {
+        position,
+        userId: authUser._id,
+      });
+    }
+  }, [socket, position, authUser]);
 
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>{children}</SocketContext.Provider>
