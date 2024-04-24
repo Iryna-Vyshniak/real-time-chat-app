@@ -22,12 +22,13 @@ export const useLogin = () => {
       });
 
       const data = await res.json();
+
       if (data.error || data.message) {
         throw new Error(data.error || data.message);
       }
-
       // localStorage
       localStorage.setItem('chat-user', JSON.stringify(data));
+      localStorage.setItem('pinnedGroups', JSON.stringify(data.pinnedGroups));
       // context
       setAuthUser(data);
     } catch (error) {
