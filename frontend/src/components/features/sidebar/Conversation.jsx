@@ -9,7 +9,17 @@ import Avatar from '../../ui/Avatar';
 import Divider from '../../ui/Divider.jsx';
 
 const Conversation = ({
-  conversation: { _id, fullName, username, avatar, gender, createdAt },
+  conversation: {
+    _id,
+    fullName,
+    username,
+    avatar,
+    gender,
+    groups,
+    adminGroups,
+    pinnedGroups,
+    createdAt,
+  },
   emoji,
   lastIdx,
   filteredNotification,
@@ -40,7 +50,17 @@ const Conversation = ({
     resetCurrentPage();
     setSelectedConversation({
       type: 'private',
-      data: { _id, fullName, username, avatar, gender, createdAt },
+      data: {
+        _id,
+        fullName,
+        username,
+        avatar,
+        gender,
+        groups,
+        adminGroups,
+        pinnedGroups,
+        createdAt,
+      },
     });
     setNotification(
       notification.filter(
