@@ -28,20 +28,17 @@ export const uniqueSender = (notification) => {
     return Object.values(
       notification.reduce((acc, curr) => {
         if (curr.newMessage && curr.newMessage.sender) {
-          const {
-            sender: { _id, fullName, username, avatar, gender, createdAt },
-            receiver,
-          } = curr.newMessage;
+          const { sender, receiver } = curr.newMessage;
 
-          if (!acc[_id]) {
-            acc[_id] = {
+          if (!acc[sender._id]) {
+            acc[sender._id] = {
               type: curr.newMessage.onModel === 'User' ? 'private' : 'group',
-              sender: { _id, fullName, username, avatar, gender, createdAt },
+              sender,
               receiver,
               count: 1,
             };
           } else {
-            acc[_id].count += 1;
+            acc[sender._id].count += 1;
           }
         }
         return acc;
