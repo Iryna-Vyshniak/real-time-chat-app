@@ -1,35 +1,29 @@
-import { useLocation } from 'react-router-dom';
-import { useRef } from 'react';
-
-import { LinkToBack } from '../../../ui/LinkToBack';
+import UserGroups from './UserGroups';
+import UserAdminGroups from './UserAdminGroups';
 
 const UserFullInfo = ({ user }) => {
-  const location = useLocation();
-  const backLinkLocationRef = useRef(location.state?.from ?? '/');
-
   return (
     <>
-      <LinkToBack to={backLinkLocationRef.current}>Back</LinkToBack>
-      <div className='flex flex-col items-center justify-center gap-4'>
+      {' '}
+      <div className='self-center flex items-center justify-center w-60 h-auto mt-2'>
+        <img
+          alt='user avatar'
+          src={user.avatar}
+          width='6rem'
+          height='6rem'
+          className='w-full rounded-full'
+        />
+      </div>
+      <div className='flex flex-col self-start gap-4 w-full text-slate-300'>
         {' '}
-        <div className='w-full md:w-60 h-auto'>
-          <img
-            alt='user avatar'
-            src={user.avatar}
-            width='6rem'
-            height='6rem'
-            className='w-full rounded-full'
-          />
-        </div>
-        <div className='flex flex-col items-start  gap-4'>
-          {' '}
-          <h1>Full name: {user.fullName}</h1>
-          <p>Nickname: @{user.username}</p>
-          <p>Gender: {user.gender}</p>
-          <p>
-            Join: {user.createdAt.split('T')[0]} {} {user.createdAt.split('T')[1].split('.')[0]}
-          </p>
-        </div>
+        <h1>Full name: {user.fullName}</h1>
+        <p>Nickname: @{user.username}</p>
+        <p>Gender: {user.gender}</p>
+        {user.adminGroups.length > 0 && <UserAdminGroups groups={user.adminGroups} />}
+        {user.groups.length > 0 && <UserGroups groups={user.groups} />}
+        <p>
+          Join: {user.createdAt.split('T')[0]} {} {user.createdAt.split('T')[1].split('.')[0]}
+        </p>
       </div>
     </>
   );
