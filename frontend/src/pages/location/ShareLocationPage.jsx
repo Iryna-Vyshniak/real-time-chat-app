@@ -36,7 +36,7 @@ const ShareLocationPage = () => {
   }, [socket]);
 
   return (
-    <section className='flex flex-col gap-4 w-1/2'>
+    <section className='flex flex-col gap-2 md:gap-4 w-full md:w-1/2 p-2'>
       <LinkToBack to={backLinkLocationRef.current}>Back</LinkToBack>
       <section className='p-3 flex flex-wrap gap-3 justify-between items-center w-full bg-primary/20 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-1 md:border-b border-slate-300'>
         {' '}

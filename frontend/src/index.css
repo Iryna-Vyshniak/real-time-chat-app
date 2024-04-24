@@ -120,6 +120,15 @@ div {
   color: #1e293b;
 }
 
+.tooltip:before,
+.tooltip-top:before {
+  transform: translateX(-30%);
+  top: auto;
+  left: 70%;
+  right: auto;
+  bottom: var(--tooltip-offset);
+}
+
 .chat-bubble {
   word-break: break-all;
 }

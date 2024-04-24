@@ -15,7 +15,7 @@ const LocationPage = () => {
   const { position, locationStatus } = useListenLocation();
 
   return (
-    <section className='flex flex-col gap-4 w-1/2'>
+    <section className='flex flex-col gap-2 md:gap-4 w-full md:w-1/2 p-2'>
       <LinkToBack to={backLinkLocationRef.current}>Back</LinkToBack>
       <Status position={position} locationStatus={locationStatus} />
       <ShareLocation position={position} locationStatus={locationStatus} />

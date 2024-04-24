@@ -28,7 +28,7 @@ const Map = ({ position }) => {
   const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   return (
-    <div className='relative mt-6 w-full z-10 h-[400px] overflow-hidden border-2 border-green shadow-lg shadow-green'>
+    <div className='relative mt-6 w-full z-10 min-h-[400px] h-auto overflow-hidden border-2 border-green shadow-lg shadow-green'>
       <MapContainer
         center={mapCenter}
         zoom={15}
@@ -36,7 +36,7 @@ const Map = ({ position }) => {
         style={{ width: '100%', height: 400 }}
       >
         <TileLayer attribution={attribution} url={url} />
-        <LocationMarker position={position}/>
+        <LocationMarker position={position} />
       </MapContainer>
     </div>
   );
