@@ -138,7 +138,8 @@ const useConversation = createWithEqualityFn(
     onlineGroupUsers: [],
     setOnlineGroupUsers: ({ room, onlineUsers }) =>
       set({ onlineGroupUsers: { room, onlineUsers } }),
-
+    pinnedGroups: JSON.parse(localStorage.getItem('pinnedGroups')) || [],
+    setPinnedGroups: (groups) => set({ pinnedGroups: groups }),
     // initial values for modal groups
     initialGroupChatName: null,
     setInitialGroupChatName: (groupChatName) => set({ initialGroupChatName: groupChatName }),
