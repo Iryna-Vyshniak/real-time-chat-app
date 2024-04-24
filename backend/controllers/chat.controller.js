@@ -3,6 +3,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { ctrlWrapper } from '../decorators/index.js';
 import { HttpError } from '../helpers/index.js';
 import Conversation from '../models/conversation.model.js';
+import User from '../models/user.model.js';
 
 // @description     Create New Group Chat
 // @route           POST /api/chat/group
@@ -32,6 +33,18 @@ export const createGroupChat = async (req, res) => {
     groupAdmin: sender,
     receiverType: 'group',
   });
+
+  // Add the ID of the newly created group to the list of groups for each user
+  // Update each user in the group
+  await Promise.all(
+    users.map(async (user) => {
+      await User.findByIdAndUpdate(user._id, { $addToSet: { groups: groupChat._id } });
+      // If the user is an admin, add a new group to his adminGroups list
+      if (user === sender) {
+        await User.findByIdAndUpdate(user._id, { $addToSet: { adminGroups: groupChat._id } });
+      }
+    })
+  );
 
   const getDetailedGroupChat = await Conversation.findOne({ _id: groupChat._id })
     .populate('participants', '-password')
@@ -100,7 +113,31 @@ export const updateGroupChat = async (req, res) => {
   res.status(200).json(getDetailedGroupChat);
 };
 
+// @description     Create PINNED GROUP
+// @route           POST /api/chat/group/:id/pin-group
+
+export const pinGroupChat = async (req, res) => {
+  const { groupId } = req.params;
+  const sender = req.user; // it`s me
+
+  const user = await User.findById({ _id: sender._id });
+
+  if (!user) throw HttpError(404, 'User not found');
+
+  const index = user.pinnedGroups.indexOf(groupId);
+
+  if (index !== -1) {
+    user.pinnedGroups.splice(index, 1);
+  } else {
+    user.pinnedGroups.push(groupId);
+  }
+  await user.save();
+
+  res.status(201).json(user.pinnedGroups);
+};
+
 export default {
   createGroupChat: ctrlWrapper(createGroupChat),
   updateGroupChat: ctrlWrapper(updateGroupChat),
+  pinGroupChat: ctrlWrapper(pinGroupChat),
 };
