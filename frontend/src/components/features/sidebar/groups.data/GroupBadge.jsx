@@ -5,6 +5,9 @@ import { useAuthContext } from '../../../../shared/context/AuthContext';
 import Avatar from '../../../ui/Avatar';
 import AvatarGroup from '../../../ui/AvatarGroup';
 import Divider from '../../../ui/Divider';
+import DropdownButton from '../../../ui/DropdownButton';
+import { usePinGroupChat } from '../../../../shared/hooks/usePinGroupChat';
+import Icon from '../../../ui/Icon';
 
 const GroupBadge = ({ group, toggleSidebar }) => {
   const {
@@ -17,12 +20,18 @@ const GroupBadge = ({ group, toggleSidebar }) => {
     setInitialSelectedUsers,
     setInitialImgUrl,
   } = useConversation();
+  const { addPinGroup } = usePinGroupChat(group._id);
+
+  const pinnedGroups = JSON.parse(localStorage.getItem('pinnedGroups')) || [];
 
   const { authUser } = useAuthContext();
 
   const avatars = group.participants?.map((participant) => participant);
 
   const isSelected = selectedConversation?.data?._id === group._id;
+
+  const pinnedText = pinnedGroups.includes(group._id) ? 'Unpin' : 'Pin';
+  const isPinned = pinnedGroups.includes(group._id);
 
   const handleClick = async () => {
     if (isSelected) return;
@@ -58,17 +67,15 @@ const GroupBadge = ({ group, toggleSidebar }) => {
   };
 
   return (
-    <li
-      className='w-full'
-      onClick={() => {
-        handleClick();
-        toggleSidebar();
-      }}
-    >
+    <li className='relative w-full'>
       <div
-        className={`relative flex items-center justify-between gap-2 p-3 rounded-lg cursor-pointer transition duration-200 ease-in-out ${
+        className={`flex items-center justify-between gap-2 p-3 rounded-lg cursor-pointer transition duration-200 ease-in-out ${
           isSelected ? 'border-[1px] border-green/30 shadow-md md:bg-secondary/10' : 'border-none'
-        } dropdown dropdown-hover`}
+        }`}
+        onClick={() => {
+          handleClick();
+          toggleSidebar();
+        }}
       >
         <Avatar src={group.chatAvatar} isTooltip={true} />
 
@@ -77,7 +84,7 @@ const GroupBadge = ({ group, toggleSidebar }) => {
           {group.chatName}
         </p>
 
-        <div className='flex dropdown-content z-[1] bg-beige rounded-md'>
+        <div className='flex rounded-md'>
           <AvatarGroup
             avatars={avatars}
             id={group._id}
@@ -86,6 +93,26 @@ const GroupBadge = ({ group, toggleSidebar }) => {
           />
         </div>
       </div>
+
+      <DropdownButton
+        id={group._id}
+        fromMe={true}
+        button={true}
+        isPinned={isPinned}
+        style='dropdown dropdown-hover dropdown-left absolute z-[50] top-1 right-1 cursor-pointer'
+      >
+        <div
+          tabIndex={0}
+          className='dropdown-content z-[50] menu py-1 px-2 shadow bg-primary rounded-box w-20'
+          onClick={addPinGroup}
+        >
+          <div className='flex items-center justify-between gap-2'>
+            {' '}
+            <Icon src='#icon-pin' style='w-3 fill-accent drop-shadow-1xl-black' />
+            <p className='text-slate-800 text-xs'>{pinnedText}</p>
+          </div>
+        </div>
+      </DropdownButton>
 
       <Divider />
     </li>
