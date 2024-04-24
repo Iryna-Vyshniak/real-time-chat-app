@@ -34,7 +34,6 @@ const signup = async (req, res) => {
     ...req.body,
     password: hashPassword,
     avatar: gender === 'female' ? womanAvatar : manAvatar,
-    isAdmin: false,
   });
 
   if (!newUser) {
@@ -49,7 +48,7 @@ const signup = async (req, res) => {
     fullName: newUser.fullName,
     username: newUser.username,
     avatar: newUser.avatar,
-    isAdmin: newUser.isAdmin,
+    pinnedGroups: newUser.pinnedGroups,
   });
 };
 
@@ -71,7 +70,7 @@ const login = async (req, res) => {
     fullName: user.fullName,
     username: user.username,
     avatar: user.avatar,
-    isAdmin: user.isAdmin,
+    pinnedGroups: user.pinnedGroups,
   });
 };
 

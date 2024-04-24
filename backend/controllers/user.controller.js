@@ -3,6 +3,7 @@ import { v2 as cloudinary } from 'cloudinary';
 
 import { ctrlWrapper } from '../decorators/index.js';
 import { HttpError } from '../helpers/index.js';
+import { populateGroups } from '../utils/populateGroups.js';
 
 import Message from '../models/message.model.js';
 import User from '../models/user.model.js';
@@ -16,6 +17,11 @@ const getUserInfo = async (req, res) => {
 
   if (!user) throw HttpError(404, 'User not found');
 
+  // Get extended information about user groups and store it in the user object
+  user.adminGroups = await populateGroups(user.adminGroups);
+  user.groups = await populateGroups(user.groups);
+  user.pinnedGroups = await populateGroups(user.pinnedGroups);
+
   res.status(200).json(user);
 };
 
@@ -25,6 +31,21 @@ const getUsersForSidebar = async (req, res) => {
 
   // find all users but don`t find user who is logged in and can see all users (conversations) on sidebar because we don`t want to send message to us
   const allFilteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select('-password');
+
+  // Get extended information about groups for each user and store it in the user object
+  const populateGroupsForUsers = async (users) => {
+    const populatedUsers = await Promise.all(
+      users.map(async (user) => {
+        user.adminGroups = await populateGroups(user.adminGroups);
+        user.groups = await populateGroups(user.groups);
+        user.pinnedGroups = await populateGroups(user.pinnedGroups);
+        return user;
+      })
+    );
+    return populatedUsers;
+  };
+
+  const usersWithExtendedGroups = await populateGroupsForUsers(allFilteredUsers);
 
   // Get the last unread messages from each sender
   const lastMessages = await Message.aggregate([
@@ -102,7 +123,7 @@ const getUsersForSidebar = async (req, res) => {
     .populate('participants', '-password')
     .populate('groupAdmin', '-password');
 
-  res.status(200).json({ allFilteredUsers, lastMessages, userGroupChats });
+  res.status(200).json({ allFilteredUsers: usersWithExtendedGroups, lastMessages, userGroupChats });
 };
 
 // @description -  update unread messages
