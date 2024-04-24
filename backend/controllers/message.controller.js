@@ -9,6 +9,7 @@ import Message from '../models/message.model.js';
 import User from '../models/user.model.js';
 
 import { getReceiverSocketId, io, userSocketMap } from '../socket/socket.js';
+import { populateGroups } from '../utils/populateGroups.js';
 
 //  @description - ADD MESSAGE
 //  @route - POST /api/messages/send/:id
@@ -54,6 +55,11 @@ export const sendMessage = async (req, res) => {
   }
 
   const senderInfo = await User.findById({ _id: sender });
+
+  // Get extended information about user groups and store it in the user object
+  senderInfo.adminGroups = await populateGroups(senderInfo.adminGroups);
+  senderInfo.groups = await populateGroups(senderInfo.groups);
+  senderInfo.pinnedGroups = await populateGroups(senderInfo.pinnedGroups);
 
   // retrieve information about the quoted message if a quoted message ID is provided
   let repliedInfo = null;
