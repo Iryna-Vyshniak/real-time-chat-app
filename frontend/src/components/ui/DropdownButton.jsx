@@ -1,6 +1,6 @@
 import Icon from './Icon';
 
-const DropdownButton = ({ children, fromMe, style, button }) => {
+const DropdownButton = ({ children, fromMe, style, button, isPinned }) => {
   const position = fromMe ? 'dropdown-left' : 'dropdown-right';
 
   return (
@@ -11,7 +11,11 @@ const DropdownButton = ({ children, fromMe, style, button }) => {
           role='button'
           className='p-1 hover:bg-white/20 rounded-lg focus:ring-1 focus:ring-primary focus:outline-none'
         >
-          <Icon src='#icon-dots-horizontal-triple' style='w-2 h-2' />
+          {isPinned ? (
+            <Icon src='#icon-pin' style='w-3 fill-accent drop-shadow-1xl-black' />
+          ) : (
+            <Icon src='#icon-dots-horizontal-triple' style='w-2 h-2' />
+          )}
         </div>
       )}
       {children}
