@@ -27,10 +27,32 @@ const userSchema = new Schema(
       type: String,
       default: '',
     },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-      required: true,
+    adminGroups: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Conversation',
+        },
+      ],
+      default: [],
+    },
+    groups: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Conversation',
+        },
+      ],
+      default: [],
+    },
+    pinnedGroups: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Conversation',
+        },
+      ],
+      default: [],
     },
   },
   { versionKey: false, timestamps: true }
