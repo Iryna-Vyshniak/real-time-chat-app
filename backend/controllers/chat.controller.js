@@ -4,6 +4,7 @@ import { ctrlWrapper } from '../decorators/index.js';
 import { HttpError } from '../helpers/index.js';
 import Conversation from '../models/conversation.model.js';
 import User from '../models/user.model.js';
+import Message from '../models/message.model.js';
 
 // @description     Create New Group Chat
 // @route           POST /api/chat/group
@@ -57,20 +58,55 @@ export const createGroupChat = async (req, res) => {
 // @route        - PUT /api/chat/group-edit/:groupId
 export const updateGroupChat = async (req, res) => {
   const { groupId } = req.params;
+  const sender = req.user;
 
   const { chatname, users, chatAvatar } = req.body;
 
-  if (!users && !chatname && !chatAvatar) {
-    throw HttpError(400, 'Invalid data passed into request');
+  if (users.length < 3) {
+    // Find the user who sent the request
+    const user = await User.findById({ _id: sender._id });
+
+    if (!user) throw HttpError(404, 'User not found');
+
+    // Remove the group from the user's groups, pinned groups, and admin groups lists
+    user.groups = user.groups.filter((group) => group !== groupId);
+    user.pinnedGroups = user.pinnedGroups.filter((group) => group !== groupId);
+    user.adminGroups = user.adminGroups.filter((group) => group !== groupId);
+
+    // Delete the group, delete all group messages and save the updated user
+    await Promise.all([
+      Conversation.findByIdAndDelete(groupId),
+      Message.deleteMany({ conversationId: groupId }),
+      user.save(),
+    ]);
+
+    // Remove the group from the lists of all group members
+    await Promise.all(
+      users.map(async ({ _id }) => {
+        await User.findByIdAndUpdate(_id, {
+          $pull: { groups: groupId, pinnedGroups: groupId, adminGroups: groupId },
+        });
+      })
+    );
+    return;
   }
 
-  if (users && users.length < 2)
-    throw HttpError(400, 'More than 2 users are required to form a group chat');
+  if (!chatname && !chatAvatar) {
+    throw HttpError(400, 'Invalid data passed into request');
+  }
 
   if (chatname) {
     const groupExists = await Conversation.findOne({ chatName: chatname, _id: { $ne: groupId } });
     if (groupExists) throw HttpError(400, 'Group name already exists');
   }
+
+  // Add the ID of the newly edited group to the list of groups for each user
+  // Update each user in the group
+  await Promise.all(
+    users.map(async (user) => {
+      await User.findByIdAndUpdate(user._id, { $addToSet: { groups: groupId } });
+    })
+  );
 
   let avatarUrl;
 
@@ -136,8 +172,32 @@ export const pinGroupChat = async (req, res) => {
   res.status(201).json(user.pinnedGroups);
 };
 
+// @description     DELETE USER FROM GROUP
+// @route           DELETE /api/chat/group/:groupId/delete-user
+
+export const deleteUserFromGroup = async (req, res) => {
+  const { groupId } = req.params;
+  const { userId } = req.body;
+
+  const user = await User.findById({ _id: userId });
+
+  if (!user) throw HttpError(404, 'User not found');
+
+  // Remove the user from the group, remove the group from the user's lists, and save the updated user
+  await Promise.all([
+    User.findByIdAndUpdate(userId, {
+      $pull: { groups: groupId, pinnedGroups: groupId, adminGroups: groupId },
+    }),
+    Conversation.findByIdAndUpdate(groupId, { $pull: { participants: userId } }, { multi: true }),
+    user.save(),
+  ]);
+
+  res.status(200).json({ info: 'User successfully deleted' });
+};
+
 export default {
   createGroupChat: ctrlWrapper(createGroupChat),
   updateGroupChat: ctrlWrapper(updateGroupChat),
   pinGroupChat: ctrlWrapper(pinGroupChat),
+  deleteUserFromGroup: ctrlWrapper(deleteUserFromGroup),
 };
