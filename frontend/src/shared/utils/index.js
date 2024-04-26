@@ -94,3 +94,12 @@ export const parseMessage = (message) => {
     return message;
   }
 };
+
+// Shorten long titles to 6 characters
+export const getTitle = (title) => {
+  if (title.length > 6) {
+    return title.substring(0, 6) + '...';
+  } else {
+    return title;
+  }
+};
