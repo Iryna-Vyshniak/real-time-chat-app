@@ -4,10 +4,14 @@ import isEqual from 'lodash.isequal';
 
 import useConversation from '../../../../store/useConversation';
 
-import UserFullInfo from '../../sidebar/user.data/UserFullInfo';
-import GroupFullInfo from './GroupFullInfo';
 import { useEditGroup } from '../../../../shared/hooks/useEditGroup';
 import { usePreviewImage } from '../../../../shared/hooks/usePreviewImage';
+import { useDeleteUserFromGroup } from '../../../../shared/hooks/useDeleteUserFromGroup';
+
+import UserFullInfo from '../../sidebar/user.data/UserFullInfo';
+import GroupFullInfo from './GroupFullInfo';
+
+import Toast from '../../../ui/Toast';
 
 const ChatInfoModal = ({ data, type }) => {
   const [groupChatName, setGroupChatName] = useState(data.chatName);
@@ -18,6 +22,7 @@ const ChatInfoModal = ({ data, type }) => {
 
   const {
     conversations,
+    selectedConversation,
     initialGroupChatName,
     setInitialGroupChatName,
     initialSelectedUsers,
@@ -25,8 +30,10 @@ const ChatInfoModal = ({ data, type }) => {
     initialImgUrl,
     setInitialImgUrl,
   } = useConversation();
+
   const { imgUrl, setImgUrl, handleImageChange } = usePreviewImage();
   const { editGroup } = useEditGroup();
+  const { deleteUserFromGroup } = useDeleteUserFromGroup();
 
   useEffect(() => {
     setGroupChatName(data.chatName);
@@ -64,8 +71,13 @@ const ChatInfoModal = ({ data, type }) => {
     }
   };
 
-  const handleDelete = (deleteUser) => {
-    setSelectedUsers(selectedUsers.filter((user) => user._id !== deleteUser._id));
+  const handleDelete = async (deleteUserId) => {
+    setSelectedUsers(selectedUsers.filter((user) => user._id !== deleteUserId));
+    if (selectedUsers?.length < 3)
+      toast.error(
+        `A group requires at least 3 members. Please select more users or your group will be deleted.`
+      );
+    await deleteUserFromGroup({ userId: deleteUserId, groupId: selectedConversation?.data?._id });
   };
 
   useEffect(() => {
@@ -106,9 +118,16 @@ const ChatInfoModal = ({ data, type }) => {
         <form
           method='dialog'
           className='flex flex-col items-center gap-2 text-slate-800'
-          onSubmit={() => {
+          onSubmit={(e) => {
             if (type === 'group') {
-              handleSubmit();
+              if (selectedUsers.length >= 3) {
+                handleSubmit();
+              } else {
+                e.preventDefault();
+                toast.error(
+                  `A group requires at least 3 members. Please select more users or your group will be deleted.`
+                );
+              }
             }
           }}
         >
@@ -135,6 +154,7 @@ const ChatInfoModal = ({ data, type }) => {
           )}
         </form>
       </div>
+      <Toast />
     </dialog>
   );
 };

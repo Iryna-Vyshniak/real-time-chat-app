@@ -14,7 +14,7 @@ const SelectedUsersList = ({ selectedUsers, handleDelete, adminName, style }) =>
             <UserSimpleInfo
               user={user}
               adminName={adminName}
-              handleGroup={() => handleDelete(user)}
+              handleGroup={() => handleDelete(user._id)}
               close={true}
             />
           </li>

@@ -9,6 +9,7 @@ import Divider from '../../../ui/Divider';
 import Button from '../../../ui/Button';
 import SearchInput from '../../../ui/SearchInput';
 import TextInput from '../../../ui/TextInput';
+import Toast from '../../../ui/Toast';
 
 import FoundUsersList from '../user.data/FoundUsersList';
 import SelectedUsersList from '../user.data/SelectedUsersList';
@@ -52,8 +53,13 @@ const GroupChatModal = () => {
     setSelectedUsers(updatedUsers);
   };
 
-  const handleDelete = (deleteUser) =>
-    setSelectedUsers(selectedUsers.filter((user) => user._id !== deleteUser._id));
+  const handleDelete = (deleteUserId) => {
+    setSelectedUsers(selectedUsers.filter((user) => user._id !== deleteUserId));
+    if (selectedUsers?.length < 3)
+      toast.error(
+        'A group requires at least 3 members. Please select more users or your group will be deleted.'
+      );
+  };
 
   const handleSubmit = async () => {
     if (!groupChatName || selectedUsers.length === 0) return;
@@ -78,9 +84,16 @@ const GroupChatModal = () => {
           <form
             method='dialog'
             className='flex flex-col items-center gap-2 text-slate-800'
-            onSubmit={() => {
-              if (groupChatName || selectedUsers.length > 0) {
-                handleSubmit();
+            onSubmit={(e) => {
+              if (groupChatName) {
+                if (selectedUsers.length >= 2) {
+                  handleSubmit();
+                } else {
+                  e.preventDefault();
+                  toast.error(
+                    `A group requires at least 3 members. Please select more users or your group will be deleted.`
+                  );
+                }
               }
             }}
           >
@@ -102,11 +115,12 @@ const GroupChatModal = () => {
             )}
             <FoundUsersList foundUsers={foundUsers} handleGroup={handleAddToGroup} />
 
-            <Button type='submit' width='w-64 self-center'>
+            <Button type='submit' width='w-64 self-center' disabled={selectedUsers?.length < 2}>
               Create Group
             </Button>
           </form>
         </div>
+        <Toast />
       </dialog>
     </>
   );
