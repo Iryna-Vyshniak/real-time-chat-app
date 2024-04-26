@@ -9,6 +9,8 @@ import DropdownButton from '../../../ui/DropdownButton';
 import { usePinGroupChat } from '../../../../shared/hooks/usePinGroupChat';
 import Icon from '../../../ui/Icon';
 
+import { getTitle } from '../../../../shared/utils';
+
 const GroupBadge = ({ group, toggleSidebar }) => {
   const {
     socket,
@@ -81,7 +83,7 @@ const GroupBadge = ({ group, toggleSidebar }) => {
 
         <p className='font-semibold text-slate-300 tracking-wider drop-shadow-1xl-black'>
           {' '}
-          {group.chatName}
+          {getTitle(group.chatName)}
         </p>
 
         <div className='flex rounded-md'>
