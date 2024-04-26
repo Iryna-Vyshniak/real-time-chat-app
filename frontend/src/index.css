@@ -17,6 +17,16 @@ body {
 #root {
   height: 100%;
 }
+#settings,
+#chat-info,
+#group-chat {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+}
 
 /* chrome */
 ::-webkit-scrollbar {
@@ -35,7 +45,7 @@ div {
   }
 
   .modal {
-    @apply bg-clip-padding backdrop-filter backdrop-blur-md bg-green/10;
+    @apply z-[200]  bg-green/10;
   }
   .modal-box {
     @apply bg-clip-padding backdrop-filter backdrop-blur-xl bg-green/10 bg-opacity-0;
@@ -118,6 +128,7 @@ div {
 .tooltip:before {
   background-color: #e6f4cf;
   color: #1e293b;
+  font-size: 10px;
 }
 
 .tooltip:before,
@@ -125,6 +136,14 @@ div {
   transform: translateX(-30%);
   top: auto;
   left: 70%;
+  right: auto;
+  bottom: var(--tooltip-offset);
+}
+
+.tooltip-right:before {
+  transform: translateX(-80%);
+  top: auto;
+  left: 50%;
   right: auto;
   bottom: var(--tooltip-offset);
 }

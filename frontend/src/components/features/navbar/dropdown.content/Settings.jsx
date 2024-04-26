@@ -19,7 +19,7 @@ const Settings = () => {
     <dialog id='settings' className='modal sm:modal-middle'>
       <div className='modal-box p-6 w-[18rem] max-w-full min-h-[26rem] rounded-lg shadow-lg'>
         <form method='dialog'>
-          <button className='btn btn-sm btn-circle btn-ghost absolute z-[1000] right-2 top-2 text-white/50'>
+          <button className='btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white/50'>
             ✕
           </button>
         </form>

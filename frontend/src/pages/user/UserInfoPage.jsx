@@ -20,7 +20,7 @@ const UserInfoPage = () => {
         </div>
       )}
       {!isLoading && user && (
-        <div className='flex flex-col items-center gap-2 p-4 w-[90%] md:w-1/2 h-auto bg-primary/10 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-1 rounded-md text-slate-300 text-lg drop-shadow-1xl-black'>
+        <div className='flex flex-col items-center gap-2 p-4 w-[90%] md:w-1/2 h-auto bg-primary/10 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-1 rounded-md text-slate-300 text-lg drop-shadow-1xl-black overflow-x-hidden overflow-y-scroll no-scrollbar'>
           <LinkToBack to={backLinkLocationRef.current}>Back</LinkToBack>
           <UserFullInfo user={user} />
         </div>
