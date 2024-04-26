@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 import { useAuthContext } from '../../shared/context/AuthContext.jsx';
 
@@ -62,8 +63,20 @@ const UpdateForm = ({ onSubmit }) => {
     navigate('/');
   };
 
+  const checkRequiredFields =
+    !avatar || !fullName || !username || !password || !confirmPassword || !gender;
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={(e) => {
+        if (checkRequiredFields) {
+          toast.error('Please fill all fields');
+          e.preventDefault();
+        } else {
+          handleSubmit();
+        }
+      }}
+    >
       <div className='relative flex items-center justify-center mt-4 w-28 h-20'>
         <Avatar src={imgUrl || avatar} style='w-20 h-20' />
         <div className='absolute bottom-[7%] right-0 z-50 w-8 h-8 rounded-full'>
@@ -140,7 +153,7 @@ const UpdateForm = ({ onSubmit }) => {
           </span>
         </Link>
       </div>
-      <Button type='submit' disabled={isLoading}>
+      <Button type='submit' disabled={isLoading || checkRequiredFields}>
         {isLoading ? <span className='loading loading-spinner'></span> : 'UPDATE'}
       </Button>
     </form>
