@@ -139,7 +139,12 @@ const GroupFullInfo = ({
         </div>
       </div>
       {isAdmin && (
-        <Button type='submit' width='w-64 self-center' onClick={handleCloseAll}>
+        <Button
+          type='submit'
+          width='w-64 self-center'
+          onClick={handleCloseAll}
+          disabled={selectedUsers?.length < 3}
+        >
           Update Group
         </Button>
       )}

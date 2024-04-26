@@ -1,12 +1,12 @@
 import { useEffect, Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
 
 import Layout from './components/layout/Layout';
 
 import { bgImages } from './shared/data/index.js';
 
 import { useAuthContext } from './shared/context/AuthContext';
+import Toast from './components/ui/Toast.jsx';
 
 const HomePage = lazy(() => import('./pages/home/HomePage'));
 const LoginPage = lazy(() => import('./pages/login/LoginPage'));
@@ -54,7 +54,7 @@ function App() {
           </Route>
         </Routes>
       </Suspense>
-      <Toaster />
+      <Toast />
     </>
   );
 }
