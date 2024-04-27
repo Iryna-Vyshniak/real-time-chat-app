@@ -12,6 +12,7 @@ import UserFullInfo from '../../sidebar/user.data/UserFullInfo';
 import GroupFullInfo from './GroupFullInfo';
 
 import Toast from '../../../ui/Toast';
+import { useDeleteGroup } from '../../../../shared/hooks/useDeleteGroup';
 
 const ChatInfoModal = ({ data, type }) => {
   const [groupChatName, setGroupChatName] = useState(data.chatName);
@@ -19,6 +20,7 @@ const ChatInfoModal = ({ data, type }) => {
   const [foundUsers, setFoundUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState(data.participants);
   const [isChanged, setIsChanged] = useState(false);
+  const [action, setAction] = useState(null);
 
   const {
     conversations,
@@ -34,6 +36,7 @@ const ChatInfoModal = ({ data, type }) => {
   const { imgUrl, setImgUrl, handleImageChange } = usePreviewImage();
   const { editGroup } = useEditGroup();
   const { deleteUserFromGroup } = useDeleteUserFromGroup();
+  const { deleteGroup } = useDeleteGroup();
 
   useEffect(() => {
     setGroupChatName(data.chatName);
@@ -101,14 +104,18 @@ const ChatInfoModal = ({ data, type }) => {
   ]);
 
   const handleSubmit = async () => {
-    // Check if at least one field has changed
-    if (isChanged) {
-      await editGroup({ chatname: groupChatName, users: selectedUsers, chatAvatar: imgUrl });
-      setImgUrl(null);
-      // Update the initial values
-      setInitialGroupChatName(groupChatName);
-      setInitialSelectedUsers(selectedUsers);
-      setInitialImgUrl(imgUrl);
+    if (action === 'edit') {
+      // Check if at least one field has changed
+      if (isChanged) {
+        await editGroup({ chatname: groupChatName, users: selectedUsers, chatAvatar: imgUrl });
+        setImgUrl(null);
+        // Update the initial values
+        setInitialGroupChatName(groupChatName);
+        setInitialSelectedUsers(selectedUsers);
+        setInitialImgUrl(imgUrl);
+      }
+    } else if (action === 'delete') {
+      await deleteGroup({ users: selectedUsers, groupId: selectedConversation?.data?._id });
     }
   };
 
@@ -117,11 +124,11 @@ const ChatInfoModal = ({ data, type }) => {
       <div className='modal-box'>
         <form
           method='dialog'
-          className='flex flex-col items-center gap-2 text-slate-800'
+          className='flex flex-col items-center gap-2 text-slate-300'
           onSubmit={(e) => {
             if (type === 'group') {
               if (selectedUsers.length >= 3) {
-                handleSubmit();
+                handleSubmit('edit');
               } else {
                 e.preventDefault();
                 toast.error(
@@ -150,6 +157,8 @@ const ChatInfoModal = ({ data, type }) => {
               handleDelete={handleDelete}
               handleAddToGroup={handleAddToGroup}
               handleSearch={handleSearch}
+              isChanged={isChanged}
+              setAction={setAction}
             />
           )}
         </form>
