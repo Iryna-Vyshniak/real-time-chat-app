@@ -112,7 +112,7 @@ export const updateGroupChat = async (req, res) => {
 
   if (chatAvatar) {
     if (groupId) {
-      await cloudinary.uploader.destroy(`group_${groupId}`);
+      await cloudinary.uploader.destroy(`group/group_${groupId}`);
     }
 
     if (chatAvatar.startsWith('data:image')) {
@@ -195,9 +195,53 @@ export const deleteUserFromGroup = async (req, res) => {
   res.status(200).json({ info: 'User successfully deleted' });
 };
 
+// @description     DELETE GROUP
+// @route           DELETE /api/chat/group/:groupId
+
+export const deleteGroup = async (req, res) => {
+  const { groupId } = req.params;
+  const { users } = req.body;
+
+  const sender = req.user; // it`s me
+
+  if (!users) throw HttpError(400, 'Please add users');
+
+  if (groupId) {
+    await cloudinary.uploader.destroy(`group/group_${groupId}`);
+  }
+
+  const user = await User.findById(sender);
+
+  if (!user) throw HttpError(404, 'User not found');
+
+  // Remove the group from the user's groups, pinned groups, and admin groups lists
+  user.groups = user.groups.filter((group) => group !== groupId);
+  user.pinnedGroups = user.pinnedGroups.filter((group) => group !== groupId);
+  user.adminGroups = user.adminGroups.filter((group) => group !== groupId);
+
+  // Delete the group, delete all group messages and save the updated user
+  await Promise.all([
+    Conversation.findByIdAndDelete(groupId),
+    Message.deleteMany({ conversationId: groupId }),
+    user.save(),
+  ]);
+
+  // Remove the group from the lists of all group members
+  await Promise.all(
+    users.map(async ({ _id }) => {
+      await User.findByIdAndUpdate(_id, {
+        $pull: { groups: groupId, pinnedGroups: groupId, adminGroups: groupId },
+      });
+    })
+  );
+
+  res.status(200).json({ info: 'Group successfully deleted' });
+};
+
 export default {
   createGroupChat: ctrlWrapper(createGroupChat),
   updateGroupChat: ctrlWrapper(updateGroupChat),
   pinGroupChat: ctrlWrapper(pinGroupChat),
   deleteUserFromGroup: ctrlWrapper(deleteUserFromGroup),
+  deleteGroup: ctrlWrapper(deleteGroup),
 };
