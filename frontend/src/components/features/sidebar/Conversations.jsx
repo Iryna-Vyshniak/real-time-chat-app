@@ -7,6 +7,7 @@ import { useFilterConversations } from '../../../shared/hooks/useFilterConversat
 import useConversation from '../../../store/useConversation';
 
 import { generateEmoji, uniqueSender } from '../../../shared/utils/index';
+import { emojiUser } from '../../../shared/data';
 
 import Conversation from './Conversation';
 
@@ -42,7 +43,7 @@ const Conversations = ({ toggleSidebar }) => {
   const generateConversationsWithEmoji = useMemo(() => {
     return conversations.map((conversation) => ({
       ...conversation,
-      emoji: generateEmoji(),
+      emoji: generateEmoji(emojiUser),
     }));
   }, [conversations]);
 
@@ -68,7 +69,7 @@ const Conversations = ({ toggleSidebar }) => {
                 // If the emoji is not found (i.e., if it's undefined), the generateEmoji() function is called to generate a new emoji. This ensures that each conversation has a stable emoji associated with it, even if the conversation data changes.
                 emoji={
                   generateConversationsWithEmoji.find((c) => c._id === conversation._id)?.emoji ||
-                  generateEmoji()
+                  generateEmoji(emojiUser)
                 }
                 filteredNotification={filterNotification(conversation._id)}
                 toggleSidebar={toggleSidebar}
@@ -83,7 +84,7 @@ const Conversations = ({ toggleSidebar }) => {
             conversation={conversation}
             emoji={
               generateConversationsWithEmoji.find((c) => c._id === conversation._id)?.emoji ||
-              generateEmoji()
+              generateEmoji(emojiUser)
             }
             filteredNotification={filterNotification(conversation._id)}
             toggleSidebar={toggleSidebar}

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useAuthContext } from '../../../shared/context/AuthContext.jsx';
 import { generateEmoji } from '../../../shared/utils/index.js';
+import { emojiUser } from '../../../shared/data/index.js';
 
 import Icon from '../../ui/Icon';
 
@@ -11,7 +12,7 @@ const NoChatSelected = () => {
 
   // generate emoji
   const generateConversationsWithEmoji = useMemo(() => {
-    return generateEmoji();
+    return generateEmoji(emojiUser);
   }, []);
 
   return (

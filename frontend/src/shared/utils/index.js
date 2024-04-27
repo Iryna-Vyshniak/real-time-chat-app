@@ -1,12 +1,10 @@
-import { emojiBook } from '../data/index';
-
 // generate random emoji
-export const generateEmoji = () => {
-  const emodjiList = emojiBook.length;
+export const generateEmoji = (emoji) => {
+  const emodjiList = emoji.length;
 
   const randomIdx = Math.floor(Math.random() * emodjiList);
 
-  return emojiBook[randomIdx];
+  return emoji[randomIdx];
 };
 
 // for message time
