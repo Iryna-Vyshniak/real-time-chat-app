@@ -83,7 +83,7 @@ const GroupChatModal = () => {
         <div className='modal-box'>
           <form
             method='dialog'
-            className='flex flex-col items-center gap-2 text-slate-800'
+            className='flex flex-col items-center gap-2 text-slate-300'
             onSubmit={(e) => {
               if (groupChatName) {
                 if (selectedUsers.length >= 2) {

@@ -45,7 +45,7 @@ div {
   }
 
   .modal {
-    @apply z-[200]  bg-green/10;
+    @apply z-[200] bg-clip-padding backdrop-filter backdrop-blur-md bg-green/10;
   }
   .modal-box {
     @apply bg-clip-padding backdrop-filter backdrop-blur-xl bg-green/10 bg-opacity-0;
