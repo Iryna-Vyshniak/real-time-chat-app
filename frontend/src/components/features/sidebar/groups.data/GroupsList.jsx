@@ -4,7 +4,6 @@ import GroupBadge from './GroupBadge';
 
 const GroupsList = ({ data, toggleSidebar }) => {
   const { groups, pinnedGroups, setPinnedGroups } = useConversation();
-  // const pinnedGroups = JSON.parse(localStorage.getItem('pinnedGroups')) || [];
 
   useEffect(() => {
     setPinnedGroups(JSON.parse(localStorage.getItem('pinnedGroups')) || []);

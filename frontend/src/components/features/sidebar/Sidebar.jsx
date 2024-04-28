@@ -8,9 +8,12 @@ import GroupChatModal from './chat.data/GroupChatModal';
 import GroupsList from './groups.data/GroupsList';
 
 import useConversation from '../../../store/useConversation';
+import { useListenGroups } from '../../../shared/hooks/useListenGroups';
 
 const Sidebar = ({ isMobile, isOpen, toggleSidebar }) => {
   const { groups } = useConversation();
+
+  useListenGroups();
 
   return (
     <>
