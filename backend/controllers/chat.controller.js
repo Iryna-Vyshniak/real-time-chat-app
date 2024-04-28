@@ -221,7 +221,10 @@ export const deleteGroup = async (req, res) => {
 
   if (!users) throw HttpError(400, 'Please add users');
 
+  let group;
+
   if (groupId) {
+    group = await Conversation.findById(groupId);
     await cloudinary.uploader.destroy(`group/group_${groupId}`);
   }
 
@@ -250,7 +253,17 @@ export const deleteGroup = async (req, res) => {
     })
   );
 
-  io.to('group_' + groupId).emit('groupDeleted', { groupId, users });
+  // SOCKET
+  users.forEach((user) => {
+    if (user._id.toString() === sender._id.toString()) {
+      return;
+    }
+    const participantSocketId = userSocketMap[user._id.toString()];
+
+    if (participantSocketId) {
+      io.to(participantSocketId).emit('groupDeleted', group);
+    }
+  });
 
   res.status(200).json({ info: 'Group successfully deleted' });
 };
