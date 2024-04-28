@@ -2,9 +2,12 @@ import { v2 as cloudinary } from 'cloudinary';
 
 import { ctrlWrapper } from '../decorators/index.js';
 import { HttpError } from '../helpers/index.js';
+
 import Conversation from '../models/conversation.model.js';
 import User from '../models/user.model.js';
 import Message from '../models/message.model.js';
+
+import { io, userSocketMap } from '../socket/socket.js';
 
 // @description     Create New Group Chat
 // @route           POST /api/chat/group
@@ -50,6 +53,18 @@ export const createGroupChat = async (req, res) => {
   const getDetailedGroupChat = await Conversation.findOne({ _id: groupChat._id })
     .populate('participants', '-password')
     .populate('groupAdmin', '-password');
+
+  // SOCKET
+  getDetailedGroupChat.participants.forEach((participant) => {
+    if (participant._id.toString() === sender._id.toString()) {
+      return;
+    }
+    const participantSocketId = userSocketMap[participant._id.toString()];
+
+    if (participantSocketId) {
+      io.to(participantSocketId).emit('groupCreated', getDetailedGroupChat);
+    }
+  });
 
   res.status(201).json(getDetailedGroupChat);
 };
@@ -234,6 +249,8 @@ export const deleteGroup = async (req, res) => {
       });
     })
   );
+
+  io.to('group_' + groupId).emit('groupDeleted', { groupId, users });
 
   res.status(200).json({ info: 'Group successfully deleted' });
 };
