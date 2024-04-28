@@ -25,12 +25,15 @@ const ChatInfoModal = ({ data, type }) => {
   const {
     conversations,
     selectedConversation,
+    setSelectedConversation,
     initialGroupChatName,
     setInitialGroupChatName,
     initialSelectedUsers,
     setInitialSelectedUsers,
     initialImgUrl,
     setInitialImgUrl,
+    setGroups,
+    groups,
   } = useConversation();
 
   const { imgUrl, setImgUrl, handleImageChange } = usePreviewImage();
@@ -116,6 +119,8 @@ const ChatInfoModal = ({ data, type }) => {
       }
     } else if (action === 'delete') {
       await deleteGroup({ users: selectedUsers, groupId: selectedConversation?.data?._id });
+      setGroups(groups.filter((group) => group._id !== selectedConversation?.data?._id));
+      setSelectedConversation(null);
     }
   };
 
