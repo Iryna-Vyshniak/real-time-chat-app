@@ -10,9 +10,16 @@ export const useListenGroups = () => {
     socket?.on('groupCreated', (group) => {
       setGroups([...groups, group]);
 
-      toast.success(
-        `Congratulations! The group ${group.chatName} has been successfully created and you have been added to it.`
+      toast.success(`Congratulations! You have been added to group ${group.chatName}`);
+    });
+
+    socket?.on('groupUpdated', (group) => {
+      const updatedGroups = groups.map((oldGroup) =>
+        oldGroup._id === group._id ? group : oldGroup
       );
+      setGroups(updatedGroups);
+
+      toast.success(`The group ${group.chatName} has been updated`);
     });
 
     socket?.on('groupDeleted', (group) => {
@@ -25,6 +32,7 @@ export const useListenGroups = () => {
 
     return () => {
       socket.off('groupCreated');
+      socket.off('groupUpdated');
       socket.off('groupDeleted');
     };
   }, [groups, setGroups, setSelectedConversation, socket]);

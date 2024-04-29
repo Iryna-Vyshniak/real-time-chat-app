@@ -5,11 +5,6 @@ export const useDeleteUserFromGroup = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const deleteUserFromGroup = useCallback(async ({ userId, groupId }) => {
-    console.log("groupId: ", groupId);
-    
-    console.log('userId: ', userId);
-   
-
     setIsLoading(true);
     try {
       const res = await fetch(`/api/chat/group/${groupId}/delete-user`, {
@@ -21,7 +16,6 @@ export const useDeleteUserFromGroup = () => {
       });
 
       const data = await res.json();
-      console.log('data: ', data);
 
       if (data.error || data.message) {
         throw new Error(data.error || data.message);
