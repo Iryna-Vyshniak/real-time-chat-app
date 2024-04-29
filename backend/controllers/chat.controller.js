@@ -151,6 +151,8 @@ export const updateGroupChat = async (req, res) => {
     ...(users && { participants: users }),
   };
 
+  const pastGroupChat = await Conversation.findById(groupId).populate('participants', '-password');
+
   const updatedGroupChat = await Conversation.findOneAndUpdate({ _id: groupId }, updateData, {
     new: true,
   });
@@ -160,6 +162,44 @@ export const updateGroupChat = async (req, res) => {
   const getDetailedGroupChat = await Conversation.findOne({ _id: updatedGroupChat._id })
     .populate('participants', '-password')
     .populate('groupAdmin', '-password');
+
+  // SOCKET
+  // Get the IDs of the past participants
+  const pastParticipantIds = pastGroupChat.participants.map((participant) =>
+    participant._id.toString()
+  );
+
+  // Find the new participants
+  const updatedParticipants = getDetailedGroupChat.participants.filter(
+    (participant) => !pastParticipantIds.includes(participant._id.toString())
+  );
+
+  // Find the old participants
+  const oldParticipants = getDetailedGroupChat.participants.filter((participant) =>
+    pastParticipantIds.includes(participant._id.toString())
+  );
+
+  // Emit 'groupUpdated' to old participants
+  oldParticipants.forEach((participant) => {
+    if (participant._id.toString() === sender._id.toString()) {
+      return;
+    }
+    const participantSocketId = userSocketMap[participant._id.toString()];
+    if (participantSocketId) {
+      io.to(participantSocketId).emit('groupUpdated', getDetailedGroupChat);
+    }
+  });
+
+  // Emit 'groupCreated' to new participants
+  updatedParticipants.forEach((participant) => {
+    if (participant._id.toString() === sender._id.toString()) {
+      return;
+    }
+    const participantSocketId = userSocketMap[participant._id.toString()];
+    if (participantSocketId) {
+      io.to(participantSocketId).emit('groupCreated', getDetailedGroupChat);
+    }
+  });
 
   res.status(200).json(getDetailedGroupChat);
 };
@@ -193,10 +233,13 @@ export const pinGroupChat = async (req, res) => {
 export const deleteUserFromGroup = async (req, res) => {
   const { groupId } = req.params;
   const { userId } = req.body;
+  const sender = req.user;
 
   const user = await User.findById({ _id: userId });
 
   if (!user) throw HttpError(404, 'User not found');
+
+  const group = await Conversation.findById(groupId);
 
   // Remove the user from the group, remove the group from the user's lists, and save the updated user
   await Promise.all([
@@ -207,6 +250,15 @@ export const deleteUserFromGroup = async (req, res) => {
     user.save(),
   ]);
 
+  // SOCKET
+  if (user._id.toString() === sender._id.toString()) {
+    return;
+  }
+  const participantSocketId = userSocketMap[user._id.toString()];
+
+  if (participantSocketId) {
+    io.to(participantSocketId).emit('groupDeleted', group);
+  }
   res.status(200).json({ info: 'User successfully deleted' });
 };
 
