@@ -19,7 +19,7 @@ export const useGetConversations = () => {
       if (data.error) throw new Error(data.error);
 
       setConversations(data.allFilteredUsers);
-      setLastMessages(data.lastMessages);
+      setLastMessages(data.unreadMessages);
       setGroups(data.userGroupChats);
     } catch (error) {
       toast.error(error.message);
