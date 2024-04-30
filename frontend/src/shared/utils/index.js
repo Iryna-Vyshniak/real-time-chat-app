@@ -27,16 +27,20 @@ export const uniqueSender = (notification) => {
       notification.reduce((acc, curr) => {
         if (curr.newMessage && curr.newMessage.sender) {
           const { sender, receiver } = curr.newMessage;
+          const type = curr.type; // use the type field from the input array
 
-          if (!acc[sender._id]) {
-            acc[sender._id] = {
-              type: curr.newMessage.onModel === 'User' ? 'private' : 'group',
+          // Object key must be unique for each sender and group
+          const key = `${sender._id}-${type}-${receiver._id}`;
+
+          if (!acc[key]) {
+            acc[key] = {
+              type,
               sender,
               receiver,
               count: 1,
             };
           } else {
-            acc[sender._id].count += 1;
+            acc[key].count += 1;
           }
         }
         return acc;
