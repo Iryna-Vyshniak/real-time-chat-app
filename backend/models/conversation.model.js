@@ -4,7 +4,7 @@ import { addUpdateSettings, handleMongooseError } from '../helpers/index.js';
 
 const conversationSchema = new Schema(
   {
-    chatName: { type: String, trim: true, default: 'New group' },
+    chatName: { type: String, trim: true, default: '' },
     chatAvatar: { type: String, default: '' },
     isGroupChat: { type: Boolean, default: false },
     groupAdmin: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -12,10 +12,6 @@ const conversationSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        unreadMessages: {
-          type: Number,
-          default: 0,
-        },
       },
     ],
     messages: [
