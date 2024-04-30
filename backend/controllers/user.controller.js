@@ -48,69 +48,113 @@ const getUsersForSidebar = async (req, res) => {
   const usersWithExtendedGroups = await populateGroupsForUsers(allFilteredUsers);
 
   // Get the last unread messages from each sender
-  const lastMessages = await Message.aggregate([
+  const unreadMessages = await Message.aggregate([
+    //  start by filtering out messages that are not read
+    { $match: { read: false } },
     {
-      //   $match: Цей етап фільтрує записи, залишаючи лише ті, які відповідають вказаним умовам. У цьому випадку фільтрується колекція повідомлень, вибираючи ті, що мають отримувача (receiver) зі значенням, рівним loggedInUserId, і ще не були прочитані (read: false).
-      $match: {
-        receiver: loggedInUserId,
-        read: false,
+      // then perform a lookup (join) on the 'conversations' collection
+      $lookup: {
+        from: 'conversations',
+        let: { conversationId: '$conversationId', userId: loggedInUserId },
+        pipeline: [
+          {
+            //  match conversations where the logged in user is a participant
+            // and the conversation ID matches the one in the message
+            $match: {
+              $expr: {
+                $or: [
+                  // For private conversations
+                  {
+                    $and: [
+                      { $eq: ['$_id', '$$conversationId'] },
+                      { $eq: ['$isGroupChat', false] },
+                      { $in: [loggedInUserId, '$participants'] },
+                    ],
+                  },
+                  // For group conversations
+                  {
+                    $and: [
+                      { $eq: ['$_id', '$$conversationId'] },
+                      { $eq: ['$isGroupChat', true] },
+                      { $in: [loggedInUserId, '$participants'] },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+        as: 'conversation',
       },
     },
+    //  flatten the 'conversation' array into separate documents
+    { $unwind: '$conversation' },
     {
-      // $sort: Цей етап сортує записи за значенням поля createdAt у зворотньому порядку (-1), щоб найновіші записи з'являлися першими.
-      $sort: { createdAt: -1 },
-    },
-    {
-      // $group: У цьому кроці записи групуються за значенням поля sender. Кожній групі присвоюється властивість lastMessages, яка містить масив об'єктів, представляючих кожен запис у цій групі.
-      $group: {
-        _id: '$sender',
-        lastMessages: { $addToSet: '$$ROOT' },
-      },
-    },
-    {
-      // $unwind: Цей етап "розгортає" масив lastMessages, розбиваючи його на окремі документи, щоб їх можна було подальше обробити.
-      $unwind: '$lastMessages',
-    },
-    {
-      // $lookup: Виконує з'єднання з колекцією users, де значення поля _id у колекції Message (sender) збігається з значенням поля _id у колекції users. Результат з'єднання записується у поле senderInfo
+      // perform another lookup (join) on the 'users' collection to get sender info
       $lookup: {
         from: 'users',
-        localField: '_id',
+        localField: 'sender',
         foreignField: '_id',
         as: 'senderInfo',
       },
     },
     {
-      // $unwind: Цей крок розгортає масив senderInfo, розбиваючи його на окремі документи.
-      $unwind: '$senderInfo',
+      // replace the 'sender' field with the first element of 'senderInfo'
+      $addFields: {
+        sender: { $arrayElemAt: ['$senderInfo', 0] },
+      },
     },
     {
       $lookup: {
-        from: 'users',
-        localField: 'lastMessages.receiver',
+        from: 'conversations',
+        localField: 'sender.groups',
         foreignField: '_id',
-        as: 'receiverInfo',
+        as: 'groupDetails',
       },
     },
     {
-      $unwind: '$receiverInfo',
+      $lookup: {
+        from: 'conversations',
+        localField: 'sender.adminGroups',
+        foreignField: '_id',
+        as: 'adminGroupDetails',
+      },
     },
     {
-      // $addFields: Додає до об'єкту lastMessages поля sender та receiver, які містять розгорнуті дані про відправника та отримувача.
+      // replace the 'sender.groups' and 'sender.adminGroups' fields with 'groupDetails' and 'adminGroupDetails'
       $addFields: {
-        'lastMessages.sender': '$senderInfo',
-        'lastMessages.receiver': '$receiverInfo',
+        'sender.groups': '$groupDetails',
+        'sender.adminGroups': '$adminGroupDetails',
       },
     },
+    //  remove the 'senderInfo', 'groupDetails', and 'adminGroupDetails' fields as they're no longer needed
+    { $unset: ['senderInfo', 'groupDetails', 'adminGroupDetails'] },
+    // add the 'onModel' field to the document
+    { $addFields: { onModel: '$onModel' } },
     {
-      // $replaceRoot: Замінює корінь кожного документа на об'єкт lastMessages.
-      $replaceRoot: { newRoot: '$lastMessages' },
-    },
-    {
-      // $project: Виключає поля senderInfo та receiverInfo з вихідних даних.
+      // project (select) the fields we are interested in
       $project: {
-        senderInfo: 0,
-        receiverInfo: 0,
+        _id: 1,
+        conversationId: '$conversation._id',
+        receiver: {
+          $cond: [{ $eq: ['$conversation.isGroupChat', true] }, '$conversation', {}],
+        },
+        sender: {
+          $cond: [
+            { $eq: ['$conversation.isGroupChat', false] },
+            {
+              _id: '$sender._id',
+              avatar: '$sender.avatar',
+              fullName: '$sender.fullName',
+              gender: '$sender.gender',
+              username: '$sender.username',
+              adminGroups: '$sender.adminGroups',
+              groups: '$sender.groups',
+              createdAt: '$sender.createdAt',
+            },
+            {},
+          ],
+        },
       },
     },
   ]);
@@ -123,7 +167,11 @@ const getUsersForSidebar = async (req, res) => {
     .populate('participants', '-password')
     .populate('groupAdmin', '-password');
 
-  res.status(200).json({ allFilteredUsers: usersWithExtendedGroups, lastMessages, userGroupChats });
+  res.status(200).json({
+    allFilteredUsers: usersWithExtendedGroups,
+    unreadMessages,
+    userGroupChats,
+  });
 };
 
 // @description -  update unread messages
