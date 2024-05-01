@@ -11,7 +11,7 @@ const Notification = () => {
   useEffect(() => {
     const newMessagesWithTypes = lastMessages.map((message) => ({
       newMessage: message,
-      type: 'private',
+      type: message.receiver._id ? 'group' : 'private',
     }));
 
     setNotification(newMessagesWithTypes);
@@ -35,9 +35,9 @@ const Notification = () => {
               tabIndex={0}
               className='menu menu-sm dropdown-content mt-8 p-1 rounded-box w-52 shadow-md bg-primary'
             >
-              {uniqueSenders.map(({ type, sender, receiver, count }, idx) => (
+              {uniqueSenders.map(({ type, sender, receiver, count }) => (
                 <li
-                  key={sender._id + idx}
+                  key={sender._id ? sender._id : receiver._id}
                   onClick={() => {
                     setSelectedConversation({
                       type: type,
@@ -49,8 +49,17 @@ const Notification = () => {
                         ({
                           newMessage: {
                             sender: { _id: idSender },
+                            receiver: { _id: idReceiver },
                           },
-                        }) => idSender !== sender._id
+                        }) => {
+                          if (sender && sender._id) {
+                            return idSender !== (sender._id || '');
+                          } else if (receiver && receiver._id) {
+                            return idReceiver !== (receiver._id || '');
+                          } else {
+                            return true;
+                          }
+                        }
                       )
                     );
                   }}
