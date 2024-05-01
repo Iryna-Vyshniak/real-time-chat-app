@@ -11,7 +11,7 @@ const Notification = () => {
   useEffect(() => {
     const newMessagesWithTypes = lastMessages.map((message) => ({
       newMessage: message,
-      type: message.receiver._id ? 'group' : 'private',
+      type: message.sender._id ? 'private' : 'group',
     }));
 
     setNotification(newMessagesWithTypes);
@@ -52,12 +52,10 @@ const Notification = () => {
                             receiver: { _id: idReceiver },
                           },
                         }) => {
-                          if (sender && sender._id) {
-                            return idSender !== (sender._id || '');
-                          } else if (receiver && receiver._id) {
-                            return idReceiver !== (receiver._id || '');
-                          } else {
-                            return true;
+                          if (sender._id) {
+                            return idSender !== sender._id;
+                          } else if (receiver._id) {
+                            return idReceiver !== receiver._id;
                           }
                         }
                       )
