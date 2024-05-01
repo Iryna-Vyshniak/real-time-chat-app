@@ -49,10 +49,29 @@ const getUsersForSidebar = async (req, res) => {
 
   // Get the last unread messages from each sender
   const unreadMessages = await Message.aggregate([
-    //  start by filtering out messages that are not read
-    { $match: { read: false } },
     {
-      // then perform a lookup (join) on the 'conversations' collection
+      // Join with the 'conversations' collection using the 'conversationId' field
+      $lookup: {
+        from: 'conversations',
+        localField: 'conversationId',
+        foreignField: '_id',
+        as: 'conversation',
+      },
+    },
+    // Flatten the 'conversation' array into separate documents
+    { $unwind: '$conversation' },
+    // Flatten the 'participants' array in 'conversation' into separate documents
+    { $unwind: '$conversation.participants' },
+    {
+      // Filter for unread messages where the logged in user is a participant and not the sender
+      $match: {
+        read: false,
+        'conversation.participants': loggedInUserId,
+        sender: { $ne: loggedInUserId },
+      },
+    },
+    {
+      // Join with the 'conversations' collection again to match conversations where the logged in user is a participant
       $lookup: {
         from: 'conversations',
         let: { conversationId: '$conversationId', userId: loggedInUserId },
@@ -90,7 +109,22 @@ const getUsersForSidebar = async (req, res) => {
     //  flatten the 'conversation' array into separate documents
     { $unwind: '$conversation' },
     {
-      // perform another lookup (join) on the 'users' collection to get sender info
+      // Join with the 'users' collection to get receiver info
+      $lookup: {
+        from: 'users',
+        localField: 'receiver',
+        foreignField: '_id',
+        as: 'receiverInfo',
+      },
+    },
+    {
+      // Replace the 'receiver' field with the first element of 'receiverInfo'
+      $addFields: {
+        receiver: { $arrayElemAt: ['$receiverInfo', 0] },
+      },
+    },
+    {
+      // Join with the 'users' collection to get sender info
       $lookup: {
         from: 'users',
         localField: 'sender',
@@ -99,12 +133,13 @@ const getUsersForSidebar = async (req, res) => {
       },
     },
     {
-      // replace the 'sender' field with the first element of 'senderInfo'
+      // Replace the 'sender' field with the first element of 'senderInfo'
       $addFields: {
         sender: { $arrayElemAt: ['$senderInfo', 0] },
       },
     },
     {
+      // Join with the 'conversations' collection to get group details
       $lookup: {
         from: 'conversations',
         localField: 'sender.groups',
@@ -113,6 +148,7 @@ const getUsersForSidebar = async (req, res) => {
       },
     },
     {
+      // Join with the 'conversations' collection to get admin group details
       $lookup: {
         from: 'conversations',
         localField: 'sender.adminGroups',
@@ -121,14 +157,14 @@ const getUsersForSidebar = async (req, res) => {
       },
     },
     {
-      // replace the 'sender.groups' and 'sender.adminGroups' fields with 'groupDetails' and 'adminGroupDetails'
+      // Replace the 'sender.groups' and 'sender.adminGroups' fields with 'groupDetails' and 'adminGroupDetails'
       $addFields: {
         'sender.groups': '$groupDetails',
         'sender.adminGroups': '$adminGroupDetails',
       },
     },
-    //  remove the 'senderInfo', 'groupDetails', and 'adminGroupDetails' fields as they're no longer needed
-    { $unset: ['senderInfo', 'groupDetails', 'adminGroupDetails'] },
+    // Remove the 'receiverInfo', 'senderInfo', 'groupDetails', and 'adminGroupDetails' fields as they're no longer needed
+    { $unset: ['receiverInfo', 'senderInfo', 'groupDetails', 'adminGroupDetails'] },
     // add the 'onModel' field to the document
     { $addFields: { onModel: '$onModel' } },
     {
@@ -137,7 +173,7 @@ const getUsersForSidebar = async (req, res) => {
         _id: 1,
         conversationId: '$conversation._id',
         receiver: {
-          $cond: [{ $eq: ['$conversation.isGroupChat', true] }, '$conversation', {}],
+          $cond: [{ $eq: ['$conversation.isGroupChat', true] }, '$conversation', '$receiver'],
         },
         sender: {
           $cond: [
@@ -158,6 +194,8 @@ const getUsersForSidebar = async (req, res) => {
       },
     },
   ]);
+
+  console.log(unreadMessages);
 
   // filter chats where user is a participant and add fields with participants and admin info
   const userGroupChats = await Conversation.find({
