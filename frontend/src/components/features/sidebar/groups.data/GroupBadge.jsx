@@ -1,19 +1,17 @@
 import useConversation from '../../../../store/useConversation';
-
-import { useAuthContext } from '../../../../shared/context/AuthContext';
+import { useListenRoom } from '../../../../shared/hooks/useListenRoom';
+import { usePinGroupChat } from '../../../../shared/hooks/usePinGroupChat';
 
 import Avatar from '../../../ui/Avatar';
 import AvatarGroup from '../../../ui/AvatarGroup';
 import Divider from '../../../ui/Divider';
 import DropdownButton from '../../../ui/DropdownButton';
-import { usePinGroupChat } from '../../../../shared/hooks/usePinGroupChat';
 import Icon from '../../../ui/Icon';
 
 import { getTitle } from '../../../../shared/utils';
 
 const GroupBadge = ({ group, toggleSidebar }) => {
   const {
-    socket,
     isLoading,
     selectedConversation,
     setSelectedConversation,
@@ -22,11 +20,10 @@ const GroupBadge = ({ group, toggleSidebar }) => {
     setInitialSelectedUsers,
     setInitialImgUrl,
   } = useConversation();
+  const listenRoom = useListenRoom();
   const { addPinGroup } = usePinGroupChat(group._id);
 
   const pinnedGroups = JSON.parse(localStorage.getItem('pinnedGroups')) || [];
-
-  const { authUser } = useAuthContext();
 
   const avatars = group.participants?.map((participant) => participant);
 
@@ -39,21 +36,8 @@ const GroupBadge = ({ group, toggleSidebar }) => {
     if (isSelected) return;
     if (isLoading) return;
 
-    // check if the user is already in the group before subscribing to receive messages, and only subscribe to receive messages if we are not already connected to that group.
-    if (selectedConversation?.data?._id !== group._id) {
-      // Check whether the current group is different from the clicked group
-      if (socket.currentRoom && socket.currentRoom !== group.chatName) {
-        // If the user is already in the group, leave it
-        await socket.emit('leaveRoom', { room: socket.currentRoom, username: authUser.fullName });
-        socket.currentRoom = null;
-      }
-
-      // Join a new group, if not yet connected
-      if (socket.currentRoom !== group.chatName) {
-        await socket.emit('joinRoom', { room: group.chatName, username: authUser.fullName });
-        socket.currentRoom = group.chatName;
-      }
-    }
+    //  listen who entered or leave room
+    listenRoom(isSelected, group);
 
     resetCurrentPage();
 
