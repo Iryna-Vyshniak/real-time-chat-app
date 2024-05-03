@@ -1,12 +1,21 @@
 import { useEffect } from 'react';
-import { uniqueSender } from '../../../shared/utils';
+
 import useConversation from '../../../store/useConversation';
+import { useListenRoom } from '../../../shared/hooks/useListenRoom';
 
 import Icon from '../../ui/Icon';
 
+import { uniqueSender } from '../../../shared/utils';
+
 const Notification = () => {
-  const { setSelectedConversation, notification, setNotification, lastMessages } =
-    useConversation();
+  const {
+    setSelectedConversation,
+    selectedConversation,
+    notification,
+    setNotification,
+    lastMessages,
+  } = useConversation();
+  const listenRoom = useListenRoom();
 
   useEffect(() => {
     const newMessagesWithTypes = lastMessages.map((message) => ({
@@ -18,6 +27,35 @@ const Notification = () => {
   }, [lastMessages, setNotification]);
 
   const uniqueSenders = uniqueSender(notification);
+
+  const handleClick = (type, sender, receiver) => {
+    setSelectedConversation({
+      type: type,
+      data: type === 'private' ? sender : receiver,
+    });
+
+    setNotification(
+      notification.filter(
+        ({
+          newMessage: {
+            sender: { _id: idSender },
+            receiver: { _id: idReceiver },
+          },
+        }) => {
+          if (type === 'private') {
+            return idSender !== sender._id;
+          } else if (type === 'group') {
+            return idReceiver !== receiver._id;
+          }
+        }
+      )
+    );
+
+    if (type === 'group') {
+      const isSelected = receiver._id === selectedConversation?.data?._id;
+      listenRoom(isSelected, receiver);
+    }
+  };
 
   return (
     <button
@@ -35,32 +73,10 @@ const Notification = () => {
               tabIndex={0}
               className='menu menu-sm dropdown-content mt-8 p-1 rounded-box w-52 shadow-md bg-primary'
             >
-              {uniqueSenders.map(({ type, sender, receiver, count }) => (
+              {uniqueSenders.map(({ type, sender, receiver, count }, idx) => (
                 <li
-                  key={sender._id ? sender._id : receiver._id}
-                  onClick={() => {
-                    setSelectedConversation({
-                      type: type,
-                      data: type === 'private' ? sender : receiver,
-                    });
-
-                    setNotification(
-                      notification.filter(
-                        ({
-                          newMessage: {
-                            sender: { _id: idSender },
-                            receiver: { _id: idReceiver },
-                          },
-                        }) => {
-                          if (sender._id) {
-                            return idSender !== sender._id;
-                          } else if (receiver._id) {
-                            return idReceiver !== receiver._id;
-                          }
-                        }
-                      )
-                    );
-                  }}
+                  key={idx}
+                  onClick={() => handleClick(type, sender, receiver)}
                   className='grid grid-cols-[1fr,40px] gap-2 items-center justify-between text-slate-800'
                 >
                   <p className='text-[10px]'>
