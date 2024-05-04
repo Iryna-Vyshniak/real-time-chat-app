@@ -142,14 +142,16 @@ export const sendMessage = async (req, res) => {
 
   // socket io functionality
   if (type === 'group') {
-    const senderSocketId = userSocketMap[sender.toString()];
-    const senderSocket = io.sockets.sockets.get(senderSocketId);
+    conversation.participants.forEach((participant) => {
+      if (participant._id.toString() === sender._id.toString()) {
+        return;
+      }
+      const participantSocketId = userSocketMap[participant._id.toString()];
 
-    if (senderSocketId && senderSocket) {
-      senderSocket.broadcast.to('group_' + conversation.chatName).emit('newMessage', newMessage);
-    } else {
-      console.log(`No connected socket found for sender: ${sender}`);
-    }
+      if (participantSocketId) {
+        io.to(participantSocketId).emit('newMessage', newMessage);
+      }
+    });
   } else {
     const receiverSocketId = getReceiverSocketId(receiver);
 
