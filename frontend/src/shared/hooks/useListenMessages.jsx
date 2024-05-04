@@ -2,17 +2,12 @@ import { useCallback, useEffect } from 'react';
 
 import useConversation from '../../store/useConversation';
 
-import { useAuthContext } from '../context/AuthContext';
-
 import messageSound from '../../assets/sounds/message-sound.mp3';
 import notifySound from '../../assets/sounds/notify-sound.mp3';
 
 export const useListenMessages = () => {
-  const { authUser } = useAuthContext();
-
   const {
     socket,
-    // onlineUsers,
     addMessage,
     selectedConversation,
     notification,
@@ -22,6 +17,7 @@ export const useListenMessages = () => {
     setSelectedMessage,
     messages,
     setMessages,
+    groups,
   } = useConversation();
 
   // --------------------------------------------------------
@@ -33,11 +29,10 @@ export const useListenMessages = () => {
       // Check if there was already a notification for this message
       const hasNotification = notification?.some((msg) => msg.newMessage._id === newMessage._id);
 
-      // Check if the user is a member of the group to which the message was sent
-      let isMemberOfGroup = false;
-      if (newMessage.receiver.participants) {
-        isMemberOfGroup = newMessage.receiver.participants.includes(authUser._id);
-      }
+      // Check if the user is a participant in the private conversation
+      const isUserInPrivateConversation =
+        selectedConversation?.type === 'private' &&
+        selectedConversation?.data?._id === newMessage.sender._id;
 
       // Check if the selected conversation is private and matches the conversation of the new message
       const isSamePrivateConversationSelected =
@@ -46,26 +41,41 @@ export const useListenMessages = () => {
 
       // Check if the selected conversation is group and matches the conversation of the new message
       const isSameGroupConversationSelected =
-        selectedConversation?.data?._id === newMessage.conversationId &&
+        selectedConversation?.data?._id === newMessage.receiver._id &&
         newMessage.receiver.chatName !== undefined;
 
-      if (isMemberOfGroup && isSameGroupConversationSelected) {
-        newMessage.shouldShake = true;
-        sound.play();
-        addMessage(newMessage);
-      } else if (isSamePrivateConversationSelected) {
+      // Check if the user is a member of the group to which the message was sent
+      let isUserInGroup = false;
+      if (newMessage.receiver.participants) {
+        isUserInGroup = newMessage.receiver.participants.some((participant) =>
+          groups.some((group) => group.participants.some((user) => user._id === participant))
+        );
+      }
+
+      if (
+        (selectedConversation &&
+          isUserInPrivateConversation &&
+          isSamePrivateConversationSelected) ||
+        (selectedConversation && isUserInGroup && isSameGroupConversationSelected)
+      ) {
         newMessage.shouldShake = true;
         sound.play();
         addMessage(newMessage);
       } else {
-        if (!hasNotification) {
-          const notificationType = isMemberOfGroup ? 'group' : 'private';
-          setNotification([...notification, { newMessage, type: notificationType }]);
-          notify.play();
+        if (
+          !selectedConversation ||
+          !isSameGroupConversationSelected ||
+          !isSamePrivateConversationSelected
+        ) {
+          if (!hasNotification) {
+            const notificationType = isUserInGroup ? 'group' : 'private';
+            setNotification([...notification, { newMessage, type: notificationType }]);
+            notify.play();
+          }
         }
       }
     },
-    [addMessage, authUser._id, notification, selectedConversation, setNotification]
+    [addMessage, groups, notification, selectedConversation, setNotification]
   );
 
   // delete message
@@ -150,6 +160,7 @@ export const useListenMessages = () => {
     handleEditMessageReceiver,
     handleEditMessageSender,
     handleNewMessage,
+    selectedConversation,
     selectedConversation?.data?._id,
     selectedConversation?.type,
     socket,
