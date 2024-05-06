@@ -5,7 +5,10 @@ const messageValidation = Joi.object({
   img: Joi.string().uri().allow(null).optional(),
   audio: Joi.string().allow(null).optional(),
   video: Joi.string().allow(null).optional(),
-  emoji: Joi.string().allow('').optional(),
+  emoji: Joi.object({
+    userId: Joi.string().required(),
+    value: Joi.string().allow('').required(),
+  }).optional(),
   quote: Joi.boolean(),
   quotedId: Joi.string().allow('').optional(),
 });
