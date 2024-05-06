@@ -32,8 +32,13 @@ const messageSchema = new Schema(
     audio: String,
     video: String,
     emoji: {
-      type: String,
-      default: '',
+      type: [
+        {
+          userId: { type: Schema.Types.ObjectId, ref: 'User' },
+          value: String,
+        },
+      ],
+      default: [],
     },
     read: {
       type: Boolean,
