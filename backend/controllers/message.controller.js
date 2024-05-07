@@ -179,12 +179,26 @@ export const sendEmoji = async (req, res) => {
     throw HttpError(400, 'Invalid data passed into request');
   }
 
-  const updateMessage = await Message.findByIdAndUpdate(
-    messageId,
-    { emoji },
-    { emoji: '' },
-    { new: true }
+  const message = await Message.findById(messageId);
+  const existingEmoji = message.emoji.findIndex(
+    ({ userId, value }) => userId.toString() === sender.toString()
   );
+
+  let updateMessage;
+  if (existingEmoji >= 0) {
+    // If the emoji is already added, update it using the map method
+    const updatedEmojis = message.emoji.map((emojiItem) =>
+      emojiItem.userId.toString() === sender.toString() ? emoji : emojiItem
+    );
+    updateMessage = await Message.findByIdAndUpdate(
+      messageId,
+      { emoji: updatedEmojis },
+      { new: true }
+    );
+  } else {
+    // If the emoji has not yet been added, add it using the $push operator
+    updateMessage = await Message.findByIdAndUpdate(messageId, { $push: { emoji } }, { new: true });
+  }
 
   if (!updateMessage) throw HttpError(404, 'Message not found');
 
@@ -199,7 +213,13 @@ export const sendEmoji = async (req, res) => {
   const senderSocketId = getReceiverSocketId(sender);
 
   if (type === 'group') {
-    io.to('group_' + conversation.chatName).emit('addEmoji', { messageId, emoji });
+    conversation.participants.forEach((participant) => {
+      const participantSocketId = userSocketMap[participant._id.toString()];
+
+      if (participantSocketId) {
+        io.to(participantSocketId).emit('addEmoji', { messageId, emoji });
+      }
+    });
   } else {
     if ((receiverSocketId && senderSocketId) || senderSocketId) {
       // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
@@ -220,20 +240,33 @@ export const removeEmoji = async (req, res) => {
   const { id: receiver, messageId } = req.params;
   const sender = req.user._id; // its me
   const { type } = req.query;
+  const { emoji } = req.body;
 
   if (!messageId) {
     throw HttpError(400, 'Invalid data passed into request');
   }
 
-  const updateMessage = await Message.findOneAndUpdate(
-    { _id: messageId },
-    { $set: { emoji: '' } },
-    {
-      new: true,
-    }
-  ).exec();
+  const message = await Message.findById(messageId);
 
-  if (!updateMessage) throw HttpError(404, 'Message not found');
+  const existingEmoji = message.emoji.find(
+    ({ userId, value }) => userId.toString() === sender.toString() && value === emoji.value
+  );
+
+  let updateMessage;
+
+  if (existingEmoji) {
+    updateMessage = await Message.findOneAndUpdate(
+      { _id: messageId },
+      { $pull: { emoji: existingEmoji } },
+      {
+        new: true,
+      }
+    ).exec();
+  } else {
+    throw HttpError(404, 'Sorry, you are not allowed to delete emojis added by other users.');
+  }
+
+  if (!updateMessage) throw HttpError(404, 'Not found message');
 
   let conversation;
 
@@ -246,12 +279,18 @@ export const removeEmoji = async (req, res) => {
   const senderSocketId = getReceiverSocketId(sender);
 
   if (type === 'group') {
-    io.to('group_' + conversation.chatName).emit('removeEmoji', { messageId });
+    conversation.participants.forEach((participant) => {
+      const participantSocketId = userSocketMap[participant._id.toString()];
+
+      if (participantSocketId) {
+        io.to(participantSocketId).emit('removeEmoji', { messageId, emoji });
+      }
+    });
   } else {
     if ((receiverSocketId && senderSocketId) || senderSocketId) {
       // io.to(socket_id).emit() used to send events to one specific clients - only sender and receiver
-      io.to(receiverSocketId).emit('removeEmoji', { messageId });
-      io.to(senderSocketId).emit('removeEmoji', { messageId });
+      io.to(receiverSocketId).emit('removeEmoji', { messageId, emoji });
+      io.to(senderSocketId).emit('removeEmoji', { messageId, emoji });
     }
   }
 
