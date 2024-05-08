@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
-import useConversation from '../../store/useConversation';
-
 const useEmojiPicker = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [currentPopupId, setCurrentPopupId] = useState(null);
 
-  const { addEmoji } = useConversation();
   const emojiPickerRef = useRef(null);
 
   // show popup
@@ -16,8 +13,7 @@ const useEmojiPicker = () => {
   };
 
   // add emoji
-  const addEmojis = (messageId, emoji) => {
-    addEmoji(messageId, emoji);
+  const addEmojis = () => {
     setCurrentPopupId(null);
     setShowEmojiPicker(false);
   };
