@@ -5,13 +5,12 @@ import { countEmojis } from '../../../../../shared/utils';
 const EmojiList = ({ emoji, _id, fromMe, onRemoveEmoji }) => {
   const [emojiCounts, setEmojiCounts] = useState({});
 
-
   useEffect(() => {
     setEmojiCounts(countEmojis(emoji));
   }, [emoji]);
 
   return (
-    <ul className={`flex -space-x-[4px]`}>
+    <ul className={`flex items-center -space-x-[4px]`}>
       {Object.entries(emojiCounts).map(([emojiValue, count], idx) => (
         <li key={idx}>
           {' '}
@@ -22,8 +21,7 @@ const EmojiList = ({ emoji, _id, fromMe, onRemoveEmoji }) => {
             disabled={fromMe}
             className='flex items-center justify-center gap-1'
           >
-            {emojiValue}{' '}
-            <span className='text-xs text-[#2d4b069b]'>{count === 1 ? null : count}</span>
+            {emojiValue} <span className='text-xs text-accent'>{count === 1 ? null : count}</span>
           </button>
         </li>
       ))}

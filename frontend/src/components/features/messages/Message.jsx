@@ -125,7 +125,7 @@ const Message = ({ message, onReply, quotedMessage }) => {
           </div>
           {message.emoji.length > 0 && (
             <>
-              <div className='divider mb-0 before:h-[0.1rem] after:h-[0.1rem] before:bg-[#3f621259] after:bg-[#3f621259] h-[0.1rem]' />{' '}
+              <div className='divider mb-0 before:h-[0.05rem] after:h-[0.05rem] before:bg-[#3f621227] after:bg-[#3f621227] h-[0.05rem]' />{' '}
               <EmojiList
                 emoji={message.emoji}
                 _id={message._id}
