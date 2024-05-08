@@ -8,7 +8,7 @@ export const useRemoveEmoji = () => {
   const { selectedConversation } = useConversation();
 
   const removeEmoji = useCallback(
-    async ({ messageId }) => {
+    async ({ messageId, emoji }) => {
       if (!selectedConversation?.data?._id) return;
 
       setIsLoading(true);
@@ -20,6 +20,7 @@ export const useRemoveEmoji = () => {
             headers: {
               'Content-Type': 'application/json',
             },
+            body: JSON.stringify({ emoji }),
           }
         );
 
