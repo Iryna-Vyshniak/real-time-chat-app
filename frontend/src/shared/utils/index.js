@@ -105,3 +105,11 @@ export const getTitle = (title) => {
     return title;
   }
 };
+
+// count each emoji
+export const countEmojis = (emojiList) => {
+  return emojiList.reduce((acc, emoji) => {
+    acc[emoji.value] = (acc[emoji.value] || 0) + 1;
+    return acc;
+  }, {});
+};
