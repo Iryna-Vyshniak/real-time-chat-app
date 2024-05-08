@@ -42,7 +42,7 @@ const AudioPlayer = ({ src }) => {
   };
 
   return (
-    <div className='flex items-center justify-start gap-1'>
+    <div className='flex items-center justify-between gap-2 mt-2'>
       <audio ref={audioRef} src={src} onTimeUpdate={handleTimeUpdate} onEnded={handleAudioEnd} />
       <button onClick={toggleAudio} className='bg-transparent cursor-pointer'>
         {isPlaying ? (
@@ -51,17 +51,15 @@ const AudioPlayer = ({ src }) => {
           <Icon src='#icon-play' style='w-3 h-3 drop-shadow-[0px_1px_0.5px_rgba(0,0,0,1)]' />
         )}
       </button>
-      <div className='ml-1 flex items-center justify-start gap-1'>
-        <p className='text-xs'>{calculateTime(currentTime)}</p>
-        <input
-          type='range'
-          min={0}
-          max={duration || 0}
-          value={currentTime}
-          onChange={handleSeek}
-          className='range'
-        />
-      </div>
+      <p className='text-[10px]'>{calculateTime(currentTime)}</p>
+      <input
+        type='range'
+        min={0}
+        max={duration || 0}
+        value={currentTime}
+        onChange={handleSeek}
+        className='range self-center'
+      />
     </div>
   );
 };

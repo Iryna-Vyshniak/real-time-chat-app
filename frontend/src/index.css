@@ -54,7 +54,7 @@ div {
   .range {
     padding: 0;
     height: 0.2rem;
-    width: 100%;
+    width: 60%;
     --range-shdw: #ea580c;
   }
 
@@ -74,6 +74,13 @@ div {
   .area {
     resize: none;
   }
+}
+
+.chat-bubble {
+  width: fit-content;
+  min-width: 10rem;
+  max-width: 90%;
+  padding: 0.5rem;
 }
 
 .avatar.online:before {

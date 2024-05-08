@@ -1,7 +1,7 @@
 const ImageMessage = ({ message }) => {
   return (
     <>
-      <div className='relative w-32 h-20'>
+      <div className='relative w-32 h-20 self-center'>
         <img
           src={message.img}
           alt='message'
