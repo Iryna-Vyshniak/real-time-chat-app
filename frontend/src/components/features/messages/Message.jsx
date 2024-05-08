@@ -22,6 +22,7 @@ import Icon from '../../ui/Icon';
 
 import AudioPlayer from './message.data/audio/AudioPlayer';
 import VideoPlayer from './message.data/video/VideoPlayer';
+import EmojiList from './message.data/emojii/EmojiList';
 
 const Message = ({ message, onReply, quotedMessage }) => {
   const { authUser } = useAuthContext();
@@ -40,8 +41,8 @@ const Message = ({ message, onReply, quotedMessage }) => {
   const quotedInfo = messages.find((message) => message._id === quotedMessage);
 
   // function to remove emoji -
-  const onRemoveEmoji = async (id) => {
-    await removeEmoji({ messageId: id });
+  const onRemoveEmoji = async (id, emoji) => {
+    await removeEmoji({ messageId: id, emoji: { userId: authUser._id, value: emoji } });
   };
 
   const fromMe = message.sender._id === authUser._id;
@@ -98,7 +99,7 @@ const Message = ({ message, onReply, quotedMessage }) => {
         <div
           className={`chat-bubble pb-2 text-slate-800 ${
             message.video ? 'bg-transparent' : chatColor
-          } ${shakeClass} flex flex-col items-center justify-center gap-1 selection:bg-accent/50 cursor-pointer break-all`}
+          } ${shakeClass} flex flex-col gap-1 selection:bg-accent/50 cursor-pointer break-all`}
         >
           {quotedMessage && (
             <QuotedMessage
@@ -116,20 +117,22 @@ const Message = ({ message, onReply, quotedMessage }) => {
             />
           </DropdownButton>
           {message.img && <DownloadImage message={message} />}
-          <div className='flex flex-col items-center justify-between gap-2'>
+          <div className='flex flex-col justify-between gap-2'>
             {message.img && <ImageMessage message={message} />}
             {message.audio && <AudioPlayer src={message.audio} />}
             {message.video && <VideoPlayer src={message.video} />}
-            {parsedMessage}
+            <p className='self-start'>{parsedMessage}</p>
           </div>
-          {message.emoji && (
-            <button
-              onClick={() => onRemoveEmoji(message._id)}
-              className={`absolute -bottom-2 ${fromMe ? 'left-1' : 'right-1'} bg-transparent`}
-              disabled={fromMe}
-            >
-              {message.emoji}
-            </button>
+          {message.emoji.length > 0 && (
+            <>
+              <div className='divider mb-0 before:h-[0.1rem] after:h-[0.1rem] before:bg-[#3f621259] after:bg-[#3f621259] h-[0.1rem]' />{' '}
+              <EmojiList
+                emoji={message.emoji}
+                _id={message._id}
+                fromMe={fromMe}
+                onRemoveEmoji={onRemoveEmoji}
+              />
+            </>
           )}
         </div>
         <div className='chat-footer flex items-center justify-center gap-2 text-xs text-slate-600'>
