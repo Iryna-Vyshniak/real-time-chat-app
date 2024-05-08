@@ -7,11 +7,11 @@ export const useListenEmoji = () => {
 
   useEffect(() => {
     const addEmojiListener = ({ messageId, emoji }) => {
-      addEmoji(messageId, emoji);
+      addEmoji({ messageId, emoji });
     };
 
-    const removeEmojiListener = ({ messageId }) => {
-      deleteEmoji(messageId);
+    const removeEmojiListener = ({ messageId, emoji }) => {
+      deleteEmoji({ messageId, emoji });
     };
 
     socket?.on('addEmoji', addEmojiListener);
