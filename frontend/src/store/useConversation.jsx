@@ -48,40 +48,6 @@ const useConversation = createWithEqualityFn(
 
       set({ messages: updatedMessages });
     },
-    addEmoji: (messageId, emoji) => {
-      const messages = get().messages;
-      if (!Array.isArray(messages)) {
-        console.error('Error: messages is not an array');
-        return;
-      }
-      const updatedMessages = messages.map((message) => {
-        const isCurrentMessage = message._id === messageId;
-
-        if (isCurrentMessage) {
-          return { ...message, emoji };
-        }
-        return message;
-      });
-      // Update the state with the new messages
-      set({ messages: updatedMessages });
-    },
-    deleteEmoji: (messageId) => {
-      const messages = get().messages;
-      if (!Array.isArray(messages)) {
-        console.error('Error: messages is not an array');
-        return;
-      }
-      const updatedMessages = messages.map((message) => {
-        const isCurrentMessage = message._id === messageId;
-
-        if (isCurrentMessage) {
-          return { ...message, emoji: '' };
-        }
-        return message;
-      });
-      // Update the state with the new messages
-      set({ messages: updatedMessages });
-    },
     totalPages: 0,
     setTotalPages: (totalPages) => set({ totalPages }),
     currentPage: 1,
@@ -102,6 +68,52 @@ const useConversation = createWithEqualityFn(
       set((state) => ({
         selectedEmojis: { ...state.selectedEmojis, [messageId]: emoji },
       }));
+    },
+    addEmoji: ({ messageId, emoji }) => {
+      const messages = get().messages;
+      if (!Array.isArray(messages)) {
+        console.error('Error: messages is not an array');
+        return;
+      }
+      const updatedMessages = messages.map((message) => {
+        if (message._id === messageId) {
+          const existingEmoji = message.emoji.find(({ userId }) => userId === emoji.userId);
+
+          if (existingEmoji) {
+            // If the new emoji is not the same as the existing one, remove the old one and add the new one
+            const newEmojis = message.emoji.map((e) => (e.userId === emoji.userId ? emoji : e));
+            return { ...message, emoji: newEmojis };
+          } else {
+            // If the new emoji is not in the message yet, add it to the emojis array
+            return { ...message, emoji: [...message.emoji, emoji] };
+          }
+        } else {
+          return message;
+        }
+      });
+      // Update the state with the new messages with new emoji
+      set({ messages: updatedMessages });
+    },
+    deleteEmoji: ({ messageId, emoji }) => {
+      const messages = get().messages;
+      if (!Array.isArray(messages)) {
+        console.error('Error: messages is not an array');
+        return;
+      }
+      const updatedMessages = messages.map((message) => {
+        const isCurrentMessage = message._id === messageId;
+
+        const updatedEmoji = message.emoji.filter(
+          ({ userId, value }) => !(userId === emoji.userId && value === emoji.value)
+        );
+
+        if (isCurrentMessage) {
+          return { ...message, emoji: updatedEmoji };
+        }
+        return message;
+      });
+      // Update the state with the new messages
+      set({ messages: updatedMessages });
     },
     selectedMessage: null,
     setSelectedMessage: (messageId, text) => {
