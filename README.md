@@ -1,4 +1,4 @@
-# real-time-chat-app
+# real-time-chat-rn
 
 
 | ![Screenshot](/frontend/public/screenshots/Screenshot_2.png) | ![Screenshot](/frontend/public/screenshots/Screenshot_1.png) |
