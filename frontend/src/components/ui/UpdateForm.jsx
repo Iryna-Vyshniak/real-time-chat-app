@@ -73,7 +73,7 @@ const UpdateForm = ({ onSubmit }) => {
           toast.error('Please fill all fields');
           e.preventDefault();
         } else {
-          handleSubmit();
+          handleSubmit(e);
         }
       }}
     >
