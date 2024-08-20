@@ -195,8 +195,6 @@ const getUsersForSidebar = async (req, res) => {
     },
   ]);
 
-  console.log(unreadMessages);
-
   // filter chats where user is a participant and add fields with participants and admin info
   const userGroupChats = await Conversation.find({
     isGroupChat: true,
